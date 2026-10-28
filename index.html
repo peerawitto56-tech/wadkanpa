@@ -5,346 +5,2151 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="วัดกันป่ะ">
-<meta name="theme-color" content="#0B0F0E">
-<title>วัดกันป่ะ!! กล้อง</title>
+<title>วัดกันป่ะ!!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
 <style>
-/* Phase 1: camera test page. Live view + spirit level from the gyroscope; the shutter stays locked while the phone is tilted. */
+/* Layout: grading bench. Two-step flow (corners, then borders). Photo stage left, instrument panel right; stacks on phones. */
 :root{
-  --bg:#0B0F0E; --panel:#151B19; --ink:#EEF3F1; --muted:#9FB0AA; --rule:#2E3936;
-  --ok:#5DCAA5; --warn:#E8B45A; --bad:#F0997B; --gold:#E8C27A;
+  --bg:#EDF1EF; --surface:#FFFFFF; --sunk:#E2E8E5; --ink:#15211D; --muted:#56665F; --rule:#CCD7D2;
+  --outer:#0A7F72; --inner:#BE2D72; --on-accent:#FFFFFF;
+  --good:#1F7A45; --good-bg:#DDF0E4; --warn:#9A600B; --warn-bg:#F6E8CF; --bad:#AE3A24; --bad-bg:#F5DDD7;
   --f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
-  --f-body:"IBM Plex Sans Thai",system-ui,-apple-system,sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
-  color-scheme:dark;
+  --f-body:"IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
 }
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1412; --surface:#161F1C; --sunk:#0A0F0D; --ink:#E4ECE9; --muted:#93A49E; --rule:#2A3733;
+  --outer:#3CC4B2; --inner:#F06AA6; --on-accent:#0E1412;
+  --good:#6FD39A; --good-bg:#16301F; --warn:#E8B45A; --warn-bg:#332611; --bad:#F08A72; --bad-bg:#3A1C15;
+  color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#0E1412; --surface:#161F1C; --sunk:#0A0F0D; --ink:#E4ECE9; --muted:#93A49E; --rule:#2A3733;
+  --outer:#3CC4B2; --inner:#F06AA6; --on-accent:#0E1412;
+  --good:#6FD39A; --good-bg:#16301F; --warn:#E8B45A; --warn-bg:#332611; --bad:#F08A72; --bad-bg:#3A1C15;
+  color-scheme:dark;}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-user-select:none;user-select:none;overflow:hidden}
-button{font:inherit;color:inherit;cursor:pointer}
-button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-.screen{position:fixed;inset:0;display:flex;flex-direction:column}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+.eyebrow{margin:0 0 2px;font-family:var(--f-display);font-weight:600;font-size:13px;letter-spacing:.24em;color:var(--outer)}
+h1{font-family:var(--f-display);font-weight:600;font-size:clamp(24px,3.2vw,32px);line-height:1.15;margin:0;letter-spacing:.01em;text-wrap:balance}
+.sub{margin:4px 0 0;color:var(--muted);max-width:62ch}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{font:inherit;font-weight:500;border:1px solid var(--rule);background:var(--surface);color:var(--ink);padding:9px 16px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;line-height:1.2}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--outer);border-color:var(--outer);color:var(--on-accent)}
+.btn:focus-visible,.chip:focus-visible,canvas:focus-visible,.seg button:focus-visible,.step:focus-visible,select:focus-visible,.dpad button:focus-visible{outline:2px solid var(--inner);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{font:inherit;font-size:14px;border:0;background:none;color:var(--muted);padding:8px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.steps{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.steps .arrow{color:var(--muted)}
+.step{font:inherit;font-size:14px;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--rule);background:var(--surface);color:var(--muted);padding:5px 14px 5px 5px;border-radius:999px;cursor:pointer}
+.step .n{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--sunk);font-family:var(--f-mono);font-size:12px;font-weight:600}
+.step[aria-current="step"]{color:var(--ink);border-color:var(--ink)}
+.step[aria-current="step"] .n{background:var(--ink);color:var(--bg)}
+.step.done .n{background:var(--outer);color:var(--on-accent)}
+.bench{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+@media (max-width:880px){.bench{grid-template-columns:minmax(0,1fr)}}
+.left{display:flex;flex-direction:column;gap:10px;min-width:0}
+.stage{position:relative;background:var(--sunk);border:1px solid var(--rule);border-radius:12px;padding:12px;display:flex;justify-content:center;min-height:320px;min-width:0}
+.stage.drop{outline:2px dashed var(--outer);outline-offset:-8px}
+#view{display:block;touch-action:none;border-radius:4px;max-width:100%}
+.badge{position:absolute;top:20px;left:20px;background:var(--surface);color:var(--ink);border:1px solid var(--rule);font-size:12.5px;padding:4px 10px;border-radius:999px;pointer-events:none}
+.stagebar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin:0;min-width:0;flex:1 1 260px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:22px;height:0;border-top:2px solid var(--outer)}
+.sw.in{border-top:2px dashed var(--inner)}
+.ring{width:14px;height:14px;border-radius:50%;border:2px solid var(--inner)}
+.panel{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.label{font-size:12px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;font-weight:500;margin:0}
+.status{font-size:14px;padding:8px 12px;border-radius:8px;background:var(--good-bg);color:var(--good);margin:0}
+.status.warn{background:var(--warn-bg);color:var(--warn)}
+.field{display:flex;flex-direction:column;gap:4px;font-size:14px}
+select{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:8px 10px}
+.corners{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.corners .mid{font-size:12.5px}
+.corners .ctr{display:grid;place-items:center;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.3}
+.dpad{display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,38px);gap:4px;justify-content:center}
+.dpad button{font:inherit;font-size:16px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);border-radius:6px;cursor:pointer}
+.dpad .c{display:grid;place-items:center;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.dpad button:disabled{opacity:.3;cursor:default}
+.who{font-size:14px;margin:0;text-align:center}
+.readouts{display:grid;grid-template-columns:1fr;gap:14px}
+.ro{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ro .k{font-size:13px;color:var(--muted)}
+.ro .v{font-family:var(--f-mono);font-weight:600;font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar{position:relative;height:8px;border-radius:4px;background:var(--sunk);overflow:hidden;display:flex}
+.bar i{display:block;height:100%;background:var(--outer)}
+.bar b{display:block;height:100%;flex:1;background:var(--inner);opacity:.75}
+.bar::after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;background:var(--ink);transform:translateX(-1px)}
+.verdict{display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:8px;background:var(--sunk)}
+.verdict strong{font-weight:600;font-size:15px}
+.verdict small{font-size:13px;color:var(--muted)}
+.verdict.good{background:var(--good-bg)} .verdict.good strong{color:var(--good)}
+.verdict.warn{background:var(--warn-bg)} .verdict.warn strong{color:var(--warn)}
+.verdict.bad{background:var(--bad-bg)} .verdict.bad strong{color:var(--bad)}
+.crit{font-size:12.5px;color:var(--muted);margin:0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:6px 0;border-bottom:1px solid var(--rule)}
+th{font-weight:500;color:var(--muted);font-size:12.5px}
+td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+.chips{display:grid;grid-template-columns:auto repeat(4,1fr);gap:6px;align-items:center}
+.chips .rl{font-size:13px;color:var(--muted);padding-right:4px;display:flex;align-items:center;gap:6px}
+.chip{font:inherit;font-size:13.5px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);padding:6px 0;border-radius:6px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:transparent;color:var(--on-accent)}
+.chip.o[aria-pressed="true"]{background:var(--outer)}
+.chip.i[aria-pressed="true"],.chip.c[aria-pressed="true"]{background:var(--inner)}
+.nudge{display:flex;align-items:center;gap:8px}
+.nudge .btn{padding:6px 12px;font-family:var(--f-mono)}
+.nudge .who{flex:1;font-size:14px;min-width:0}
+.loupe-box{position:relative}
+.loupe{display:block;width:100%;aspect-ratio:1/1;max-width:100%;border-radius:8px;border:1px solid var(--rule);background:var(--sunk);touch-action:none;cursor:grab}
+.ztools{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ztools .btn{padding:6px 12px}
+.ztools .zm{font-family:var(--f-mono);font-size:16px;min-width:40px;justify-content:center}
+.ztools output{font-family:var(--f-mono);font-size:13px;min-width:48px;text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
+.loupe-box span{position:absolute;right:8px;bottom:8px;font-family:var(--f-mono);font-size:12px;background:var(--surface);color:var(--muted);padding:2px 6px;border-radius:4px}
+.hint{font-size:13px;color:var(--muted);margin:0}
+details{font-size:14px}
+summary{cursor:pointer;font-weight:500}
+details ul{margin:8px 0 0;padding-left:20px;color:var(--muted)}
+.msg{font-size:14px;color:var(--bad);margin:0}
+.stage.has-live{justify-content:flex-start;align-items:flex-start;gap:14px}
+.live{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px;width:var(--livew,260px);flex:none;align-content:start}
+.live-h{grid-column:1/-1;margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.live figure{margin:0;display:flex;flex-direction:column;gap:4px;min-width:0}
+.live canvas{width:100%;aspect-ratio:1/1;max-width:100%;display:block;border-radius:6px;background:#000;cursor:pointer}
+.live figcaption{font-size:12px;color:var(--muted);line-height:1.35}
+.live figcaption b{display:block;color:var(--ink);font-weight:500;font-size:12.5px;font-variant-numeric:tabular-nums;white-space:pre-line}
+@media (max-width:640px){.stage.has-live{flex-direction:column;align-items:stretch}.live{width:100%;grid-template-columns:repeat(4,1fr)}}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:300px;text-align:center;padding:24px;max-width:420px;margin:auto}
+.empty-t{font-size:18px;font-weight:600;margin:0}
+.sides{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sides li{border:1px solid var(--rule);border-radius:8px;padding:8px 10px;font-size:13px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.sides li b{font-weight:600;font-size:14px}
+.sides li span{color:var(--muted);font-family:var(--f-mono);font-size:12.5px}
+.sides li.on{border-color:var(--outer)}
+input[type=text],textarea{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:8px 10px;width:100%;resize:vertical}
+input[type=text]:focus-visible,textarea:focus-visible{outline:2px solid var(--inner);outline-offset:1px}
+.report{display:block;width:100%;max-width:100%;height:auto;border-radius:8px;border:1px solid var(--rule);background:#0B0E0D}
+.tpls{display:flex;flex-wrap:wrap;gap:6px}
+.tpls .chip{padding:6px 12px}
+.tpls .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:transparent}
+.okmsg{color:var(--good)}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* start screen */
-#start{align-items:center;justify-content:center;gap:18px;text-align:center;padding:calc(24px + env(safe-area-inset-top)) max(24px,env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left))}
-.brand{font-family:var(--f-display);font-size:40px;color:var(--gold);margin:0;line-height:1.1}
-.eyebrow{font-family:var(--f-display);font-size:12px;letter-spacing:.24em;color:var(--muted);margin:0}
-.lead{max-width:34ch;color:var(--muted);margin:0}
-.big{height:56px;padding:0 28px;border:0;border-radius:16px;background:var(--gold);color:#2B1F06;font-size:17px;font-weight:600}
-.msg{color:var(--bad);max-width:34ch;margin:0}
-
-/* camera screen */
-#cam{background:#000}
-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.guide{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);border:2px dashed var(--bad);border-radius:10px;pointer-events:none;transition:border-color .15s}
-.guide.ok{border-style:solid;border-color:var(--ok)}
-.guide.warn{border-color:var(--warn)}
-.topbar{position:absolute;left:0;right:0;top:0;padding:calc(10px + env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 10px max(12px,env(safe-area-inset-left));display:flex;gap:8px;justify-content:space-between;align-items:center}
-.pill{height:44px;padding:0 14px;border-radius:22px;border:0;background:rgba(11,15,14,.72);font-size:14px;display:inline-flex;align-items:center;gap:6px}
-.pill[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-.level{position:absolute;left:50%;top:44%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;border:2px solid rgba(238,243,241,.85);pointer-events:none}
-.level::after{content:"";position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:1px solid rgba(238,243,241,.85)}
-.bubble{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:var(--bad);transition:background .15s}
-.bottom{position:absolute;left:0;right:0;bottom:0;padding:12px max(16px,env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(transparent,rgba(0,0,0,.75) 30%)}
-.read{font-family:var(--f-mono);font-size:13px;color:var(--ink);text-align:center}
-.hint{font-size:16px;font-weight:600;text-align:center;min-height:24px}
-.hint.ok{color:var(--ok)} .hint.warn{color:var(--warn)} .hint.bad{color:var(--bad)}
-.row{display:flex;align-items:center;justify-content:center;gap:22px;width:100%}
-.shutter{position:relative;width:78px;height:78px;border-radius:50%;border:4px solid var(--ink);background:transparent;display:grid;place-items:center;padding:0}
-.shutter i{width:62px;height:62px;border-radius:50%;background:var(--ink);display:block;transition:transform .1s}
-.shutter:active i{transform:scale(.9)}
-.shutter:disabled{border-color:#5F5E5A;cursor:not-allowed}
-.shutter:disabled i{background:#3A403E}
-.shutter svg{position:absolute;inset:-4px;width:78px;height:78px;transform:rotate(-90deg);pointer-events:none}
-.side{width:64px;height:44px;border-radius:12px;border:0;background:rgba(11,15,14,.72);font-size:13px}
-.res{font-size:12px;color:var(--muted);text-align:center}
-
-/* calibration sheet + review */
-.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--panel);border-radius:20px 20px 0 0;padding:18px max(18px,env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:12px}
-.sheet h2{margin:0;font-size:18px}
-.sheet p{margin:0;color:var(--muted)}
-.btns{display:flex;gap:10px}
-.btn{flex:1;height:50px;border-radius:14px;border:0;background:#222B28;font-size:15px}
-.btn.primary{background:var(--gold);color:#2B1F06;font-weight:600}
-#review{background:var(--bg)}
-#shot{flex:1;min-height:0;width:100%;object-fit:contain;margin-top:env(safe-area-inset-top)}
-.meta{font-family:var(--f-mono);font-size:13px;color:var(--muted);text-align:center;margin:0}
-.toast{position:absolute;left:50%;top:calc(64px + env(safe-area-inset-top));transform:translateX(-50%);background:var(--panel);padding:8px 14px;border-radius:12px;font-size:14px;max-width:90%;text-align:center}
-@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+/* Standalone page: keep content clear of the notch and home bar. */
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg)}
+/* Camera with spirit level: always dark, over the whole screen. */
+html.cam-open,html.cam-open body{overflow:hidden}
+.camwrap{position:fixed;inset:0;z-index:50;background:#000;color:#EEF3F1;font-family:var(--f-body);-webkit-user-select:none;user-select:none}
+.camwrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cg{position:absolute;border:2px dashed #F0997B;border-radius:10px;pointer-events:none}
+.cg.ok{border-style:solid;border-color:#5DCAA5} .cg.warn{border-color:#E8B45A}
+.clevel{position:absolute;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;border:2px solid rgba(238,243,241,.85);pointer-events:none}
+.clevel::after{content:"";position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:1px solid rgba(238,243,241,.85)}
+.cbub{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:#F0997B}
+.ctop{position:absolute;left:0;right:0;top:0;padding:calc(10px + env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 10px max(12px,env(safe-area-inset-left));display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center}
+.cpill{height:44px;min-width:44px;padding:0 14px;border-radius:22px;border:0;background:rgba(11,15,14,.72);color:#EEF3F1;font:inherit;font-size:14px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.cpill[aria-pressed="true"]{background:#EEF3F1;color:#0B0F0E}
+.cbot{position:absolute;left:0;right:0;bottom:0;padding:10px max(16px,env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(0,0,0,.72)}
+.cside-t{font-size:13px;color:#9FB0AA;margin:0}
+.chint{font-size:16px;font-weight:600;text-align:center;margin:0;min-height:24px}
+.chint.ok{color:#5DCAA5}.chint.warn{color:#E8B45A}.chint.bad{color:#F0997B}
+.cread{font-family:var(--f-mono);font-size:13px;margin:0;text-align:center}
+.crow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;width:100%;max-width:420px;margin-top:4px}
+.cshut{position:relative;width:78px;height:78px;border-radius:50%;border:4px solid #EEF3F1;background:transparent;display:grid;place-items:center;padding:0;cursor:pointer}
+.cshut i{width:62px;height:62px;border-radius:50%;background:#EEF3F1;display:block}
+.cshut:disabled{border-color:#5F5E5A;cursor:not-allowed}
+.cshut:disabled i{background:#3A403E}
+.cshut svg{position:absolute;inset:-4px;width:78px;height:78px;transform:rotate(-90deg);pointer-events:none}
+.cside{height:44px;min-width:72px;padding:0 12px;border-radius:12px;border:0;background:rgba(238,243,241,.14);color:#EEF3F1;font:inherit;font-size:14px;justify-self:center;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.cres{font-size:12px;color:#9FB0AA;margin:0;text-align:center}
+.csheet{position:absolute;left:0;right:0;bottom:0;z-index:2;background:#151B19;color:#EEF3F1;border-radius:20px 20px 0 0;padding:18px max(18px,env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:12px}
+.csheet h2{margin:0;font-size:18px}
+.csheet p{margin:0;color:#9FB0AA}
+.cbtns{display:flex;gap:10px}
+.cbtn{flex:1;height:50px;border-radius:14px;border:0;background:#222B28;color:#EEF3F1;font:inherit;font-size:15px;cursor:pointer}
+.cbtn.pri{background:#E8C27A;color:#2B1F06;font-weight:600}
+.ctoast{position:absolute;left:50%;top:calc(66px + env(safe-area-inset-top));transform:translateX(-50%);background:#151B19;color:#EEF3F1;padding:8px 14px;border-radius:12px;font-size:14px;max-width:90%;text-align:center;margin:0;z-index:3}
+.creview{position:fixed;inset:0;z-index:51;background:#0B0F0E;color:#EEF3F1;display:flex;flex-direction:column}
+.creview img{flex:1;min-height:0;width:100%;object-fit:contain;padding-top:env(safe-area-inset-top);box-sizing:border-box}
+.creview .csheet{position:static}
+.cpill:focus-visible,.cside:focus-visible,.cshut:focus-visible,.cbtn:focus-visible{outline:2px solid #E8C27A;outline-offset:2px}
 </style>
 </head>
 <body>
 
-<section id="start" class="screen">
-  <p class="eyebrow">CENTERING LAB · กล้อง</p>
-  <h1 class="brand">วัดกันป่ะ!!</h1>
-  <p class="lead">วางการ์ดบนโต๊ะเรียบ ถือมือถือขนานกับโต๊ะ ปุ่มถ่ายจะปลดล็อกเมื่อมือถือตรงและนิ่ง</p>
-  <button class="big" type="button" id="go">เริ่มถ่าย</button>
-  <p class="msg" id="startMsg" role="status" hidden></p>
-</section>
-
-<section id="cam" class="screen" hidden>
-  <video id="video" playsinline muted autoplay></video>
-  <div class="guide" id="guide"></div>
-  <div class="level" id="level" aria-hidden="true"><div class="bubble" id="bubble"></div></div>
-  <div class="topbar">
-    <button class="pill" type="button" id="calBtn">ตั้งศูนย์</button>
-    <button class="pill" type="button" id="lensBtn" hidden>เลนส์</button>
-    <button class="pill" type="button" id="autoBtn" aria-pressed="true">ถ่ายอัตโนมัติ</button>
-  </div>
-  <p class="toast" id="toast" role="status" hidden></p>
-  <div class="bottom">
-    <p class="hint bad" id="hint" aria-live="polite">กำลังอ่านเซนเซอร์…</p>
-    <p class="read" id="read">ซ้าย-ขวา –° · หน้า-หลัง –°</p>
-    <div class="row">
-      <button class="side" type="button" id="zoomBtn" hidden>1×</button>
-      <button class="shutter" type="button" id="shutter" aria-label="ถ่ายรูป" disabled>
-        <i></i>
-        <svg viewBox="0 0 78 78" aria-hidden="true"><circle id="ring" cx="39" cy="39" r="36" fill="none" stroke="#5DCAA5" stroke-width="4" stroke-dasharray="226" stroke-dashoffset="226"/></svg>
-      </button>
-      <span class="side" aria-hidden="true" style="background:none"></span>
+<div class="wrap">
+  <header>
+    <div>
+      <p class="eyebrow">CENTERING LAB</p>
+      <h1>วัดกันป่ะ!!</h1>
+      <p class="sub">ถ่ายหรือเลือกรูปหน้าและหลังการ์ด ระบบจะหามุม ดัดภาพให้ตรง แล้วหาขอบให้อัตโนมัติ ทุกขั้นลากแก้เองได้ เลือก 2 รูปพร้อมกันได้ รูปแรกเป็นหน้า รูปที่สองเป็นหลัง</p>
     </div>
-    <p class="res" id="res"></p>
+    <div class="actions">
+      <div class="seg" role="group" aria-label="ด้านของการ์ด">
+        <button type="button" id="sideF" aria-pressed="true">หน้าการ์ด</button>
+        <button type="button" id="sideB" aria-pressed="false">หลังการ์ด</button>
+      </div>
+      <button class="btn" type="button" id="sample">ดูภาพตัวอย่าง</button>
+      <button class="btn primary" type="button" id="camBtn">ถ่ายรูป</button>
+      <label class="btn" for="file">เลือกรูป</label>
+      <input id="file" type="file" accept="image/*" multiple class="visually-hidden">
+    </div>
+  </header>
+
+  <nav class="steps" aria-label="ขั้นตอน">
+    <button class="step" type="button" id="st1" aria-current="step"><span class="n">1</span>วางมุมการ์ด</button>
+    <span class="arrow" aria-hidden="true">→</span>
+    <button class="step" type="button" id="st2"><span class="n">2</span>ปรับเส้นขอบ</button>
+    <span class="arrow" aria-hidden="true">→</span>
+    <button class="step" type="button" id="st3"><span class="n">3</span>สรุปผล</button>
+  </nav>
+
+  <div class="bench">
+    <div class="left">
+      <div class="stage" id="stage">
+        <canvas id="view" tabindex="0" aria-label="รูปการ์ด ลากจุดหรือเส้นเพื่อปรับ ใช้ปุ่มลูกศรเลื่อนทีละพิกเซล"></canvas>
+        <span class="badge" id="badge">ภาพตัวอย่าง การ์ดถ่ายเอียง</span>
+        <div class="live" id="live" hidden aria-label="ภาพขยายมุมทั้ง 4 อัปเดตตามเส้น">
+          <p class="live-h">มุมการ์ด · ขอบเป็น มม. · อัปเดตตามเส้น</p>
+          <figure><canvas id="lv0" data-c="TL"></canvas><figcaption>ซ้ายบน<b id="lc0"></b></figcaption></figure>
+          <figure><canvas id="lv1" data-c="TR"></canvas><figcaption>ขวาบน<b id="lc1"></b></figcaption></figure>
+          <figure><canvas id="lv2" data-c="BL"></canvas><figcaption>ซ้ายล่าง<b id="lc2"></b></figcaption></figure>
+          <figure><canvas id="lv3" data-c="BR"></canvas><figcaption>ขวาล่าง<b id="lc3"></b></figcaption></figure>
+        </div>
+        <div class="empty" id="empty" hidden>
+          <p class="empty-t" id="emptyT">ยังไม่มีรูปหลังการ์ด</p>
+          <div class="actions" style="justify-content:center"><button class="btn primary" type="button" id="camBtn2">ถ่ายรูป</button><label class="btn" for="file">เลือกรูป</label></div>
+          <p class="hint">ถ่ายจากกล้องหรือเลือกจากอัลบั้มก็ได้ ถ้าเลือก 2 รูปพร้อมกัน รูปแรกจะเป็นหน้าการ์ด รูปที่สองเป็นหลังการ์ด</p>
+          <button class="btn" type="button" id="emptyBack" hidden>← กลับไปหน้าการ์ด</button>
+        </div>
+      </div>
+      <div class="stagebar" id="bar1">
+        <p class="legend"><span><i class="ring"></i>มุมการ์ด ลากให้ตรงมุมจริง</span><span><i class="sw"></i>แนวขอบการ์ด</span></p>
+        <button class="btn primary" type="button" id="go">ดัดภาพให้ตรง แล้ววัดขอบ →</button>
+      </div>
+      <div class="stagebar" id="bar2" hidden>
+        <p class="legend"><span><i class="sw"></i>ขอบนอก (ขอบกระดาษ)</span><span><i class="sw in"></i>ขอบใน (กรอบภาพ)</span></p>
+        <div class="actions">
+          <button class="btn" type="button" id="back">← กลับไปวางมุม</button>
+          <button class="btn primary" type="button" id="toSum">สรุปผล →</button>
+        </div>
+      </div>
+      <div class="stagebar" id="bar3" hidden>
+        <p class="legend"><span>กลับไปปรับเส้นต่อได้ เส้นที่ปรับไว้ยังอยู่</span></p>
+        <div class="actions">
+          <button class="btn" type="button" id="back1">← วางมุมใหม่</button>
+          <button class="btn" type="button" id="back2">← ปรับเส้นต่อ</button>
+          <button class="btn primary" type="button" id="nextSide">ไปวัดหลังการ์ด →</button>
+        </div>
+      </div>
+    </div>
+
+    <aside class="panel">
+      <div class="panel" id="p1">
+        <section class="card">
+          <p class="label">มุมการ์ด</p>
+          <p class="status" id="status">กำลังหามุม…</p>
+          <div class="corners" id="cornerChips">
+            <button class="chip c" type="button" data-i="0">ซ้ายบน</button>
+            <button class="chip c mid" type="button" data-i="4">กลางบน</button>
+            <button class="chip c" type="button" data-i="1">ขวาบน</button>
+            <button class="chip c mid" type="button" data-i="7">กลางซ้าย</button>
+            <span class="ctr" aria-hidden="true">วงกลม = มุม<br>สี่เหลี่ยม = กลางขอบ</span>
+            <button class="chip c mid" type="button" data-i="5">กลางขวา</button>
+            <button class="chip c" type="button" data-i="3">ซ้ายล่าง</button>
+            <button class="chip c mid" type="button" data-i="6">กลางล่าง</button>
+            <button class="chip c" type="button" data-i="2">ขวาล่าง</button>
+          </div>
+          <p class="hint" id="bendInfo"></p>
+          <div class="dpad" id="dpad1" role="group" aria-label="เลื่อนมุมที่เลือกทีละพิกเซล">
+            <span></span><button type="button" data-dx="0" data-dy="-1" aria-label="เลื่อนขึ้น">↑</button><span></span>
+            <button type="button" data-dx="-1" data-dy="0" aria-label="เลื่อนซ้าย">←</button><span class="c">1 px</span><button type="button" data-dx="1" data-dy="0" aria-label="เลื่อนขวา">→</button>
+            <span></span><button type="button" data-dx="0" data-dy="1" aria-label="เลื่อนลง">↓</button><span></span>
+          </div>
+          <div class="loupe-box"><canvas class="loupe" id="loupe1" aria-label="ภาพขยายรอบมุมที่เลือก"></canvas></div>
+          <div class="ztools">
+            <button class="btn zm" type="button" data-l="1" data-z="-1" aria-label="ซูมออก">−</button><output id="zl1">6×</output><button class="btn zm" type="button" data-l="1" data-z="1" aria-label="ซูมเข้า">+</button>
+            <button class="btn" type="button" data-c="1">กลับไปที่จุด</button>
+          </div>
+          <p class="hint">ลากในภาพขยายเพื่อเลื่อนดูรอบๆ ลากที่วงกลมเพื่อขยับมุมแบบละเอียด ซูมด้วยปุ่ม ล้อเมาส์ หรือใช้สองนิ้ว</p>
+          <p class="hint">การ์ดมุมมน ให้วางจุดตรงที่เส้นขอบสองด้านต่อออกไปชนกัน ไม่ใช่บนส่วนโค้ง</p>
+          <label class="field" for="size">ขนาดการ์ด
+            <select id="size">
+              <option value="std">มาตรฐาน 63 × 88 มม.</option>
+              <option value="small">ไซซ์เล็ก 59 × 86 มม.</option>
+            </select>
+          </label>
+          <div class="actions"><button class="btn" type="button" id="redetectC">หามุมอัตโนมัติอีกครั้ง</button><button class="btn" type="button" id="straighten">ทำขอบให้ตรง</button></div>
+        </section>
+      </div>
+
+      <div class="panel" id="p3" hidden>
+        <section class="card" aria-live="polite">
+          <p class="label">ผลการวัด</p>
+          <p class="hint" id="meta"></p>
+          <div class="readouts">
+            <div class="ro"><span class="k">ซ้าย / ขวา</span><span class="v" id="lr">–</span><div class="bar"><i id="lrBar"></i><b></b></div></div>
+            <div class="ro"><span class="k">บน / ล่าง</span><span class="v" id="tb">–</span><div class="bar"><i id="tbBar"></i><b></b></div></div>
+          </div>
+          <div class="verdict" id="verdict"><strong id="vTitle">–</strong><small id="vSub"></small></div>
+          <p class="status warn" id="bendWarn3" hidden></p>
+          <p class="crit" id="crit"></p>
+          <table>
+            <thead><tr><th>ด้าน</th><th class="n">พิกเซล</th><th class="n">มม. (ประมาณ)</th></tr></thead>
+            <tbody id="gapRows"></tbody>
+          </table>
+        </section>
+
+        <section class="card">
+          <p class="label">ภาพสรุป</p>
+          <ul class="sides" id="sides"></ul>
+          <p class="hint" id="sideHint"></p>
+          <label class="field" for="cardName">ชื่อการ์ด
+            <input id="cardName" type="text" maxlength="60" placeholder="เช่น ไชนิงเซเลบี 172/130">
+          </label>
+          <label class="field" for="cardNote">หมายเหตุ
+            <textarea id="cardNote" rows="3" maxlength="240" placeholder="เช่น มุมขวาล่างมีจุดขาวเล็กน้อย"></textarea>
+          </label>
+          <p class="hint" id="autoNote" hidden></p>
+          <div class="tpls" id="tpls" role="group" aria-label="แบบภาพสรุป">
+            <button class="chip" type="button" data-t="lab" aria-pressed="true">ห้องแล็บ</button>
+            <button class="chip" type="button" data-t="story" aria-pressed="false">สตอรี่</button>
+            <button class="chip" type="button" data-t="label" aria-pressed="false">ป้ายร้าน</button>
+            <button class="chip" type="button" data-t="compare" aria-pressed="false">หน้า-หลัง</button>
+            <button class="chip" type="button" data-t="blueprint" aria-pressed="false">พิมพ์เขียว</button>
+          </div>
+          <img id="reportImg" class="report" alt="ภาพสรุปผลการวัดเซ็นเตอร์" hidden>
+          <div class="actions">
+            <button class="btn primary" type="button" id="saveReport">บันทึกภาพ</button>
+            <button class="btn" type="button" id="clearSides">เริ่มการ์ดใบใหม่</button>
+          </div>
+          <p class="hint" id="saveMsg" role="status" hidden></p>
+        </section>
+      </div>
+
+      <div class="panel" id="p2" hidden>
+        <section class="card">
+          <p class="label">ปรับเส้นให้ตรงขอบ</p>
+          <p class="status warn" id="bendWarn" hidden></p>
+          <div class="chips" id="chips">
+            <span class="rl"><i class="sw"></i>นอก</span>
+            <button class="chip o" data-k="oL" type="button">ซ้าย</button>
+            <button class="chip o" data-k="oR" type="button">ขวา</button>
+            <button class="chip o" data-k="oT" type="button">บน</button>
+            <button class="chip o" data-k="oB" type="button">ล่าง</button>
+            <span class="rl"><i class="sw in"></i>ใน</span>
+            <button class="chip i" data-k="iL" type="button">ซ้าย</button>
+            <button class="chip i" data-k="iR" type="button">ขวา</button>
+            <button class="chip i" data-k="iT" type="button">บน</button>
+            <button class="chip i" data-k="iB" type="button">ล่าง</button>
+          </div>
+          <p class="who" id="who"></p>
+          <div class="dpad" id="dpad2" role="group" aria-label="เลื่อนเส้นที่เลือกทีละพิกเซล">
+            <span></span><button type="button" data-dx="0" data-dy="-1" aria-label="เลื่อนขึ้น">↑</button><span></span>
+            <button type="button" data-dx="-1" data-dy="0" aria-label="เลื่อนซ้าย">←</button><span class="c">1 px</span><button type="button" data-dx="1" data-dy="0" aria-label="เลื่อนขวา">→</button>
+            <span></span><button type="button" data-dx="0" data-dy="1" aria-label="เลื่อนลง">↓</button><span></span>
+          </div>
+          <div class="loupe-box"><canvas class="loupe" id="loupe2" aria-label="ภาพขยายรอบเส้นที่เลือก"></canvas></div>
+          <div class="ztools">
+            <button class="btn zm" type="button" data-l="2" data-z="-1" aria-label="ซูมออก">−</button><output id="zl2">8×</output><button class="btn zm" type="button" data-l="2" data-z="1" aria-label="ซูมเข้า">+</button>
+            <button class="btn" type="button" data-c="2">กลับไปที่เส้น</button>
+          </div>
+          <p class="hint">ลากในภาพขยายเพื่อเลื่อนดูรอบๆ ลากที่เส้นที่เลือกเพื่อขยับแบบละเอียด ซูมด้วยปุ่ม ล้อเมาส์ หรือใช้สองนิ้ว</p>
+          <p class="hint">วางเส้นให้ทับรอยต่อสีพอดี กดลูกศรบนคีย์บอร์ดเพื่อเลื่อนทีละพิกเซล (Shift = 10)</p>
+          <div class="actions"><button class="btn" type="button" id="redetectL">หาขอบอัตโนมัติอีกครั้ง</button></div>
+        </section>
+      </div>
+
+      <p class="msg" id="msg" role="status" hidden></p>
+
+      <details class="card">
+        <summary>วิธีถ่ายรูปให้วัดแม่น</summary>
+        <ul>
+          <li>วางการ์ดบนพื้นเรียบสีเข้ม ที่สีตัดกับขอบการ์ดชัดๆ</li>
+          <li>ถ่ายให้ตรงที่สุดเท่าที่ทำได้ ระบบดัดภาพเอียงได้ แต่ถ้าเอียงมาก ด้านที่ไกลกล้องจะเหลือรายละเอียดน้อย</li>
+          <li>ถอยกล้องออกแล้วซูม 2× ดีกว่าเอากล้องจ่อใกล้ เพราะเลนส์มุมกว้างทำให้ขอบโค้ง</li>
+          <li>ใช้แสงสม่ำเสมอ เลี่ยงแสงสะท้อนบนขอบ ถอดซองหรือท็อปโหลดถ้าทำได้</li>
+          <li>ผลนี้เป็นการประเมินจากรูป ไม่ใช่ผลเกรดจริง</li>
+        </ul>
+      </details>
+    </aside>
   </div>
-  <div class="sheet" id="calSheet" hidden>
+</div>
+
+<div class="camwrap" id="cam" hidden>
+  <video id="cvideo" playsinline muted autoplay></video>
+  <div class="cg" id="cguide"></div>
+  <div class="clevel" id="clevel" aria-hidden="true"><div class="cbub" id="cbub"></div></div>
+  <div class="ctop" id="ctop">
+    <button class="cpill" type="button" id="cClose" aria-label="ปิดกล้อง">✕</button>
+    <button class="cpill" type="button" id="cCal">ตั้งศูนย์</button>
+    <button class="cpill" type="button" id="cLens" hidden>เลนส์</button>
+    <button class="cpill" type="button" id="cAuto" aria-pressed="true">ถ่ายอัตโนมัติ</button>
+  </div>
+  <p class="ctoast" id="ctoast" role="status" hidden></p>
+  <div class="cbot" id="cbot">
+    <p class="cside-t" id="cSideTxt">กำลังถ่ายหน้าการ์ด</p>
+    <p class="chint bad" id="chint" aria-live="polite">กำลังอ่านเซนเซอร์…</p>
+    <p class="cread" id="cread"></p>
+    <div class="crow">
+      <label class="cside" for="cfile">คลังรูป</label>
+      <button class="cshut" type="button" id="cshut" aria-label="ถ่ายรูป" disabled>
+        <i></i>
+        <svg viewBox="0 0 78 78" aria-hidden="true"><circle id="cring" cx="39" cy="39" r="36" fill="none" stroke="#5DCAA5" stroke-width="4" stroke-dasharray="226" stroke-dashoffset="226"/></svg>
+      </button>
+      <button class="cside" type="button" id="cZoom" hidden>1×</button>
+    </div>
+    <p class="cres" id="cres"></p>
+  </div>
+  <input id="cfile" type="file" accept="image/*" class="visually-hidden">
+  <div class="csheet" id="cCalSheet" hidden>
     <h2>ตั้งศูนย์ระดับ</h2>
     <p>วางมือถือหงายราบบนโต๊ะตรงที่จะวางการ์ด แล้วกด "ตั้งศูนย์" ระบบจะจำความเอียงของโต๊ะไว้ ถ้าโต๊ะไม่ได้ระดับก็ยังวัดถูก</p>
-    <p id="calNow" style="font-family:var(--f-mono)"></p>
-    <div class="btns">
-      <button class="btn" type="button" id="calReset">ล้างค่า</button>
-      <button class="btn" type="button" id="calCancel">ปิด</button>
-      <button class="btn primary" type="button" id="calSet">ตั้งศูนย์</button>
+    <p id="cCalNow" style="font-family:var(--f-mono)"></p>
+    <div class="cbtns">
+      <button class="cbtn" type="button" id="cCalReset">ล้างค่า</button>
+      <button class="cbtn" type="button" id="cCalClose">ปิด</button>
+      <button class="cbtn pri" type="button" id="cCalSet">ตั้งศูนย์</button>
     </div>
   </div>
-</section>
-
-<section id="review" class="screen" hidden>
-  <img id="shot" alt="รูปการ์ดที่ถ่าย">
-  <div class="sheet" style="position:static">
-    <p class="meta" id="shotMeta"></p>
-    <div class="btns">
-      <button class="btn" type="button" id="again">ถ่ายใหม่</button>
-      <button class="btn primary" type="button" id="save">บันทึกรูป</button>
+</div>
+<div class="creview" id="creview" hidden>
+  <img id="cshot" alt="รูปที่ถ่าย">
+  <div class="csheet">
+    <p class="cread" id="cshotMeta" style="color:#9FB0AA"></p>
+    <div class="cbtns">
+      <button class="cbtn" type="button" id="cAgain">ถ่ายใหม่</button>
+      <button class="cbtn pri" type="button" id="cUse">ใช้รูปนี้ →</button>
     </div>
-    <p class="meta" id="saveMsg" role="status" hidden></p>
   </div>
-</section>
+</div>
 
 <script>
 (() => {
-  /* ---------- settings ---------- */
-  const OK_DEG = 1.5;        // green: shutter free, auto capture allowed
-  const LOCK_DEG = 3;        // above this on either axis the shutter locks
-  const STEADY_DEG = 0.3;    // max wobble inside the steady window
-  const STEADY_MS = 500;     // how long the phone must stay steady
-  const CARD = [63, 88];     // mm, portrait
-  const GUIDE_FILL = 0.82;   // guide size against the smaller free screen side
-
   const $ = id => document.getElementById(id);
-  const video = $('video'), guide = $('guide'), bubble = $('bubble'), shutter = $('shutter'), ring = $('ring');
-  const S = { stream:null, track:null, sensor:false, b:null, g:null, hist:[], cal:{ b:0, g:0 }, auto:true, steadySince:0, busy:false,
-              devices:[], devIdx:0, zooms:null, zoomIdx:0, blob:null, shotInfo:null, lastEvt:0 };
-  try { const c = JSON.parse(localStorage.getItem('wkp-cal') || 'null'); if (c && isFinite(c.b) && isFinite(c.g)) S.cal = c; } catch(_){}
+  const view = $('view'), vctx = view.getContext('2d');
+  const work = document.createElement('canvas'), wctx = work.getContext('2d', { willReadFrequently:true });
+  const flat = document.createElement('canvas'), fctx = flat.getContext('2d', { willReadFrequently:true });
+  const an = document.createElement('canvas');
+  const loupe1 = $('loupe1'), loupe2 = $('loupe2');
+  const KEYS = ['oL','oR','oT','oB','iL','iR','iT','iB'];
+  const SIDE_TH = { L:'ซ้าย', R:'ขวา', T:'บน', B:'ล่าง' };
+  const CORNER_TH = ['ซ้ายบน','ขวาบน','ขวาล่าง','ซ้ายล่าง'];
+  const SIZES = { std:[63,88], small:[59,86] };
+  const isV = k => k[1] === 'L' || k[1] === 'R';
+  const nameOf = k => (k[0] === 'o' ? 'ขอบนอก ' : 'ขอบใน ') + SIDE_TH[k[1]];
+  const S = { src:null, srcData:null, step:1, corners:null, csel:0, lines:null, sel:'iL', side:'front', size:'std',
+              drag:false, dragOff:null, ptr:null, lz:{1:6, 2:8}, pan:{x:0, y:0}, ldrag:null, results:{}, mid:0, tpl:'lab', slots:{ front:null, back:null }, isSample:false, scale:1, dpr:1, lastW:0, margin:0, mm:[63,88] };
+  const GR = {
+    front: [[55,'PSA 10'],[60,'PSA 9'],[65,'PSA 8'],[70,'PSA 7']],
+    back:  [[75,'PSA 10'],[90,'PSA 9']]
+  };
 
-  function toast(t, ms = 2200){ const el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, ms); }
-  function show(id){ for (const s of ['start','cam','review']) $(s).hidden = s !== id; }
+  function tokens(){
+    const cs = getComputedStyle(document.documentElement), g = n => cs.getPropertyValue(n).trim();
+    return { outer:g('--outer'), inner:g('--inner'), surface:g('--surface'), ink:g('--ink'), sunk:g('--sunk') };
+  }
+  function rr(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+  function median(a){ const s = Array.from(a).sort((x,y)=>x-y); const m = s.length>>1; return s.length%2 ? s[m] : (s[m-1]+s[m])/2; }
+  const dist2 = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);
 
-  /* ---------- start: permissions must come from a tap on iOS ---------- */
-  $('go').addEventListener('click', async () => {
-    const msg = $('startMsg'); msg.hidden = true;
-    let motionOK = true;
-    try {
-      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
-        motionOK = (await DeviceOrientationEvent.requestPermission()) === 'granted';
+  /* ---------- geometry: homography ---------- */
+  function solveH(from, to){
+    const A = [], b = [];
+    for (let i = 0; i < 4; i++){
+      const u = from[i].x, v = from[i].y, x = to[i].x, y = to[i].y;
+      A.push([u,v,1,0,0,0,-u*x,-v*x]); b.push(x);
+      A.push([0,0,0,u,v,1,-u*y,-v*y]); b.push(y);
+    }
+    for (let c = 0; c < 8; c++){
+      let p = c; for (let r = c+1; r < 8; r++) if (Math.abs(A[r][c]) > Math.abs(A[p][c])) p = r;
+      if (Math.abs(A[p][c]) < 1e-10) return null;
+      [A[c],A[p]] = [A[p],A[c]]; [b[c],b[p]] = [b[p],b[c]];
+      for (let r = 0; r < 8; r++){
+        if (r === c) continue; const f = A[r][c]/A[c][c]; if (!f) continue;
+        for (let k = c; k < 8; k++) A[r][k] -= f*A[c][k]; b[r] -= f*b[c];
       }
-    } catch(_){ motionOK = false; }
-    if (motionOK) window.addEventListener('deviceorientation', onOrient);
-    try {
-      await openCamera();
-    } catch (e){
-      msg.hidden = false;
-      msg.textContent = !window.isSecureContext ? 'ต้องเปิดผ่านลิงก์ https เท่านั้น'
-        : e && e.name === 'NotAllowedError' ? 'ไม่ได้รับอนุญาตให้ใช้กล้อง เปิดได้ที่ การตั้งค่า › Safari › กล้อง แล้วลองใหม่'
-        : 'เปิดกล้องไม่ได้ ลองปิดแอปอื่นที่ใช้กล้องอยู่แล้วกดใหม่';
+    }
+    const h = b.map((v,i) => v/A[i][i]); h.push(1); return h;
+  }
+  function bilinear(d, w, h, x, y, o){
+    if (x < -0.5 || y < -0.5 || x > w-0.5 || y > h-0.5) return false;
+    const x0 = Math.floor(x), y0 = Math.floor(y), fx = x-x0, fy = y-y0;
+    const xa = x0 < 0 ? 0 : x0, xb = x0+1 > w-1 ? w-1 : x0+1, ya = y0 < 0 ? 0 : y0, yb = y0+1 > h-1 ? h-1 : y0+1;
+    const i00 = (ya*w+xa)*4, i10 = (ya*w+xb)*4, i01 = (yb*w+xa)*4, i11 = (yb*w+xb)*4;
+    for (let k = 0; k < 4; k++) o[k] = (d[i00+k]*(1-fx) + d[i10+k]*fx)*(1-fy) + (d[i01+k]*(1-fx) + d[i11+k]*fx)*fy;
+    return true;
+  }
+  function orderQuad(p){
+    const cx = (p[0].x+p[1].x+p[2].x+p[3].x)/4, cy = (p[0].y+p[1].y+p[2].y+p[3].y)/4;
+    const s = p.slice().sort((a,b) => Math.atan2(a.y-cy,a.x-cx) - Math.atan2(b.y-cy,b.x-cx));
+    let k = 0; for (let i = 1; i < 4; i++) if (s[i].x+s[i].y < s[k].x+s[k].y) k = i;
+    return [0,1,2,3].map(i => s[(k+i)%4]);
+  }
+  function convex(q){
+    let sign = 0;
+    for (let i = 0; i < 4; i++){
+      const a = q[i], b = q[(i+1)%4], c = q[(i+2)%4];
+      const cr = (b.x-a.x)*(c.y-b.y) - (b.y-a.y)*(c.x-b.x);
+      if (Math.abs(cr) < 1e-6) return false;
+      if (!sign) sign = Math.sign(cr); else if (Math.sign(cr) !== sign) return false;
+    }
+    return true;
+  }
+  const quadArea = q => Math.abs(q.reduce((s,p,i) => { const n = q[(i+1)%4]; return s + p.x*n.y - n.x*p.y; }, 0))/2;
+
+  /* ---------- sample image: a tilted card ---------- */
+  function makeSampleCard(){
+    const c = document.createElement('canvas'); c.width = 630; c.height = 880;
+    const g = c.getContext('2d'), W = 630, H = 880;
+    g.fillStyle = '#F1C83C'; rr(g,0,0,W,H,26); g.fill();
+    const L = 26, R = 38, T = 30, B = 34;
+    const ax = L, ay = T, aw = W-L-R, ah = H-T-B, f = 7;
+    g.fillStyle = '#C6CBD1'; g.fillRect(ax,ay,aw,ah);
+    g.fillStyle = '#EFE3B0'; g.fillRect(ax+f, ay+f, aw-2*f, 52);
+    g.fillStyle = '#2E2B24'; g.font = '600 30px "IBM Plex Sans Thai", sans-serif'; g.fillText('มังกรภูเขา', ax+24, ay+f+37);
+    g.font = '600 24px "IBM Plex Mono", monospace'; g.fillText('HP 120', ax+aw-130, ay+f+36);
+    const top = ay+f+60, artH = ah*0.48;
+    const grd = g.createLinearGradient(0,top,0,top+artH); grd.addColorStop(0,'#2F5FA7'); grd.addColorStop(1,'#9FD0E6');
+    g.fillStyle = grd; g.fillRect(ax+f, top, aw-2*f, artH);
+    g.fillStyle = '#F7F1DE'; g.beginPath(); g.arc(ax+aw*0.72, top+artH*0.28, 46, 0, Math.PI*2); g.fill();
+    g.fillStyle = '#35524A'; g.beginPath(); g.moveTo(ax+f, top+artH); g.lineTo(ax+aw*0.35, top+artH*0.35); g.lineTo(ax+aw*0.6, top+artH*0.7); g.lineTo(ax+aw*0.8, top+artH*0.45); g.lineTo(ax+aw-f, top+artH); g.closePath(); g.fill();
+    g.fillStyle = '#EDE6D3'; g.fillRect(ax+f, top+artH+8, aw-2*f, ah - (top-ay) - artH - 8 - f);
+    g.fillStyle = '#4A463C'; g.font = '500 22px "IBM Plex Sans Thai", sans-serif';
+    ['พ่นไฟ  ·  60', 'หางฟาด  ·  30'].forEach((t,i) => g.fillText(t, ax+30, top+artH+70+i*56));
+    return c;
+  }
+  function makeSample(){
+    const card = makeSampleCard(), cw = card.width, ch = card.height;
+    const cd = card.getContext('2d').getImageData(0,0,cw,ch).data;
+    const W = 1000, H = 1300, c = document.createElement('canvas'); c.width = W; c.height = H;
+    const g = c.getContext('2d');
+    g.fillStyle = '#2C3633'; g.fillRect(0,0,W,H);
+    for (let i = 0; i < H; i += 6){ g.fillStyle = i % 12 ? 'rgba(255,255,255,0.018)' : 'rgba(0,0,0,0.05)'; g.fillRect(0,i,W,3); }
+    const quad = [{x:238,y:176},{x:792,y:226},{x:846,y:1128},{x:152,y:1090}];
+    g.fillStyle = 'rgba(0,0,0,0.2)'; g.beginPath(); quad.forEach((p,i) => i ? g.lineTo(p.x+7,p.y+10) : g.moveTo(p.x+7,p.y+10)); g.closePath(); g.fill();
+    const h = solveH(quad, [{x:0,y:0},{x:cw,y:0},{x:cw,y:ch},{x:0,y:ch}]);
+    const img = g.getImageData(0,0,W,H), d = img.data, px = [0,0,0,0];
+    const x0 = Math.floor(Math.min(...quad.map(p=>p.x)))-2, x1 = Math.ceil(Math.max(...quad.map(p=>p.x)))+2;
+    const y0 = Math.floor(Math.min(...quad.map(p=>p.y)))-2, y1 = Math.ceil(Math.max(...quad.map(p=>p.y)))+2;
+    for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++){
+      const u = x+0.5, v = y+0.5, den = h[6]*u + h[7]*v + 1;
+      const sx = (h[0]*u + h[1]*v + h[2])/den - 0.5, sy = (h[3]*u + h[4]*v + h[5])/den - 0.5;
+      if (!bilinear(cd, cw, ch, sx, sy, px)) continue;
+      const a = px[3]/255; if (a <= 0) continue;
+      const i = (y*W+x)*4;
+      d[i] = px[0] + (1-a)*d[i]; d[i+1] = px[1] + (1-a)*d[i+1]; d[i+2] = px[2] + (1-a)*d[i+2];
+    }
+    g.putImageData(img,0,0);
+    return c;
+  }
+
+  /* ---------- step 1: find card corners ---------- */
+  function otsu(hist){
+    let tot = 0, sum = 0; for (let i = 0; i < 256; i++){ tot += hist[i]; sum += i*hist[i]; }
+    let sB = 0, wB = 0, best = 0, thr = 0;
+    for (let i = 0; i < 256; i++){
+      wB += hist[i]; if (!wB) continue; const wF = tot - wB; if (!wF) break;
+      sB += i*hist[i]; const mB = sB/wB, mF = (sum-sB)/wF, v = wB*wF*(mB-mF)*(mB-mF);
+      if (v > best){ best = v; thr = i; }
+    }
+    return thr;
+  }
+  function fitLine(pts){
+    if (pts.length < 8) return null;
+    let P = pts, L = null;
+    for (let it = 0; it < 2; it++){
+      let mx = 0, my = 0; for (const p of P){ mx += p.x; my += p.y; } mx /= P.length; my /= P.length;
+      let sxx = 0, syy = 0, sxy = 0; for (const p of P){ const dx = p.x-mx, dy = p.y-my; sxx += dx*dx; syy += dy*dy; sxy += dx*dy; }
+      const ang = 0.5*Math.atan2(2*sxy, sxx-syy);
+      L = { mx, my, dx:Math.cos(ang), dy:Math.sin(ang) };
+      if (it === 1) break;
+      const res = P.map(p => Math.abs((p.x-mx)*L.dy - (p.y-my)*L.dx));
+      const lim = Math.max(1.5, median(res)*3);
+      const Q = P.filter((p,i) => res[i] <= lim); if (Q.length >= 8) P = Q;
+    }
+    return L;
+  }
+  function inter(a, b){
+    if (!a || !b) return null;
+    const den = a.dx*b.dy - a.dy*b.dx; if (Math.abs(den) < 1e-6) return null;
+    const t = ((b.mx-a.mx)*b.dy - (b.my-a.my)*b.dx)/den;
+    return { x:a.mx + t*a.dx, y:a.my + t*a.dy };
+  }
+  const pct = (arr, q) => { const s = Array.from(arr).sort((a,b) => a-b); return s[Math.min(s.length-1, Math.floor(q/100*(s.length-1)))]; };
+  function solveLin(A0, b0){
+    const n = b0.length, A = A0.map(r => r.slice()), b = b0.slice();
+    for (let c = 0; c < n; c++){
+      let p = c; for (let r = c+1; r < n; r++) if (Math.abs(A[r][c]) > Math.abs(A[p][c])) p = r;
+      if (Math.abs(A[p][c]) < 1e-12) return null;
+      [A[c],A[p]] = [A[p],A[c]]; [b[c],b[p]] = [b[p],b[c]];
+      for (let r = 0; r < n; r++){
+        if (r === c) continue; const f = A[r][c]/A[c][c]; if (!f) continue;
+        for (let k = c; k < n; k++) A[r][k] -= f*A[c][k]; b[r] -= f*b[c];
+      }
+    }
+    return b.map((v,i) => v/A[i][i]);
+  }
+  function morph(m, w, h, grow){
+    const o = new Uint8Array(m.length);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){
+      const p = y*w+x;
+      const l = x > 0 ? m[p-1] : m[p], r = x < w-1 ? m[p+1] : m[p], u = y > 0 ? m[p-w] : m[p], dn = y < h-1 ? m[p+w] : m[p];
+      o[p] = grow ? (m[p] | l | r | u | dn) : (m[p] & l & r & u & dn);
+    }
+    return o;
+  }
+  /* Separate card from background: model the background (from the photo's outer frame) as a smooth
+     surface so uneven lighting is ignored, and weigh colour over brightness. */
+  function cardMask(d, w, h){
+    const N = w*h, F = [new Float32Array(N), new Float32Array(N), new Float32Array(N)];
+    for (let p = 0, i = 0; p < N; p++, i += 4){
+      const r = d[i], g = d[i+1], b = d[i+2];
+      F[0][p] = (r+g+b)/3*0.35; F[1][p] = r-g; F[2][p] = (r+g)/2 - b;
+    }
+    for (const ch of F){
+      const tmp = new Float32Array(N);
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){ const p = y*w+x; tmp[p] = (ch[x > 0 ? p-1 : p] + ch[p] + ch[x < w-1 ? p+1 : p])/3; }
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){ const p = y*w+x; ch[p] = (tmp[y > 0 ? p-w : p] + tmp[p] + tmp[y < h-1 ? p+w : p])/3; }
+    }
+    const t = Math.max(2, Math.round(Math.min(w,h)*0.03)), fr = [];
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){
+      if (y >= t && y < h-t && x >= t && x < w-t){ x = w-t-1; continue; }
+      fr.push(y*w+x);
+    }
+    const basis = p => { const X = (p % w)/w - 0.5, Y = ((p/w)|0)/h - 0.5; return [1, X, Y, X*X, Y*Y, X*Y]; };
+    const predict = (coef, v, p) => { let s = 0; for (let c = 0; c < 3; c++){ let pr = 0; for (let a = 0; a < 6; a++) pr += coef[c][a]*v[a]; const e = pr - F[c][p]; s += e*e; } return Math.sqrt(s); };
+    const Bf = fr.map(basis);
+    let keep = fr.map(() => true), coef = null;
+    for (let it = 0; it < 3; it++){
+      const ATA = Array.from({ length:6 }, () => new Array(6).fill(0)), ATb = [0,1,2].map(() => new Array(6).fill(0));
+      for (let j = 0; j < fr.length; j++){
+        if (!keep[j]) continue; const v = Bf[j], p = fr[j];
+        for (let a = 0; a < 6; a++){ for (let b = 0; b < 6; b++) ATA[a][b] += v[a]*v[b]; for (let c = 0; c < 3; c++) ATb[c][a] += v[a]*F[c][p]; }
+      }
+      const nc = ATb.map(rhs => solveLin(ATA, rhs)); if (nc.some(x => !x)) break; coef = nc;
+      const r = fr.map((p,j) => predict(coef, Bf[j], p));
+      const lim = pct(r, 95)*1.5; keep = r.map(v => v < lim);
+    }
+    if (!coef) return null;
+    const res = new Float32Array(N); for (let p = 0; p < N; p++) res[p] = predict(coef, basis(p), p);
+    const T = Math.max(10, pct(fr.map(p => res[p]), 99)*1.5);
+    let m = new Uint8Array(N); for (let p = 0; p < N; p++) m[p] = res[p] > T ? 1 : 0;
+    m = morph(m,w,h,1); m = morph(m,w,h,1); m = morph(m,w,h,0); m = morph(m,w,h,0);
+    m = morph(m,w,h,0); m = morph(m,w,h,1);
+    return m;
+  }
+
+  function autoCorners(){
+    const W = work.width, H = work.height;
+    const full = { ok:true, cropped:true, pts:[{x:0,y:0},{x:W,y:0},{x:W,y:H},{x:0,y:H}] };
+    const fallback = () => { const ix = W*0.1, iy = H*0.1; return { ok:false, pts:[{x:ix,y:iy},{x:W-ix,y:iy},{x:W-ix,y:H-iy},{x:ix,y:H-iy}] }; };
+    const r = W/H;
+    for (const [a,b] of Object.values(SIZES)){ const cr = a/b; if (Math.abs(r-cr)/cr < 0.03 || Math.abs(r-1/cr)/(1/cr) < 0.03) return full; }
+
+    const s = Math.min(1, 640/Math.max(W,H)), w = Math.max(16, Math.round(W*s)), h = Math.max(16, Math.round(H*s));
+    an.width = w; an.height = h;
+    const ac = an.getContext('2d', { willReadFrequently:true }); ac.drawImage(work, 0, 0, w, h);
+    const d = ac.getImageData(0,0,w,h).data, N = w*h;
+    const mask = cardMask(d, w, h);
+    if (!mask) return fallback();
+
+    const lab = new Int32Array(N), stack = new Int32Array(N); let cur = 0, best = 0, bestN = 0;
+    for (let p = 0; p < N; p++){
+      if (!mask[p] || lab[p]) continue;
+      cur++; let sp = 0, n = 0; stack[sp++] = p; lab[p] = cur;
+      while (sp){
+        const q = stack[--sp]; n++; const x = q % w, y = (q/w)|0;
+        if (x > 0   && mask[q-1] && !lab[q-1]){ lab[q-1] = cur; stack[sp++] = q-1; }
+        if (x < w-1 && mask[q+1] && !lab[q+1]){ lab[q+1] = cur; stack[sp++] = q+1; }
+        if (y > 0   && mask[q-w] && !lab[q-w]){ lab[q-w] = cur; stack[sp++] = q-w; }
+        if (y < h-1 && mask[q+w] && !lab[q+w]){ lab[q+w] = cur; stack[sp++] = q+w; }
+      }
+      if (n > bestN){ bestN = n; best = cur; }
+    }
+    if (bestN < N*0.08) return fallback();
+    if (bestN > N*0.96) return full;
+
+    const left = new Int32Array(h).fill(-1), right = new Int32Array(h).fill(-1), top = new Int32Array(w).fill(-1), bot = new Int32Array(w).fill(-1);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){
+      if (lab[y*w+x] !== best) continue;
+      if (left[y] < 0) left[y] = x; right[y] = x;
+      if (top[x] < 0) top[x] = y; bot[x] = y;
+    }
+    let TL, TR, BR, BL, a1 = Infinity, a2 = -Infinity, a3 = -Infinity, a4 = Infinity;
+    for (let y = 0; y < h; y++){
+      if (left[y] < 0) continue;
+      const lx = left[y], rx = right[y]+1;
+      if (lx+y < a1){ a1 = lx+y; TL = {x:lx, y}; }
+      if (lx-y < a4){ a4 = lx-y; BL = {x:lx, y:y+1}; }
+      if (rx-y > a3){ a3 = rx-y; TR = {x:rx, y}; }
+      if (rx+y > a2){ a2 = rx+y; BR = {x:rx, y:y+1}; }
+    }
+    const span = (a, b) => { const lo = Math.min(a,b), hi = Math.max(a,b), m = (hi-lo)*0.15; return [Math.ceil(lo+m), Math.floor(hi-m)]; };
+    /* The mask edge can sit on a shadow (a lifted card casts one). Refine each edge point to the strongest
+       colour change just inside it, which is where the card itself starts. */
+    const Dx = (ax, a, b, line) => {
+      const i = ax === 'x' ? (line*w + a)*4 : (a*w + line)*4, j = ax === 'x' ? (line*w + b)*4 : (b*w + line)*4;
+      return Math.hypot(d[i]-d[j], d[i+1]-d[j+1], d[i+2]-d[j+2]);
+    };
+    const RR = Math.max(4, Math.round(Math.min(w,h)*0.016));
+    const refine = (ax, line, p0, inward) => {
+      const lim = ax === 'x' ? w : h, other = ax === 'x' ? h : w, ks = [], vs = [];
+      for (let k = -2; k <= RR; k++){
+        const pp = p0 + inward*k; if (pp < 1 || pp >= lim) continue;
+        let v = 0, n = 0;
+        for (let o = -1; o <= 1; o++){ const L2 = line + o; if (L2 < 0 || L2 >= other) continue; v += Dx(ax, pp-1, pp, L2); n++; }
+        ks.push(pp); vs.push(v/n);
+      }
+      if (!vs.length) return p0;
+      const mx = Math.max(...vs);
+      for (let i = 0; i < vs.length; i++){
+        const okL = i === 0 || vs[i] >= vs[i-1], okR = i === vs.length-1 || vs[i] >= vs[i+1];
+        if (vs[i] >= 0.6*mx && okL && okR) return ks[i];
+      }
+      return ks[vs.indexOf(mx)];
+    };
+    const pL = [], pR = [], pT = [], pB = [];
+    { const [a,b] = span(TL.y, BL.y); for (let y = a; y <= b; y++) if (y >= 0 && y < h && left[y] >= 0) pL.push({x:refine('x', y, left[y], 1), y:y+0.5}); }
+    { const [a,b] = span(TR.y, BR.y); for (let y = a; y <= b; y++) if (y >= 0 && y < h && right[y] >= 0) pR.push({x:refine('x', y, right[y]+1, -1), y:y+0.5}); }
+    { const [a,b] = span(TL.x, TR.x); for (let x = a; x <= b; x++) if (x >= 0 && x < w && top[x] >= 0) pT.push({x:x+0.5, y:refine('y', x, top[x], 1)}); }
+    { const [a,b] = span(BL.x, BR.x); for (let x = a; x <= b; x++) if (x >= 0 && x < w && bot[x] >= 0) pB.push({x:x+0.5, y:refine('y', x, bot[x]+1, -1)}); }
+    const lL = fitLine(pL), lR = fitLine(pR), lT = fitLine(pT), lB = fitLine(pB);
+    let q = [inter(lL,lT), inter(lT,lR), inter(lR,lB), inter(lB,lL)];
+    const okFit = q.every(p => p && p.x > -0.05*w && p.x < 1.05*w && p.y > -0.05*h && p.y < 1.05*h) && convex(q);
+    if (!okFit) q = [TL, TR, BR, BL];
+    let mids = null;
+    const fL = fitQuad(pL, true), fR = fitQuad(pR, true), fT = fitQuad(pT, false), fB = fitQuad(pB, false);
+    if (okFit && fL && fR && fT && fB){
+      const meet = (p, fv, fh) => { let x = p.x, y = p.y; for (let k = 0; k < 8; k++){ x = fv(y); y = fh(x); } return { x, y }; };
+      const cq = [meet(q[0], fL, fT), meet(q[1], fR, fT), meet(q[2], fR, fB), meet(q[3], fL, fB)];
+      if (cq.every(p => isFinite(p.x) && isFinite(p.y) && dist2(p, q[cq.indexOf(p)]) < Math.max(w,h)*0.04) && convex(cq)){
+        q = cq;
+        const mx = (a, b) => (a.x + b.x)/2, my = (a, b) => (a.y + b.y)/2;
+        mids = [{ x:mx(q[0],q[1]), y:fT(mx(q[0],q[1])) }, { x:fR(my(q[1],q[2])), y:my(q[1],q[2]) },
+                { x:mx(q[3],q[2]), y:fB(mx(q[3],q[2])) }, { x:fL(my(q[0],q[3])), y:my(q[0],q[3]) }];
+      }
+    }
+    const sc = p => ({ x:Math.max(0, Math.min(W, p.x/s)), y:Math.max(0, Math.min(H, p.y/s)) });
+    q = q.map(sc);
+    if (!convex(q) || quadArea(q) < W*H*0.06) return fallback();
+    return { ok:true, pts:q, mids: mids ? mids.map(sc) : null };
+  }
+  /* Parabola fit for a card edge: x = f(y) for left/right, y = f(x) for top/bottom. Robust to sparkle outliers. */
+  function fitQuad(pts, vert){
+    if (pts.length < 12) return null;
+    let P = pts.map(p => vert ? [p.y, p.x] : [p.x, p.y]), coef = null;
+    for (let it = 0; it < 2; it++){
+      const A = [[0,0,0],[0,0,0],[0,0,0]], b = [0,0,0];
+      for (const [u, v] of P){ const r = [u*u, u, 1]; for (let i = 0; i < 3; i++){ for (let j = 0; j < 3; j++) A[i][j] += r[i]*r[j]; b[i] += r[i]*v; } }
+      coef = solveLin(A, b); if (!coef) return null;
+      if (it === 1) break;
+      const res = P.map(([u, v]) => Math.abs(coef[0]*u*u + coef[1]*u + coef[2] - v));
+      const lim = Math.max(1.2, median(res)*3), Q = P.filter((_, i) => res[i] <= lim); if (Q.length >= 12) P = Q;
+    }
+    return u => coef[0]*u*u + coef[1]*u + coef[2];
+  }
+  const straightMids = c => [0,1,2,3].map(i => ({ x:(c[i].x + c[(i+1)%4].x)/2, y:(c[i].y + c[(i+1)%4].y)/2 }));
+
+  /* Curved card model: corners + edge midpoints. Perspective comes from the 4 corners (homography to a unit
+     square); the remaining bow of each edge is a quadratic curve, blended across the card as a Coons patch. */
+  function curveModel(){
+    if (!S.corners || !S.mids) return null;
+    const q = orderQuad(S.corners);
+    if (!convex(q) || quadArea(q) < 400) return null;
+    const U = [{x:0,y:0},{x:1,y:0},{x:1,y:1},{x:0,y:1}];
+    const Hn = solveH(U, q), Hi = solveH(q, U); if (!Hn || !Hi) return null;
+    const ap = (h, p) => { const d = h[6]*p.x + h[7]*p.y + 1; return { x:(h[0]*p.x + h[1]*p.y + h[2])/d, y:(h[3]*p.x + h[4]*p.y + h[5])/d }; };
+    const sm = straightMids(q), used = new Set();
+    const mids = sm.map(m0 => { let bi = 0, bd = Infinity; S.mids.forEach((m, j) => { if (used.has(j)) return; const d = dist2(m, m0); if (d < bd){ bd = d; bi = j; } }); used.add(bi); return S.mids[bi]; });
+    /* Keep only each mid's bow away from its edge; its position along the edge is perspective, not bend. */
+    const mr = mids.map(m => ap(Hi, m)), mu = [{ x:0.5, y:mr[0].y }, { x:mr[1].x, y:0.5 }, { x:0.5, y:mr[2].y }, { x:mr[3].x, y:0.5 }];
+    const P00 = U[0], P10 = U[1], P11 = U[2], P01 = U[3];
+    const ctrl = (a, m, b) => ({ x:2*m.x - (a.x+b.x)/2, y:2*m.y - (a.y+b.y)/2 });
+    const cT = ctrl(P00, mu[0], P10), cR = ctrl(P10, mu[1], P11), cB = ctrl(P01, mu[2], P11), cL = ctrl(P00, mu[3], P01);
+    const bz = (a, c, b, t) => { const u = 1-t; return { x:u*u*a.x + 2*u*t*c.x + t*t*b.x, y:u*u*a.y + 2*u*t*c.y + t*t*b.y }; };
+    const coons = (s, t) => {
+      const T = bz(P00, cT, P10, s), B = bz(P01, cB, P11, s), L = bz(P00, cL, P01, t), R = bz(P10, cR, P11, t);
+      return { x:(1-t)*T.x + t*B.x + (1-s)*L.x + s*R.x - s, y:(1-t)*T.y + t*B.y + (1-s)*L.y + s*R.y - t };
+    };
+    const edge = (i, t) => i === 0 ? bz(P00, cT, P10, t) : i === 1 ? bz(P10, cR, P11, t) : i === 2 ? bz(P01, cB, P11, 1-t) : bz(P00, cL, P01, 1-t);
+    const bowU = { T:Math.abs(mu[0].y), R:Math.abs(mu[1].x - 1), B:Math.abs(mu[2].y - 1), L:Math.abs(mu[3].x) };
+    return { q, Hn, coons, edge, toSrc: p => ap(Hn, p), bowU };
+  }
+  function bowMM(M){
+    const [mw, mh] = SIZES[S.size], q = M.q;
+    const land = (dist2(q[0],q[1]) + dist2(q[3],q[2])) > (dist2(q[0],q[3]) + dist2(q[1],q[2]));
+    const W = land ? mh : mw, H = land ? mw : mh, b = M.bowU;
+    const all = { T:b.T*H, B:b.B*H, L:b.L*W, R:b.R*W };
+    let side = 'T'; for (const k in all) if (all[k] > all[side]) side = k;
+    return { max:all[side], side };
+  }
+
+  /* ---------- warp to a flat card ---------- */
+  function makeFlat(){
+    const M = curveModel(); if (!M) return false;
+    const q = M.q;
+    const [mw, mh] = SIZES[S.size];
+    const wq = (dist2(q[0],q[1]) + dist2(q[3],q[2]))/2, hq = (dist2(q[0],q[3]) + dist2(q[1],q[2]))/2;
+    const land = wq > hq, rw = land ? mh : mw, rh = land ? mw : mh;
+    const long = Math.max(600, Math.min(2200, Math.max(dist2(q[0],q[1]), dist2(q[3],q[2]), dist2(q[0],q[3]), dist2(q[1],q[2]))));
+    let cw, ch; if (rh >= rw){ ch = Math.round(long); cw = Math.round(long*rw/rh); } else { cw = Math.round(long); ch = Math.round(long*rh/rw); }
+    const m = Math.round(Math.max(cw,ch)*0.035), OW = cw+2*m, OH = ch+2*m;
+    const h = M.Hn;
+    flat.width = OW; flat.height = OH;
+    const img = fctx.createImageData(OW, OH), o = img.data, sd = S.srcData.data, sw = work.width, sh = work.height, px = [0,0,0,0];
+    for (let v = 0, i = 0; v < OH; v++) for (let u = 0; u < OW; u++, i += 4){
+      const cp = M.coons((u + 0.5 - m)/cw, (v + 0.5 - m)/ch), uu = cp.x, vv = cp.y, den = h[6]*uu + h[7]*vv + 1;
+      const x = (h[0]*uu + h[1]*vv + h[2])/den - 0.5, y = (h[3]*uu + h[4]*vv + h[5])/den - 0.5;
+      if (bilinear(sd, sw, sh, x, y, px)){ o[i] = px[0]; o[i+1] = px[1]; o[i+2] = px[2]; }
+      else { o[i] = o[i+1] = o[i+2] = 128; }
+      o[i+3] = 255;
+    }
+    fctx.putImageData(img, 0, 0);
+    S.margin = m; S.mm = [rw, rh]; S.bow = bowMM(M);
+    return true;
+  }
+
+  /* ---------- step 2: find outer + inner borders on the flat card ---------- */
+  function detectLines(){
+    const W = flat.width, H = flat.height, M = S.margin;
+    const s = Math.min(1, 1200/Math.max(W,H)), w = Math.max(8, Math.round(W*s)), h = Math.max(8, Math.round(H*s));
+    an.width = w; an.height = h;
+    const actx = an.getContext('2d', { willReadFrequently:true }); actx.drawImage(flat, 0, 0, w, h);
+    const d = actx.getImageData(0,0,w,h).data;
+    const cd = (x1,y1,x2,y2) => { const i=(y1*w+x1)*4, j=(y2*w+x2)*4; const r=d[i]-d[j], g=d[i+1]-d[j+1], b=d[i+2]-d[j+2]; return Math.sqrt(r*r+g*g+b*b); };
+    const cdc = (x,y,c) => { const i=(y*w+x)*4; const r=d[i]-c[0], g=d[i+1]-c[1], b=d[i+2]-c[2]; return Math.sqrt(r*r+g*g+b*b); };
+    const colP = new Float32Array(w), rowP = new Float32Array(h);
+    const y0 = Math.floor(h*0.3), y1 = Math.ceil(h*0.7), x0 = Math.floor(w*0.3), x1 = Math.ceil(w*0.7);
+    for (let x = 1; x < w-1; x++){ let t = 0; for (let y = y0; y < y1; y++) t += cd(x-1,y,x+1,y); colP[x] = t/(y1-y0); }
+    for (let y = 1; y < h-1; y++){ let t = 0; for (let x = x0; x < x1; x++) t += cd(x,y-1,x,y+1); rowP[y] = t/(x1-x0); }
+    const smooth = p => { const q = new Float32Array(p.length); for (let i = 1; i < p.length-1; i++) q[i] = (p[i-1]+2*p[i]+p[i+1])/4; return q; };
+    const cP = smooth(colP), rP = smooth(rowP);
+    const winOut = Math.max(3, Math.round(Math.max(w,h)*0.025)), winIn = Math.max(2, Math.round(Math.max(w,h)*0.015));
+    /* Outer edge: strongest edge near where the corners put it. The window reaches further outward than
+       inward, so a thin border's inner edge stays out of reach. out = -1 means "outside" is toward index 0. */
+    const snap = (p, at, out) => {
+      const lo = Math.max(1, out < 0 ? at-winOut : at-winIn), hi = Math.min(p.length-2, out < 0 ? at+winIn : at+winOut);
+      let bi = at, bv = -1; for (let i = lo; i <= hi; i++) if (p[i] > bv){ bv = p[i]; bi = i; }
+      return bv >= 12 ? bi : at;
+    };
+    const oL = snap(cP, Math.round(M*s), -1), oR = snap(cP, Math.round((W-M)*s)-1, 1);
+    const oT = snap(rP, Math.round(M*s), -1), oB = snap(rP, Math.round((H-M)*s)-1, 1);
+    const cw = oR-oL, ch = oB-oT;
+
+    const walk = (axis, o, dir, a0, a1, dim) => {
+      const lim = axis === 'x' ? w : h;
+      const off = Math.max(2, Math.round(dim*0.008)), depth = Math.round(dim*0.2), n = 24, T = 45;
+      const at = (a,t) => axis === 'x' ? [o+dir*t, a] : [a, o+dir*t];
+      const rows = [], ch3 = [[],[],[]];
+      for (let k = 0; k < n; k++){
+        const a = Math.round(a0 + (a1-a0)*k/(n-1)), [px,py] = at(a,off);
+        if (px < 0 || py < 0 || px >= w || py >= h) continue;
+        rows.push(a); const i = (py*w+px)*4; ch3[0].push(d[i]); ch3[1].push(d[i+1]); ch3[2].push(d[i+2]);
+      }
+      if (!rows.length) return null;
+      const bc = ch3.map(median), hits = [];
+      for (const a of rows){
+        for (let t = off+1; t < depth; t++){
+          const p = o + dir*(t+2); if (p < 0 || p >= lim) break;
+          const q = tt => { const [px,py] = at(a,tt); return cdc(px,py,bc); };
+          if (q(t) > T && q(t+1) > T && q(t+2) > T){ hits.push(t); break; }
+        }
+      }
+      if (hits.length < rows.length*0.3) return null;
+      return o + dir*median(hits);
+    };
+    /* Average colour along the edge first (cancels holo sparkle), then find the first strong colour step. */
+    const stepEdge = (axis, o, dir, a0, a1, dim) => {
+      const start = o + dir*Math.max(2, Math.round(dim*0.006)), n = Math.round(dim*0.12), P = [];
+      for (let t = 0; t <= n; t++){
+        const i = start + dir*t; let r = 0, g = 0, b = 0, c = 0;
+        for (let a = Math.round(a0); a <= Math.round(a1); a++){
+          const x = axis === 'x' ? i : a, y = axis === 'x' ? a : i;
+          if (x < 0 || y < 0 || x >= w || y >= h) continue;
+          const j = (y*w+x)*4; r += d[j]; g += d[j+1]; b += d[j+2]; c++;
+        }
+        P.push(c ? [r/c, g/c, b/c] : null);
+      }
+      if (P.some(p => !p)) return null;
+      const k = 2, Sg = P.map((_, i) => { const A = P[Math.max(0, i-k)], B = P[Math.min(P.length-1, i+k)]; return Math.hypot(B[0]-A[0], B[1]-A[1], B[2]-A[2]); });
+      const mx = Math.max(...Sg); if (mx < 14) return null;
+      const i0 = Sg.findIndex(v => v >= 0.5*mx); if (i0 < 0) return null;
+      const end = Math.min(Sg.length-1, i0 + Math.max(3, Math.round(dim*0.02)));
+      let i = i0; for (let t = i0; t <= end; t++) if (Sg[t] > Sg[i]) i = t;
+      let j = i; while (j < end && Sg[j+1] === Sg[i]) j++;
+      return start + dir*(i+j)/2;
+    };
+    const ya = oT + ch*0.3, yb = oT + ch*0.7, xa = oL + cw*0.3, xb = oL + cw*0.7;
+    const iL = stepEdge('x', oL,  1, ya, yb, cw) ?? walk('x', oL,  1, ya, yb, cw) ?? oL + cw*0.045;
+    const iR = stepEdge('x', oR, -1, ya, yb, cw) ?? walk('x', oR, -1, ya, yb, cw) ?? oR - cw*0.045;
+    const iT = stepEdge('y', oT,  1, xa, xb, ch) ?? walk('y', oT,  1, xa, xb, ch) ?? oT + ch*0.045;
+    const iB = stepEdge('y', oB, -1, xa, xb, ch) ?? walk('y', oB, -1, xa, xb, ch) ?? oB - ch*0.045;
+    const r = v => Math.round(v/s);
+    S.lines = { oL:r(oL), oR:r(oR+1), oT:r(oT), oB:r(oB+1), iL:r(iL), iR:r(iR+1), iT:r(iT), iB:r(iB+1) };
+  }
+
+  /* ---------- flow ---------- */
+  const img = () => S.step === 1 ? work : flat;
+
+  function buildWork(){
+    const sw0 = S.src.naturalWidth || S.src.width, sh0 = S.src.naturalHeight || S.src.height;
+    const k = Math.min(1, 4096 / Math.max(sw0, sh0));
+    work.width = Math.round(sw0*k); work.height = Math.round(sh0*k);
+    wctx.imageSmoothingQuality = 'high';
+    wctx.drawImage(S.src, 0, 0, work.width, work.height);
+    S.srcData = wctx.getImageData(0, 0, work.width, work.height);
+  }
+
+  function runCorners(){
+    const res = autoCorners();
+    S.corners = res.pts; S.mids = res.mids || straightMids(res.pts); S.csel = 0; S.dirty = true; S.pan = {x:0, y:0};
+    const st = $('status');
+    st.classList.toggle('warn', !res.ok);
+    st.textContent = res.cropped ? 'รูปนี้ครอบตัดชิดการ์ดแล้ว ใช้มุมของรูปได้เลย'
+      : res.ok ? 'หามุมให้แล้ว กดเลือกทีละมุมแล้วดูภาพขยายว่าจุดตรงมุมการ์ดพอดี'
+      : 'หามุมอัตโนมัติไม่เจอ ลากจุดทั้ง 4 ไปวางที่มุมการ์ดเอง';
+  }
+
+  function setSource(src, sample, tilt){
+    S.src = src; S.isSample = sample; S.tilt = tilt || null; S.mid++; S.lines = null; hideEmpty(); $('badge').hidden = !sample; hideMsg();
+    if (S.results[S.side]){ delete S.results[S.side]; updSides(); }
+    buildWork(); runCorners(); setStep(1); updSideBtns();
+  }
+  /* Each side (front/back) keeps its own photo, corners and lines. */
+  function saveSlot(){
+    if (!S.src){ S.slots[S.side] = null; return; }
+    S.slots[S.side] = { src:S.src, isSample:S.isSample, tilt:S.tilt, corners:S.corners, mids:S.mids, lines:S.lines, dirty:S.dirty,
+      csel:S.csel, sel:S.sel, step:S.step, status:$('status').textContent, statusWarn:$('status').classList.contains('warn') };
+  }
+  function restoreSlot(side){
+    const sl = S.slots[side];
+    if (!sl){ S.src = null; S.corners = null; S.mids = null; S.lines = null; showEmpty(); return; }
+    hideEmpty();
+    Object.assign(S, { src:sl.src, isSample:sl.isSample, tilt:sl.tilt, corners:sl.corners, mids:sl.mids, lines:sl.lines, dirty:sl.dirty, csel:sl.csel, sel:sl.sel });
+    $('badge').hidden = !S.isSample;
+    const st = $('status'); st.textContent = sl.status; st.classList.toggle('warn', sl.statusWarn);
+    buildWork();
+    if (S.lines && !S.dirty) makeFlat();
+    setStep(sl.step);
+  }
+  const otherSide = () => S.side === 'front' ? 'back' : 'front';
+  function showEmpty(){
+    view.hidden = true; $('badge').hidden = true; $('empty').hidden = false;
+    $('emptyT').textContent = `ยังไม่มีรูป${SIDE_NAME[S.side]}`;
+    const o = otherSide(), eb = $('emptyBack');
+    eb.hidden = !S.slots[o]; eb.textContent = `← กลับไป${SIDE_NAME[o]}`;
+    for (const i of [1,2,3]){ $('p'+i).hidden = true; $('bar'+i).hidden = true; $('st'+i).removeAttribute('aria-current'); $('st'+i).classList.remove('done'); }
+  }
+  function hideEmpty(){ view.hidden = false; $('empty').hidden = true; }
+  function updSideBtns(){
+    for (const [k, id] of [['front','sideF'], ['back','sideB']]){
+      const has = S.results[k] ? ' ✓' : ((k === S.side ? S.src : S.slots[k]) ? ' •' : '');
+      $(id).textContent = SIDE_NAME[k] + has; $(id).setAttribute('aria-pressed', String(k === S.side));
+    }
+  }
+
+  function setStep(n){
+    if (!S.src) return;
+    if (n >= 2 && (S.dirty || !S.lines)){
+      if (!makeFlat()){ showMsg('มุมทั้ง 4 จุดไม่เป็นรูปสี่เหลี่ยม ลองลากจุดให้อยู่คนละมุมของการ์ด'); return; }
+      detectLines(); S.sel = 'iL'; S.dirty = false;
+    }
+    hideMsg(); S.step = n; S.drag = false; S.pan = {x:0, y:0};
+    for (const i of [1,2,3]){
+      $('p'+i).hidden = n !== i; $('bar'+i).hidden = n !== i;
+      const st = $('st'+i);
+      if (n === i) st.setAttribute('aria-current','step'); else st.removeAttribute('aria-current');
+      st.classList.toggle('done', i < n);
+    }
+    layout();
+    if (n === 3){
+      snapshot();
+      const o = otherSide(), ns = $('nextSide');
+      ns.hidden = !!S.results[o]; ns.textContent = `ไปวัด${SIDE_NAME[o]} →`;
+    }
+  }
+
+  function layout(){
+    const im = img(); if (!S.src || !im.width) return;
+    const stage = $('stage'), live = S.step === 2, wide = stage.clientWidth > 640;
+    stage.classList.toggle('has-live', live); $('live').hidden = !live;
+    const lw = live && wide ? Math.round(Math.min(330, Math.max(240, stage.clientWidth*0.35))) : 0;
+    if (lw) stage.style.setProperty('--livew', lw + 'px');
+    const aw = stage.clientWidth - 26 - (lw ? lw + 14 : 0), mh = Math.max(300, window.innerHeight*(live && !wide ? 0.6 : 0.74));
+    const sc = Math.min(aw/im.width, mh/im.height);
+    S.scale = sc; S.dpr = window.devicePixelRatio || 1;
+    const cw = Math.round(im.width*sc), ch = Math.round(im.height*sc);
+    view.style.width = cw+'px'; view.style.height = ch+'px';
+    view.width = Math.round(cw*S.dpr); view.height = Math.round(ch*S.dpr);
+    render();
+  }
+
+  const fmtZ = z => (Math.abs(z - Math.round(z)) < 0.05 ? Math.round(z) : z.toFixed(1)) + '×';
+  function render(){
+    if (!S.src) return;
+    $('zl1').textContent = fmtZ(S.lz[1]); $('zl2').textContent = fmtZ(S.lz[2]);
+    if (S.step === 1){ drawCorners(); drawLoupe1(); updCornerUI(); }
+    else { drawLines(); drawLoupe2(); readout(); updChips(); if (S.step === 2) drawLive(); }
+  }
+
+  /* ---------- drawing ---------- */
+  function strokeHalo(c, col, w){ c.lineWidth = w+2; c.strokeStyle = 'rgba(0,0,0,0.45)'; c.stroke(); c.lineWidth = w; c.strokeStyle = col; c.stroke(); }
+
+  function drawCorners(){
+    const c = vctx, sc = S.scale, col = tokens();
+    c.setTransform(S.dpr,0,0,S.dpr,0,0);
+    const cw = work.width*sc, ch = work.height*sc;
+    c.clearRect(0,0,cw,ch); c.drawImage(work, 0, 0, cw, ch);
+    const M = curveModel(), T = p => ({ x:p.x*sc, y:p.y*sc });
+    if (M){
+      const ring = []; for (let i = 0; i < 4; i++) for (let k = 0; k < 24; k++) ring.push(T(M.toSrc(M.edge(i, k/24))));
+      c.save(); c.beginPath(); c.rect(0,0,cw,ch); ring.forEach((p, i) => i ? c.lineTo(p.x, p.y) : c.moveTo(p.x, p.y)); c.closePath();
+      c.fillStyle = 'rgba(6,10,9,0.45)'; c.fill('evenodd'); c.restore();
+      for (let i = 0; i < 4; i++){
+        c.beginPath();
+        for (let k = -3; k <= 27; k++){ const p = T(M.toSrc(M.edge(i, k/24))); k === -3 ? c.moveTo(p.x, p.y) : c.lineTo(p.x, p.y); }
+        strokeHalo(c, col.outer, 1.5);
+      }
+    }
+    allPts().map(T).forEach((p, i) => {
+      const sel = i === S.csel, cc = sel ? col.inner : '#FFFFFF';
+      if (i < 4){
+        const r = sel ? 13 : 10;
+        c.beginPath(); c.arc(p.x, p.y, r, 0, Math.PI*2); strokeHalo(c, cc, 2);
+        c.beginPath(); c.moveTo(p.x-r+3,p.y); c.lineTo(p.x+r-3,p.y); c.moveTo(p.x,p.y-r+3); c.lineTo(p.x,p.y+r-3); c.lineWidth = 1; c.strokeStyle = cc; c.stroke();
+      } else {
+        const r = sel ? 9 : 7;
+        c.beginPath(); c.rect(p.x-r, p.y-r, 2*r, 2*r); strokeHalo(c, cc, 2);
+        c.beginPath(); c.arc(p.x, p.y, 1.5, 0, Math.PI*2); c.fillStyle = cc; c.fill();
+      }
+    });
+  }
+
+  function zoomBase(cv, im, cx, cy, z){
+    const sz = Math.max(120, Math.round(cv.clientWidth || 300)), d = S.dpr, col = tokens();
+    if (cv.width !== sz*d){ cv.width = sz*d; cv.height = sz*d; }
+    const c = cv.getContext('2d'); c.setTransform(d,0,0,d,0,0);
+    c.fillStyle = col.sunk; c.fillRect(0,0,sz,sz);
+    const vw = sz/z, sx = cx - vw/2, sy = cy - vw/2;
+    c.imageSmoothingEnabled = false;
+    const ssx = Math.max(0, sx), ssy = Math.max(0, sy), sex = Math.min(im.width, sx+vw), sey = Math.min(im.height, sy+vw);
+    if (sex > ssx && sey > ssy) c.drawImage(im, ssx, ssy, sex-ssx, sey-ssy, (ssx-sx)*z, (ssy-sy)*z, (sex-ssx)*z, (sey-ssy)*z);
+    cv._v = { sx, sy, z, sz };
+    return { c, sz, sx, sy, z, col };
+  }
+
+  function drawLoupe1(){
+    if (!S.corners) return;
+    const p = allPts()[S.csel], { c, sz, sx, sy, z, col } = zoomBase(loupe1, work, p.x + S.pan.x, p.y + S.pan.y, S.lz[1]);
+    const T = q => ({ x:(q.x-sx)*z, y:(q.y-sy)*z }), M = curveModel();
+    if (M) for (let i = 0; i < 4; i++){
+      c.beginPath();
+      for (let k = -12; k <= 108; k++){ const q = T(M.toSrc(M.edge(i, k/96))); k === -12 ? c.moveTo(q.x, q.y) : c.lineTo(q.x, q.y); }
+      strokeHalo(c, col.outer, 1.5);
+    }
+    const m = T(p);
+    c.beginPath(); c.moveTo(m.x-16,m.y); c.lineTo(m.x+16,m.y); c.moveTo(m.x,m.y-16); c.lineTo(m.x,m.y+16); strokeHalo(c, col.inner, 1.5);
+    c.beginPath(); c.arc(m.x, m.y, 8, 0, Math.PI*2); strokeHalo(c, col.inner, 1.5);
+  }
+
+  function loupeTarget(){
+    if (S.step === 1) return allPts()[S.csel];
+    const L = S.lines, k = S.sel;
+    if (isV(k)) return { x:L[k], y: S.drag && S.ptr ? S.ptr.y : (L.oT+L.oB)/2 };
+    return { x: S.drag && S.ptr ? S.ptr.x : (L.oL+L.oR)/2, y:L[k] };
+  }
+
+  /* Step 2: the four corners, redrawn on every change so the effect of each line shows at once. */
+  function drawLive(){
+    if (!S.lines) return;
+    const L = S.lines, px = S.mm[0]/Math.max(1, L.oR-L.oL), py = S.mm[1]/Math.max(1, L.oB-L.oT), d = S.dpr;
+    const g4 = { L:(L.iL-L.oL)*px, R:(L.oR-L.iR)*px, T:(L.iT-L.oT)*py, B:(L.oB-L.iB)*py };
+    [['TL','L','T'], ['TR','R','T'], ['BL','L','B'], ['BR','R','B']].forEach(([c, a, b], i) => {
+      const cv = $('lv' + i), sz = Math.max(60, Math.round(cv.clientWidth || 120));
+      if (cv.width !== sz*d){ cv.width = sz*d; cv.height = sz*d; }
+      const g = cv.getContext('2d'); g.setTransform(d, 0, 0, d, 0, 0); g.clearRect(0, 0, sz, sz);
+      drawCornerTile(g, { lines:L, img:flat }, c, 0, 0, sz, S.sel);
+      $('lc' + i).textContent = `${SIDE_TH[a]} ${g4[a].toFixed(2)}\n${SIDE_TH[b]} ${g4[b].toFixed(2)}`;
+    });
+  }
+
+  function gaps(){ const L = S.lines; return { L:L.iL-L.oL, R:L.oR-L.iR, T:L.iT-L.oT, B:L.oB-L.iB }; }
+
+  function pill(c, x, y, text, col){
+    c.font = '600 11px "IBM Plex Mono", monospace';
+    const w = c.measureText(text).width + 10, h = 18;
+    c.fillStyle = col.surface; rr(c, x-w/2, y-h/2, w, h, 4); c.fill();
+    c.fillStyle = col.ink; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, x, y+0.5);
+  }
+
+  function drawLines(){
+    const L = S.lines; if (!L) return;
+    const c = vctx, sc = S.scale, col = tokens();
+    c.setTransform(S.dpr,0,0,S.dpr,0,0);
+    const cw = flat.width*sc, ch = flat.height*sc;
+    c.clearRect(0,0,cw,ch); c.drawImage(flat, 0, 0, cw, ch);
+    const o = { l:L.oL*sc, r:L.oR*sc, t:L.oT*sc, b:L.oB*sc }, i = { l:L.iL*sc, r:L.iR*sc, t:L.iT*sc, b:L.iB*sc };
+    c.save();
+    c.beginPath(); c.rect(0,0,cw,ch); c.rect(o.l,o.t,o.r-o.l,o.b-o.t); c.fillStyle = 'rgba(6,10,9,0.5)'; c.fill('evenodd');
+    c.beginPath(); c.rect(o.l,o.t,o.r-o.l,o.b-o.t); c.rect(i.l,i.t,i.r-i.l,i.b-i.t); c.globalAlpha = 0.18; c.fillStyle = col.outer; c.fill('evenodd');
+    c.restore();
+    for (const k of KEYS){
+      const v = L[k]*sc, sel = k === S.sel && S.step === 2, isO = k[0] === 'o';
+      c.save(); c.setLineDash(isO ? [] : [7,5]); c.beginPath();
+      if (isV(k)){ c.moveTo(v,0); c.lineTo(v,ch); } else { c.moveTo(0,v); c.lineTo(cw,v); }
+      strokeHalo(c, isO ? col.outer : col.inner, sel ? 2.5 : 1.25); c.restore();
+    }
+    const g = gaps(), ly = o.t + (o.b-o.t)*0.22, lx = o.l + (o.r-o.l)*0.22;
+    pill(c, (o.l+i.l)/2, ly, String(g.L), col); pill(c, (o.r+i.r)/2, ly, String(g.R), col);
+    pill(c, lx, (o.t+i.t)/2, String(g.T), col); pill(c, lx, (o.b+i.b)/2, String(g.B), col);
+    if (S.step !== 2) return;
+    const k = S.sel, hv = L[k]*sc;
+    const hx = isV(k) ? hv : (o.l+o.r)/2, hy = isV(k) ? (o.t+o.b)/2 : hv;
+    c.beginPath(); c.arc(hx, hy, 7, 0, Math.PI*2); c.fillStyle = k[0] === 'o' ? col.outer : col.inner; c.fill();
+    c.lineWidth = 2; c.strokeStyle = '#FFFFFF'; c.stroke();
+  }
+
+  function drawLoupe2(){
+    const L = S.lines; if (!L) return;
+    const k = S.sel, t = loupeTarget();
+    const { c, sz, sx, sy, z, col } = zoomBase(loupe2, flat, t.x + S.pan.x, t.y + S.pan.y, S.lz[2]);
+    for (const key of KEYS){
+      const p = isV(key) ? (L[key]-sx)*z : (L[key]-sy)*z;
+      if (p < -2 || p > sz+2) continue;
+      const isO = key[0] === 'o';
+      c.save(); c.setLineDash(isO ? [] : [8,6]); c.beginPath();
+      if (isV(key)){ c.moveTo(p,0); c.lineTo(p,sz); } else { c.moveTo(0,p); c.lineTo(sz,p); }
+      strokeHalo(c, isO ? col.outer : col.inner, key === k ? 2 : 1); c.restore();
+    }
+  }
+
+  /* ---------- readout ---------- */
+  const fmt1 = v => v.toFixed(1);
+  const tiltTxt = t => t ? `ถ่ายเอียง ${Math.max(Math.abs(t.b), Math.abs(t.g)).toFixed(1)}°` : 'ไม่มีข้อมูลมุมกล้อง';
+  function readout(){
+    const L = S.lines; if (!L) return;
+    updBendUI();
+    $('meta').textContent = `${S.side === 'front' ? 'หน้าการ์ด' : 'หลังการ์ด'} · การ์ด ${SIZES[S.size][0]} × ${SIZES[S.size][1]} มม.` + (S.isSample ? '' : ` · ${tiltTxt(S.tilt)}`);
+    const g = gaps(), rat = (a,b) => (a < 0 || b < 0 || a+b <= 0) ? null : a/(a+b)*100;
+    const lr = rat(g.L, g.R), tb = rat(g.T, g.B);
+    $('lr').textContent = lr == null ? '–' : `${fmt1(lr)} / ${fmt1(100-lr)}`;
+    $('tb').textContent = tb == null ? '–' : `${fmt1(tb)} / ${fmt1(100-tb)}`;
+    $('lrBar').style.width = (lr ?? 50) + '%';
+    $('tbBar').style.width = (tb ?? 50) + '%';
+    const vEl = $('verdict'); vEl.className = 'verdict';
+    if (lr == null || tb == null){
+      $('vTitle').textContent = 'เส้นขอบในอยู่นอกขอบนอก';
+      $('vSub').textContent = 'ลากเส้นประให้อยู่ด้านในของเส้นทึบ';
+    } else {
+      const wLR = Math.max(lr, 100-lr), wTB = Math.max(tb, 100-tb), worst = Math.max(wLR, wTB);
+      const axis = wLR >= wTB ? `ซ้าย/ขวา ${fmt1(wLR)}%` : `บน/ล่าง ${fmt1(wTB)}%`;
+      const list = GR[S.side], idx = list.findIndex(([t]) => worst <= t + 1e-9);
+      if (idx === -1){ vEl.classList.add('bad'); $('vTitle').textContent = `เยื้องเกินเกณฑ์ ${list[list.length-1][1]}`; }
+      else { vEl.classList.add(idx === 0 ? 'good' : idx === 1 ? 'warn' : 'bad'); $('vTitle').textContent = `เซ็นเตอร์อยู่ในเกณฑ์ประมาณ ${list[idx][1]}`; }
+      $('vSub').textContent = `ด้านที่เยื้องที่สุด: ${axis}`;
+    }
+    $('crit').textContent = (S.side === 'front' ? 'เกณฑ์หน้าการ์ดโดยประมาณ: ' : 'เกณฑ์หลังการ์ดโดยประมาณ: ') +
+      GR[S.side].map(([t,l]) => `${l} ≤ ${t}/${100-t}`).join(' · ');
+    const mmX = S.mm[0]/Math.max(1, L.oR-L.oL), mmY = S.mm[1]/Math.max(1, L.oB-L.oT);
+    $('gapRows').innerHTML = [['L',g.L,mmX],['R',g.R,mmX],['T',g.T,mmY],['B',g.B,mmY]]
+      .map(([k,v,m]) => `<tr><td>${SIDE_TH[k]}</td><td class="n">${v}</td><td class="n">${(v*m).toFixed(2)}</td></tr>`).join('');
+  }
+
+  function updChips(){
+    document.querySelectorAll('#chips .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.k === S.sel)));
+    $('who').textContent = nameOf(S.sel) + (S.lines ? ` · ${S.lines[S.sel]} px` : '');
+    const v = isV(S.sel);
+    document.querySelectorAll('#dpad2 button').forEach(b => { b.disabled = v ? b.dataset.dx === '0' : b.dataset.dy === '0'; });
+  }
+  function updCornerUI(){
+    document.querySelectorAll('#cornerChips .chip').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.i === S.csel)));
+    const M = curveModel(), el = $('bendInfo');
+    if (!M){ el.textContent = ''; return; }
+    const b = bowMM(M);
+    const hard = b.max > BOW_HARD;
+    el.classList.toggle('status', hard); el.classList.toggle('warn', hard);
+    el.textContent = b.max < BOW_MIN ? 'ขอบการ์ดตรง ไม่ต้องดัดขอบโค้ง'
+      : !hard ? `ขอบโค้ง ${b.max.toFixed(1)} มม. (ด้าน${SIDE_TH[b.side]}) ระบบจะดัดให้ตรง ขั้นถัดไปจะบอกว่าความคลาดจากการงอกระทบเกรดหรือไม่`
+      : `การ์ดงอมาก ขอบ${SIDE_TH[b.side]}โค้ง ${b.max.toFixed(1)} มม. (เกิน ${BOW_HARD.toFixed(1)} มม.) การดัดภาพแก้ได้ไม่หมด ถ้าทำได้ให้กดการ์ดให้แบนแล้วถ่ายใหม่`;
+  }
+
+  /* ---------- interaction ---------- */
+  function moveLine(k, by){
+    const max = isV(k) ? flat.width : flat.height;
+    S.lines[k] = Math.max(0, Math.min(max, S.lines[k] + by)); render();
+  }
+  /* Bend levels (mm of bow). Below BOW_MIN is photo noise. A bend is reported as a problem only when the
+     error it may cause (BOW_ERR_K x the largest bow, on every border) could move the centering grade,
+     or when the bow is above BOW_HARD, where the warp cannot undo the lift reliably. */
+  const BOW_MIN = 0.2, BOW_ERR_K = 0.3, BOW_HARD = 1.0;
+  const gradeAt = (side, w) => { const hit = GR[side].find(([t]) => w <= t + 1e-9); return hit ? +hit[1].slice(4) : null; };
+  /* Worst-side share (50-100) reachable when the first border is a in [a0,a1] and the second b in [b0,b1]. */
+  function worstSpan(a, b, d){
+    const a0 = Math.max(0, a-d), a1 = a+d, b0 = Math.max(0, b-d), b1 = b+d;
+    const hi = a1 + b0 > 0 ? a1/(a1+b0)*100 : 50, lo = a0 + b1 > 0 ? a0/(a0+b1)*100 : 50;
+    const w = r => Math.max(r, 100-r);
+    return { min: lo <= 50 && hi >= 50 ? 50 : Math.min(w(lo), w(hi)), max: Math.max(w(lo), w(hi)) };
+  }
+  /* How far the bend could push the grade, for one side's lines. */
+  function bendRisk(side, L, mm, bow){
+    if (!bow || bow.max < BOW_MIN) return null;
+    const px = mm[0]/Math.max(1, L.oR-L.oL), py = mm[1]/Math.max(1, L.oB-L.oT);
+    const g = { L:(L.iL-L.oL)*px, R:(L.oR-L.iR)*px, T:(L.iT-L.oT)*py, B:(L.oB-L.iB)*py };
+    const base = { bow:bow.max, side:bow.side, delta:bow.max*BOW_ERR_K, hard:bow.max > BOW_HARD, changes:false };
+    if (Object.values(g).some(v => v < 0) || g.L+g.R <= 0 || g.T+g.B <= 0) return base;
+    const lr = worstSpan(g.L, g.R, base.delta), tb = worstSpan(g.T, g.B, base.delta);
+    const lo = Math.max(lr.min, tb.min), hi = Math.max(lr.max, tb.max);
+    const gBest = gradeAt(side, lo), gWorst = gradeAt(side, hi);
+    return { ...base, lo, hi, gBest, gWorst, changes: gBest !== gWorst };
+  }
+  const gLabel = n => n ? `PSA ${n}` : 'เยื้องเกินเกณฑ์';
+  const riskRange = r => r.gBest && r.gWorst ? `PSA ${r.gWorst}–${r.gBest}` : r.gBest ? `PSA ${r.gBest} หรือเยื้องเกินเกณฑ์` : 'เยื้องเกินเกณฑ์';
+  /* Steps 2 and 3: a yellow box only when the grade could move or the bend is severe; otherwise a quiet line. */
+  function updBendUI(){
+    const r = S.lines ? bendRisk(S.side, S.lines, S.mm, S.bow) : null;
+    for (const id of ['bendWarn', 'bendWarn3']){
+      const el = $(id);
+      if (!r){ el.hidden = true; continue; }
+      const loud = r.changes || r.hard, sd = SIDE_TH[r.side], b = r.bow.toFixed(1), d = r.delta.toFixed(2);
+      el.hidden = false; el.className = loud ? 'status warn' : 'hint';
+      el.textContent = r.changes
+        ? `การ์ดงอ ขอบ${sd}โค้ง ${b} มม. ขอบแต่ละด้านอาจคลาดได้ ±${d} มม. เกรดเซ็นเตอร์อาจอยู่ระหว่าง ${riskRange(r)} ถ้าทำได้ให้กดการ์ดให้แบนแล้วถ่ายใหม่`
+        : r.hard ? `การ์ดงอมาก ขอบ${sd}โค้ง ${b} มม. ช่วงคลาด ±${d} มม. ยังอยู่ใน ${gLabel(r.gBest)} แต่การดัดภาพแก้ส่วนที่ยกขึ้นได้ไม่หมด ถ้าทำได้ให้กดการ์ดให้แบนแล้วถ่ายใหม่`
+        : `การ์ดงอ ${b} มม. (ขอบ${sd}) คลาดได้ ±${d} มม. ต่อขอบ ไม่กระทบเกรดเซ็นเตอร์`;
+    }
+  }
+  const allPts = () => [...S.corners, ...S.mids];
+  /* Move point idx (0-3 corners, 4-7 edge mids T,R,B,L). A corner drags its two neighbouring mids half-way along. */
+  function setPoint(idx, x, y){
+    const P = allPts()[idx], nx = Math.max(0, Math.min(work.width, x)), ny = Math.max(0, Math.min(work.height, y));
+    const dx = nx - P.x, dy = ny - P.y; P.x = nx; P.y = ny; S.dirty = true;
+    if (idx < 4) for (const j of [idx, (idx+3)%4]){ S.mids[j].x += dx/2; S.mids[j].y += dy/2; }
+  }
+  function moveCorner(dx, dy){
+    const p = allPts()[S.csel]; setPoint(S.csel, p.x + dx, p.y + dy); render();
+  }
+
+  const toImg = e => { const r = view.getBoundingClientRect(); return { x:(e.clientX-r.left)/S.scale, y:(e.clientY-r.top)/S.scale }; };
+  function hitLine(p, tolPx){
+    const tol = tolPx / S.scale, dist = k => Math.abs((isV(k) ? p.x : p.y) - S.lines[k]);
+    if (dist(S.sel) < tol) return S.sel;
+    let best = null, bd = tol;
+    for (const k of KEYS){ const dd = dist(k); if (dd < bd){ bd = dd; best = k; } }
+    return best;
+  }
+  function hitCorner(p, tolPx){
+    const tol = tolPx / S.scale; let best = -1, bd = tol;
+    allPts().forEach((c,i) => { const dd = dist2(c,p); if (dd < bd){ bd = dd; best = i; } });
+    return best;
+  }
+
+  view.addEventListener('pointerdown', e => {
+    const p = toImg(e), touch = e.pointerType === 'touch';
+    if (S.step === 1){
+      if (!S.corners) return;
+      const i = hitCorner(p, touch ? 32 : 18); if (i < 0) return;
+      const P = allPts()[i]; S.csel = i; S.dragOff = { x:P.x - p.x, y:P.y - p.y };
+    } else {
+      if (!S.lines || S.step !== 2) return;
+      const k = hitLine(p, touch ? 22 : 10); if (!k) return;
+      S.sel = k; S.ptr = p;
+    }
+    S.drag = true; S.pan = {x:0, y:0}; view.setPointerCapture(e.pointerId); e.preventDefault(); render();
+  });
+  view.addEventListener('pointermove', e => {
+    const p = toImg(e);
+    if (S.step === 1){
+      if (!S.corners) return;
+      if (S.drag){
+        setPoint(S.csel, p.x + S.dragOff.x, p.y + S.dragOff.y);
+        render();
+      } else view.style.cursor = hitCorner(p, 18) >= 0 ? 'move' : 'default';
       return;
     }
-    show('cam'); layoutGuide();
-    if (!motionOK) toast('ไม่ได้รับอนุญาตให้อ่านเซนเซอร์ ปุ่มถ่ายจะไม่ล็อก', 3500);
-    setTimeout(() => { if (!S.sensor){ toast('เครื่องนี้ไม่ส่งค่าเซนเซอร์ ถ่ายได้แต่ไม่มีระดับน้ำ', 3500); render(); } }, 1500);
-    requestAnimationFrame(loop);
+    if (!S.lines || S.step !== 2){ view.style.cursor = 'default'; return; }
+    if (S.drag){
+      const max = isV(S.sel) ? flat.width : flat.height;
+      S.lines[S.sel] = Math.max(0, Math.min(max, Math.round(isV(S.sel) ? p.x : p.y)));
+      S.ptr = p; render();
+    } else {
+      const k = hitLine(p, 10);
+      view.style.cursor = k ? (isV(k) ? 'ew-resize' : 'ns-resize') : 'default';
+    }
+  });
+  const endDrag = () => { if (S.drag){ S.drag = false; S.ptr = null; render(); } };
+  view.addEventListener('pointerup', endDrag);
+  view.addEventListener('pointercancel', endDrag);
+  view.addEventListener('keydown', e => {
+    const step = e.shiftKey ? 10 : 1;
+    const dir = { ArrowLeft:[-1,0], ArrowRight:[1,0], ArrowUp:[0,-1], ArrowDown:[0,1] }[e.key];
+    if (!dir) return;
+    if (S.step === 1 && S.corners){ moveCorner(dir[0]*step, dir[1]*step); e.preventDefault(); }
+    else if (S.step === 2 && S.lines){
+      const v = isV(S.sel), by = v ? dir[0] : dir[1];
+      if (by){ moveLine(S.sel, by*step); e.preventDefault(); }
+    }
   });
 
-  async function openCamera(deviceId){
-    if (S.stream) S.stream.getTracks().forEach(t => t.stop());
-    const video0 = deviceId ? { deviceId:{ exact:deviceId } } : { facingMode:{ ideal:'environment' } };
-    const stream = await navigator.mediaDevices.getUserMedia({ audio:false,
-      video:{ ...video0, width:{ ideal:3840 }, height:{ ideal:2160 } } });
-    S.stream = stream; S.track = stream.getVideoTracks()[0];
-    video.srcObject = stream; await video.play().catch(() => {});
-    await new Promise(r => video.readyState >= 1 ? r() : video.addEventListener('loadedmetadata', r, { once:true }));
+  /* Tap a corner tile: pick its inner side line; tap again to switch to its inner top/bottom line. */
+  document.querySelectorAll('#live canvas').forEach(cv => cv.addEventListener('click', () => {
+    const c = cv.dataset.c, side = c[1] === 'L' ? 'iL' : 'iR', tb = c[0] === 'T' ? 'iT' : 'iB';
+    S.sel = S.sel === side ? tb : side; S.pan = {x:0, y:0}; render();
+  }));
+  document.querySelectorAll('#chips .chip').forEach(b => b.addEventListener('click', () => { S.sel = b.dataset.k; S.pan = {x:0, y:0}; render(); }));
+  document.querySelectorAll('#cornerChips .chip').forEach(b => b.addEventListener('click', () => { S.csel = +b.dataset.i; S.pan = {x:0, y:0}; render(); }));
+
+  /* ---------- loupe: pan, zoom, fine drag ---------- */
+  const ZSTEPS = [2,3,4,6,8,12,16,24];
+  function setZoom(l, z){ S.lz[l] = Math.max(2, Math.min(24, z)); render(); }
+  function stepZoom(l, dir){
+    const z = S.lz[l];
+    const next = dir > 0 ? ZSTEPS.find(s => s > z + 0.05) : ZSTEPS.slice().reverse().find(s => s < z - 0.05);
+    setZoom(l, next ?? z);
+  }
+  document.querySelectorAll('.ztools [data-z]').forEach(b => b.addEventListener('click', () => stepZoom(+b.dataset.l, +b.dataset.z)));
+  document.querySelectorAll('.ztools [data-c]').forEach(b => b.addEventListener('click', () => { S.pan = {x:0, y:0}; render(); }));
+  function bindLoupe(cv, l){
+    const pts = new Map(); let pinch = null;
+    const local = e => { const r = cv.getBoundingClientRect(); return { x:e.clientX - r.left, y:e.clientY - r.top }; };
+    const ready = () => S.step === l && (l === 1 ? !!S.corners : !!S.lines);
+    cv.addEventListener('wheel', e => { if (!ready()) return; e.preventDefault(); setZoom(l, S.lz[l] * (e.deltaY < 0 ? 1.15 : 1/1.15)); }, { passive:false });
+    cv.addEventListener('pointerdown', e => {
+      if (!ready()) return;
+      cv.setPointerCapture(e.pointerId); e.preventDefault();
+      pts.set(e.pointerId, local(e));
+      if (pts.size === 2){ const [a,b] = [...pts.values()]; pinch = { d:Math.hypot(a.x-b.x, a.y-b.y) || 1, z:S.lz[l] }; S.ldrag = null; return; }
+      const v = cv._v; if (!v) return;
+      const q = local(e), touch = e.pointerType === 'touch', t = loupeTarget();
+      let mode = 'pan';
+      if (l === 1){
+        if (Math.hypot(q.x - (t.x - v.sx)*v.z, q.y - (t.y - v.sy)*v.z) < (touch ? 30 : 18)) mode = 'move';
+      } else {
+        const k = S.sel, pos = isV(k) ? (S.lines[k] - v.sx)*v.z : (S.lines[k] - v.sy)*v.z;
+        if (Math.abs((isV(k) ? q.x : q.y) - pos) < (touch ? 24 : 12)) mode = 'move';
+      }
+      S.ldrag = { mode, q0:q, z:v.z, pan0:{...S.pan}, t0:{ x:t.x, y:t.y }, C0:{ x:t.x + S.pan.x, y:t.y + S.pan.y } };
+      cv.style.cursor = mode === 'pan' ? 'grabbing' : 'move';
+    });
+    cv.addEventListener('pointermove', e => {
+      if (!pts.has(e.pointerId)) return;
+      pts.set(e.pointerId, local(e));
+      if (pinch && pts.size >= 2){ const [a,b] = [...pts.values()]; setZoom(l, pinch.z * Math.hypot(a.x-b.x, a.y-b.y) / pinch.d); return; }
+      const D = S.ldrag; if (!D) return;
+      const q = local(e), dx = (q.x - D.q0.x)/D.z, dy = (q.y - D.q0.y)/D.z;
+      if (D.mode === 'pan'){ S.pan = { x:D.pan0.x - dx, y:D.pan0.y - dy }; render(); return; }
+      if (l === 1){
+        setPoint(S.csel, D.t0.x + dx, D.t0.y + dy);
+      } else {
+        const k = S.sel, max = isV(k) ? flat.width : flat.height;
+        S.lines[k] = Math.max(0, Math.min(max, Math.round(isV(k) ? D.t0.x + dx : D.t0.y + dy)));
+      }
+      const t = loupeTarget(); S.pan = { x:D.C0.x - t.x, y:D.C0.y - t.y };
+      render();
+    });
+    const end = e => { pts.delete(e.pointerId); if (pts.size < 2) pinch = null; if (!pts.size){ S.ldrag = null; cv.style.cursor = ''; } };
+    cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  }
+  bindLoupe(loupe1, 1); bindLoupe(loupe2, 2);
+  document.querySelectorAll('#dpad1 button').forEach(b => b.addEventListener('click', () => S.corners && moveCorner(+b.dataset.dx, +b.dataset.dy)));
+  document.querySelectorAll('#dpad2 button').forEach(b => b.addEventListener('click', () => {
+    if (!S.lines) return;
+    const by = isV(S.sel) ? +b.dataset.dx : +b.dataset.dy;
+    if (by) moveLine(S.sel, by);
+  }));
+  $('go').addEventListener('click', () => setStep(2));
+  $('st2').addEventListener('click', () => setStep(2));
+  $('back').addEventListener('click', () => setStep(1));
+  $('st1').addEventListener('click', () => setStep(1));
+  $('st3').addEventListener('click', () => setStep(3));
+  $('toSum').addEventListener('click', () => setStep(3));
+  $('back1').addEventListener('click', () => setStep(1));
+  $('back2').addEventListener('click', () => setStep(2));
+  $('redetectC').addEventListener('click', () => { if (S.src){ runCorners(); render(); } });
+  $('straighten').addEventListener('click', () => { if (S.corners){ S.mids = straightMids(S.corners); S.dirty = true; render(); } });
+  $('redetectL').addEventListener('click', () => { if (S.step === 2){ detectLines(); render(); } });
+  $('size').addEventListener('change', e => { S.size = e.target.value; S.dirty = true; });
+
+  function setSide(side){
+    if (side === S.side) return;
+    saveSlot(); S.side = side; hideMsg(); updSideBtns(); restoreSlot(side);
+  }
+  function newCard(){
+    S.slots = { front:null, back:null }; S.results = {}; S.src = null; S.side = 'front';
+    $('cardName').value = ''; $('cardNote').value = '';
+    const im = $('reportImg'); im.hidden = true; reportBlob = null;
+    updSides(); updSideBtns(); showEmpty();
+  }
+  $('sideF').addEventListener('click', () => setSide('front'));
+  $('sideB').addEventListener('click', () => setSide('back'));
+  $('sample').addEventListener('click', () => setSource(makeSample(), true));
+
+  /* ---------- summary report image ---------- */
+  const bendNote = () => { const b = Math.max(0, ...Object.values(S.results).map(r => r.bow || 0)); return b >= BOW_MIN ? ` · ภาพผ่านการดัดขอบโค้ง (โค้งสูงสุด ${b.toFixed(1)} มม.)` : ''; };
+  const bendLines = () => ['front','back'].filter(k => S.results[k] && S.results[k].risk && (S.results[k].risk.changes || S.results[k].risk.hard))
+    .map(k => { const r = S.results[k].risk, head = `${SIDE_NAME[k]}งอ (ขอบ${SIDE_TH[r.side]}โค้ง ${r.bow.toFixed(1)} มม.)`;
+      return r.changes ? `${head} เกรดเซ็นเตอร์อาจอยู่ระหว่าง ${riskRange(r)}` : `${head} งอมาก ผลอาจคลาดได้`; });
+  const fullNote = () => [$('cardNote').value.trim(), ...bendLines()].filter(Boolean).join('\n');
+  const SIDE_NAME = { front:'หน้าการ์ด', back:'หลังการ์ด' };
+  function sideMetrics(L){
+    const g = { L:L.iL-L.oL, R:L.oR-L.iR, T:L.iT-L.oT, B:L.oB-L.iB };
+    const rat = (a,b) => (a < 0 || b < 0 || a+b <= 0) ? null : a/(a+b)*100;
+    return { g, lr:rat(g.L,g.R), tb:rat(g.T,g.B) };
+  }
+  function gradeOf(side, m){
+    if (m.lr == null || m.tb == null) return null;
+    const worst = Math.max(m.lr, 100-m.lr, m.tb, 100-m.tb);
+    const hit = GR[side].find(([t]) => worst <= t + 1e-9);
+    return { worst, n: hit ? +hit[1].slice(4) : null, lim: hit ? hit[0] : null };
+  }
+  const ratioTxt = w => `${Math.round(w)}/${100-Math.round(w)}`;
+
+  /* Centering limits per grading company, as the worst-side share (%) a grade allows; TCG figures where the
+     company separates them. BGS judges both axes: "both" = both axes within the limit, "split" = one axis
+     exactly 50/50 (shown as 50.0) and the other within the limit. BGS figures come from secondary sources. */
+  const EXACT50 = 50.05;
+  const GRADERS = [
+    { name:'PSA', front:[[55,10],[60,9],[65,8],[70,7]], back:[[75,10],[90,9]] },
+    { name:'CGC', front:[[55,10],[60,9],[65,8],[70,7]], back:[[75,10],[90,9]] },
+    { name:'BGS', sub:'subgrade', front:[[EXACT50,10,'both'],[55,9.5,'split'],[55,9],[60,8],[65,7],[70,6]], back:[[60,10],[70,9],[80,8],[90,7],[95,6]] },
+    { name:'TAG', sub:'TCG', front:[[55,10],[60,9],[62.5,8.5],[65,8],[67.5,7.5],[70,7],[72.5,6.5],[75,6]], back:[[65,10],[75,9],[85,8.5],[95,8]] }
+  ];
+  function graderSide(G, side, m){
+    if (m.lr == null || m.tb == null) return null;
+    const wLR = Math.max(m.lr, 100-m.lr), wTB = Math.max(m.tb, 100-m.tb), hi = Math.max(wLR, wTB), lo = Math.min(wLR, wTB);
+    for (const [t, n, rule] of G[side]){
+      const ok = rule === 'both' ? hi < t : rule === 'split' ? lo < EXACT50 && hi <= t + 1e-9 : hi <= t + 1e-9;
+      if (ok) return n;
+    }
+    return null;
+  }
+  /* Per company: grade of each measured side and the lower of the two. Average of the four companies,
+     rounded up only when its fraction is above .74, otherwise down. */
+  function graderTable(){
+    const sides = ['front','back'].filter(k => S.results[k]);
+    const rows = GRADERS.map(G => {
+      const per = {};
+      for (const k of sides) per[k] = graderSide(G, k, sideMetrics(S.results[k].lines));
+      const vals = sides.map(k => per[k]);
+      return { G, per, all: vals.length && vals.every(v => v != null) ? Math.min(...vals) : null };
+    });
+    const ok = rows.every(r => r.all != null);
+    const avg = ok ? Math.round(rows.reduce((t, r) => t + r.all, 0) / rows.length * 100) / 100 : null;
+    const sideAvg = {};
+    for (const k of sides){ const v = rows.map(r => r.per[k]); sideAvg[k] = v.every(x => x != null) ? Math.round(v.reduce((t, x) => t + x, 0) / v.length * 100) / 100 : null; }
+    return { sides, rows, avg, grade: avg == null ? null : roundGrade(avg), sideAvg };
+  }
+  const roundGrade = a => { const f = Math.floor(a + 1e-9); return a - f > 0.74 + 1e-9 ? f + 1 : f; };
+  const fmtG = n => n == null ? '–' : Number.isInteger(n) ? String(n) : String(+n.toFixed(2));
+  /* How far a side's worst axis sits from the next stricter PSA/CGC/TAG front-style limit, in % and in mm of print shift. */
+  function nextStep(k){
+    const r = S.results[k]; if (!r) return null;
+    const L = r.lines, m = sideMetrics(L); if (m.lr == null || m.tb == null) return null;
+    const lim = GRADERS[0][k].map(([t]) => t), wLR = Math.max(m.lr, 100-m.lr), wTB = Math.max(m.tb, 100-m.tb);
+    const ax = wLR >= wTB ? 'LR' : 'TB', w = Math.max(wLR, wTB), t = lim.filter(x => x < w - 1e-9).pop();
+    if (t == null) return null;
+    const per = ax === 'LR' ? r.mm[0]/Math.max(1, L.oR-L.oL) : r.mm[1]/Math.max(1, L.oB-L.oT);
+    const a = (ax === 'LR' ? Math.max(m.g.L, m.g.R) : Math.max(m.g.T, m.g.B))*per, b = (ax === 'LR' ? Math.min(m.g.L, m.g.R) : Math.min(m.g.T, m.g.B))*per;
+    return { t, pct:w - t, mm:a - t/100*(a+b) };
+  }
+
+  function snapshot(){
+    if (!S.lines) return;
+    const c = document.createElement('canvas'); c.width = flat.width; c.height = flat.height; c.getContext('2d').drawImage(flat, 0, 0);
+    S.results[S.side] = { mid:S.mid, lines:{ ...S.lines }, mm:[...S.mm], img:c, bow:S.bow ? S.bow.max : 0, bowSide:S.bow ? S.bow.side : 'T', risk:bendRisk(S.side, S.lines, S.mm, S.bow), tilt:S.tilt, sample:S.isSample };
+    updSides(); updSideBtns(); scheduleReport();
+  }
+  function updSides(){
+    const list = $('sides'); list.textContent = '';
+    for (const k of ['front','back']){
+      const r = S.results[k], li = document.createElement('li'), b = document.createElement('b'), sp = document.createElement('span');
+      b.textContent = SIDE_NAME[k];
+      if (r){ const m = sideMetrics(r.lines); sp.textContent = m.lr == null || m.tb == null ? 'เส้นไม่ครบ' : `LR ${ratioTxt(m.lr)} · TB ${ratioTxt(m.tb)}`; li.classList.add('on'); }
+      else sp.textContent = 'ยังไม่วัด';
+      li.append(b, sp); list.append(li);
+    }
+    const bl = bendLines(), an = $('autoNote');
+    an.hidden = !bl.length; an.textContent = bl.length ? `เพิ่มในหมายเหตุให้อัตโนมัติ: ${bl.join(' / ')}` : '';
+    const miss = ['front','back'].filter(k => !S.results[k]);
+    $('sideHint').textContent = miss.length === 1
+      ? `ยังไม่ได้วัด${SIDE_NAME[miss[0]]} กด "ไปวัด${SIDE_NAME[miss[0]]} →" ใต้ภาพ หรือกดปุ่ม "${SIDE_NAME[miss[0]]}" ด้านบน ผลที่วัดไว้จะยังอยู่`
+      : miss.length === 2 ? 'ยังไม่มีผลการวัด' : 'ภาพสรุปใช้ผลทั้งหน้าและหลังการ์ด';
+  }
+
+  let reportTimer = null, reportBlob = null, reportUrl = null;
+  function scheduleReport(){
+    clearTimeout(reportTimer);
+    reportTimer = setTimeout(async () => {
+      if (!Object.keys(S.results).length) return;
+      const blob = await buildReport(); if (!blob) return;
+      reportBlob = blob; if (reportUrl) URL.revokeObjectURL(reportUrl);
+      reportUrl = URL.createObjectURL(blob); const im = $('reportImg'); im.src = reportUrl; im.hidden = false;
+    }, 250);
+  }
+
+  function wrapText(g, text, maxW, maxLines){
+    const out = [];
+    const seg = s => (typeof Intl !== 'undefined' && Intl.Segmenter) ? [...new Intl.Segmenter('th', { granularity:'word' }).segment(s)].map(x => x.segment) : s.split(/(\s+)/);
+    for (const para of String(text).split('\n')){
+      let cur = '';
+      for (const w of seg(para)){
+        const t = cur + w;
+        if (g.measureText(t).width > maxW && cur){ out.push(cur.trimEnd()); cur = w.trimStart(); } else cur = t;
+      }
+      out.push(cur);
+    }
+    if (out.length > maxLines){ out.length = maxLines; out[maxLines-1] = out[maxLines-1].slice(0, -1) + '…'; }
+    return out;
+  }
+
+  function drawCornerTile(g, R, which, x, y, s, sel){
+    const L = R.lines, im = R.img;
+    const gp = Math.max(L.iL-L.oL, L.oR-L.iR, L.iT-L.oT, L.oB-L.iB, 10), span = gp*2.8;
+    const left = which.includes('L'), top = which.includes('T');
+    const cx = left ? L.oL : L.oR, cy = top ? L.oT : L.oB;
+    const x0 = left ? cx - span*0.32 : cx - span*0.68, y0 = top ? cy - span*0.32 : cy - span*0.68, k = s/span;
+    const X = v => x + (v - x0)*k, Y = v => y + (v - y0)*k;
+    g.save(); g.beginPath(); g.rect(x, y, s, s); g.clip();
+    g.fillStyle = '#000'; g.fillRect(x, y, s, s);
+    g.imageSmoothingQuality = 'high'; g.drawImage(im, x0, y0, span, span, x, y, s, s);
+    g.beginPath(); g.rect(X(L.oL), Y(L.oT), (L.oR-L.oL)*k, (L.oB-L.oT)*k); g.rect(X(L.iL), Y(L.iT), (L.iR-L.iL)*k, (L.iB-L.iT)*k);
+    g.fillStyle = 'rgba(52,199,89,0.38)'; g.fill('evenodd');
+    const line = k => { const v = L[k], vert = k[1] === 'L' || k[1] === 'R';
+      g.lineWidth = (k[0] === 'o' ? 2 : 2.5) + (k === sel ? 2 : 0);
+      g.beginPath(); if (vert){ g.moveTo(X(v), y); g.lineTo(X(v), y+s); } else { g.moveTo(x, Y(v)); g.lineTo(x+s, Y(v)); } g.stroke(); };
+    g.setLineDash([]); g.strokeStyle = '#34C759'; ['oL','oR','oT','oB'].forEach(line);
+    g.setLineDash([10, 7]); g.strokeStyle = '#FF3B30'; ['iL','iR','iT','iB'].forEach(line);
+    g.restore();
+    g.strokeStyle = '#2B3330'; g.lineWidth = 2; g.strokeRect(x+1, y+1, s-2, s-2);
+  }
+
+  async function drawLab(){
+    try { await Promise.all(['600 96px "Chakra Petch"', '500 22px "IBM Plex Sans Thai"', '600 22px "IBM Plex Sans Thai"', '600 40px "IBM Plex Mono"'].map(f => document.fonts.load(f, 'วัดกันป่ะ 0123'))); } catch(_){}
+    const sides = ['front','back'].filter(k => S.results[k]); if (!sides.length) return null;
+    const heroSide = sides[0], hero = S.results[heroSide];
+    const W = 1600, H = 1600, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const g = cv.getContext('2d');
+    const C = { bg:'#0B0E0D', panel:'#111614', line:'#2B3330', ink:'#F1EEE6', mute:'#97A39E', acc:'#4FD1B8', gold:'#E8C27A', good:'#5BD68A', warn:'#E8C27A', bad:'#FF7A66' };
+    const FD = '"Chakra Petch","IBM Plex Sans Thai",sans-serif', FB = '"IBM Plex Sans Thai",sans-serif', FM = '"IBM Plex Mono",monospace';
+    const T = (txt, x, y, font, color, align = 'left') => { g.font = font; g.fillStyle = color; g.textAlign = align; g.textBaseline = 'alphabetic'; g.fillText(txt, x, y); };
+    const box = (x, y, w, h) => { g.fillStyle = C.panel; g.fillRect(x, y, w, h); g.strokeStyle = C.line; g.lineWidth = 2; g.strokeRect(x+1, y+1, w-2, h-2); };
+    const hr = (x1, x2, y) => { g.strokeStyle = C.line; g.lineWidth = 2; g.beginPath(); g.moveTo(x1, y); g.lineTo(x2, y); g.stroke(); };
+    const spaced = (on) => { if ('letterSpacing' in g) g.letterSpacing = on ? '6px' : '0px'; };
+    const gradeColor = n => n >= 10 ? C.good : n >= 9 ? C.warn : C.bad;
+
+    g.fillStyle = C.bg; g.fillRect(0, 0, W, H);
+    g.strokeStyle = C.line; g.lineWidth = 2; g.strokeRect(24, 24, W-48, H-48);
+
+    const now = new Date(), p2 = n => String(n).padStart(2, '0');
+    const rid = `CTL-${String(now.getFullYear()).slice(2)}${p2(now.getMonth()+1)}${p2(now.getDate())}-${p2(now.getHours())}${p2(now.getMinutes())}`;
+    const dateTh = now.toLocaleDateString('th-TH', { day:'numeric', month:'short', year:'numeric' });
+    T('วัดกันป่ะ!!', W/2, 138, `600 96px ${FD}`, C.gold, 'center');
+    spaced(true); T('CENTERING LAB', W/2, 192, `500 30px ${FD}`, C.ink, 'center'); spaced(false);
+    T('ประเมินเซ็นเตอร์จากรูปถ่ายเท่านั้น', 60, 96, `400 20px ${FB}`, C.mute);
+    T('ไม่ใช่ผลเกรดจริงจากบริษัทเกรดการ์ด', 60, 126, `400 20px ${FB}`, C.mute);
+    T(`REPORT ID  ${rid}`, W-60, 96, `600 20px ${FM}`, C.gold, 'right');
+    T(dateTh, W-60, 126, `400 20px ${FB}`, C.mute, 'right');
+
+    const top = 232, bot = 1512;
+    /* left: centering numbers */
+    box(48, top, 440, bot-top);
+    spaced(true); T('CENTERING', 268, 290, `600 30px ${FD}`, C.acc, 'center'); spaced(false);
+    g.strokeStyle = C.line; g.beginPath(); g.moveTo(268, 318); g.lineTo(268, 520); g.stroke();
+    const grades = {}, GT = graderTable();
+    [['front', 158], ['back', 378]].forEach(([k, cx]) => {
+      T(SIDE_NAME[k], cx, 344, `500 22px ${FB}`, C.mute, 'center');
+      const r = S.results[k];
+      if (!r){ T('ยังไม่วัด', cx, 410, `500 28px ${FB}`, C.mute, 'center'); return; }
+      const m = sideMetrics(r.lines), gr = gradeOf(k, m); grades[k] = gr;
+      if (!gr){ T('เส้นไม่ครบ', cx, 410, `500 28px ${FB}`, C.bad, 'center'); return; }
+      T(ratioTxt(gr.worst), cx, 404, `600 48px ${FM}`, C.ink, 'center');
+      T(`L ${fmt1(m.lr)} / R ${fmt1(100-m.lr)}`, cx, 446, `500 19px ${FM}`, C.mute, 'center');
+      T(`T ${fmt1(m.tb)} / B ${fmt1(100-m.tb)}`, cx, 476, `500 19px ${FM}`, C.mute, 'center');
+      const sa = GT.sideAvg[k];
+      T(sa == null ? 'เกินเกณฑ์บางค่าย' : `เฉลี่ย ${fmtG(sa)}`, cx, 512, `600 22px ${FD}`, sa == null ? C.bad : gradeColor(roundGrade(sa)), 'center');
+    });
+    hr(80, 456, 548);
+    const overall = GT.grade;
+    T('เกรดเซ็นเตอร์ เฉลี่ย 4 ค่าย', 268, 598, `500 22px ${FB}`, C.mute, 'center');
+    T(overall != null ? String(overall) : '–', 268, 770, `600 190px ${FD}`, overall != null ? C.gold : C.mute, 'center');
+    spaced(true); T(overall != null ? 'CENTERING ONLY' : 'เกินเกณฑ์บางค่าย', 268, 830, `600 32px ${FD}`, C.ink, 'center'); spaced(false);
+    const avgTxt = GT.avg != null ? `เฉลี่ย ${fmtG(GT.avg)} · PSA CGC BGS TAG` : 'บางค่ายให้ต่ำกว่าเกณฑ์ที่มีในตาราง';
+    T(sides.length === 1 ? `วัดเฉพาะ${SIDE_NAME[sides[0]]} · ${avgTxt}` : avgTxt, 268, 868, `400 18px ${FB}`, C.mute, 'center');
+    hr(80, 456, 900);
+    T('ความกว้างขอบ (มม. ประมาณ)', 268, 946, `500 21px ${FB}`, C.mute, 'center');
+    T('ด้าน', 84, 994, `500 19px ${FB}`, C.mute); T('หน้า', 330, 994, `500 19px ${FB}`, C.mute, 'right'); T('หลัง', 452, 994, `500 19px ${FB}`, C.mute, 'right');
+    ['L','R','T','B'].forEach((sd, i) => {
+      const y = 1036 + i*40;
+      T(SIDE_TH[sd], 84, y, `500 21px ${FB}`, C.ink);
+      [['front', 330], ['back', 452]].forEach(([k, x]) => {
+        const r = S.results[k]; let v = '–';
+        if (r){ const L = r.lines, m = sideMetrics(L), per = (sd === 'L' || sd === 'R') ? r.mm[0]/Math.max(1, L.oR-L.oL) : r.mm[1]/Math.max(1, L.oB-L.oT); v = (m.g[sd]*per).toFixed(2); }
+        T(v, x, y, `500 21px ${FM}`, C.ink, 'right');
+      });
+    });
+    hr(80, 456, 1210);
+    const name = $('cardName').value.trim(), note = fullNote();
+    T('ชื่อการ์ด', 84, 1254, `500 19px ${FB}`, C.mute);
+    g.font = `600 26px ${FB}`; wrapText(g, name || '–', 372, 2).forEach((ln, i) => T(ln, 84, 1294 + i*36, `600 26px ${FB}`, C.ink));
+    T('หมายเหตุ', 84, 1366, `500 19px ${FB}`, C.mute);
+    g.font = `400 20px ${FB}`; wrapText(g, note || '–', 372, 4).forEach((ln, i) => T(ln, 84, 1400 + i*30, `400 20px ${FB}`, C.ink));
+
+    /* centre: the card */
+    box(512, top, 576, bot-top);
+    const L = hero.lines, cw = L.oR-L.oL, ch = L.oB-L.oT, fit = Math.min(500/cw, 700/ch), dw = cw*fit, dh = ch*fit;
+    const hx = 800 - dw/2, hy = 276;
+    g.strokeStyle = C.line; g.lineWidth = 2; g.strokeRect(hx-14, hy-14, dw+28, dh+28);
+    g.imageSmoothingQuality = 'high'; g.drawImage(hero.img, L.oL, L.oT, cw, ch, hx, hy, dw, dh);
+    T(`ภาพ${SIDE_NAME[heroSide]}` + (hero.sample ? '' : ` · ${tiltTxt(hero.tilt)}`), 800, hy+dh+44, `500 20px ${FB}`, C.mute, 'center');
+    const sy = hy + dh + 66; hr(560, 1040, sy);
+    spaced(true); T('CENTERING BY GRADER', 800, sy+44, `600 24px ${FD}`, C.ink, 'center'); spaced(false);
+    T('เกรดเซ็นเตอร์ตามเกณฑ์แต่ละค่าย · ดูด้านที่เยื้องที่สุด', 800, sy+76, `400 18px ${FB}`, C.mute, 'center');
+    const CX = { name:572, front:772, back:884, all:992 };
+    const hdr = k => { const r = S.results[k], gr = grades[k]; return SIDE_NAME[k].replace('การ์ด', '') + (r && gr ? ` ${ratioTxt(gr.worst)}` : ''); };
+    T('ค่าย', CX.name, sy+116, `500 18px ${FB}`, C.mute);
+    T(hdr('front'), CX.front, sy+116, `500 18px ${FB}`, C.mute, 'center');
+    T(hdr('back'), CX.back, sy+116, `500 18px ${FB}`, C.mute, 'center');
+    T('รวม', CX.all, sy+116, `500 18px ${FB}`, C.mute, 'center');
+    hr(560, 1040, sy+132);
+    const pillG = (n, x, y) => {
+      const col = n == null ? C.bad : gradeColor(n), txt = n == null ? 'เกิน' : fmtG(n);
+      g.font = `600 24px ${FM}`; const w = Math.max(56, g.measureText(txt).width + 26);
+      g.save(); g.globalAlpha = 0.16; g.fillStyle = col; rr(g, x - w/2, y - 25, w, 34, 8); g.fill(); g.restore();
+      T(txt, x, y, `600 24px ${FM}`, col, 'center');
+    };
+    GT.rows.forEach((row, i) => {
+      const y = sy + 170 + i*40;
+      if (i) { g.strokeStyle = 'rgba(255,255,255,0.06)'; g.lineWidth = 1; g.beginPath(); g.moveTo(560, y-28); g.lineTo(1040, y-28); g.stroke(); }
+      T(row.G.name, CX.name, y, `600 22px ${FD}`, C.ink);
+      if (row.G.sub){ g.font = `600 22px ${FD}`; T(row.G.sub, CX.name + g.measureText(row.G.name).width + 8, y, `400 15px ${FB}`, C.mute); }
+      for (const k of ['front','back']){
+        const v = row.per[k];
+        if (!S.results[k]) T('ยังไม่วัด', CX[k], y, `400 17px ${FB}`, C.mute, 'center');
+        else T(v == null ? 'เกิน' : fmtG(v), CX[k], y, `500 23px ${FM}`, v == null ? C.bad : C.ink, 'center');
+      }
+      pillG(row.all, CX.all, y);
+    });
+    let ny = sy + 170 + 3*40 + 22; hr(560, 1040, ny); ny += 34;
+    for (const k of ['front','back']){
+      const st = nextStep(k); if (!st) continue;
+      T(`${SIDE_NAME[k]} ห่างเกณฑ์ ${st.t}/${100-st.t} อีก ${st.pct.toFixed(1)}% (≈${st.mm.toFixed(2)} มม.)`, 800, ny, `400 19px ${FB}`, C.ink, 'center');
+      ny += 30;
+    }
+    T('BGS ดูทั้งสองแกน · เกณฑ์ BGS จากแหล่งรอง ยังไม่ยืนยัน', 800, ny, `400 16px ${FB}`, C.mute, 'center');
+    const ly = Math.min(ny + 44, bot - 22);
+    g.fillStyle = 'rgba(52,199,89,0.5)'; g.fillRect(600, ly - 17, 40, 20); g.strokeStyle = '#34C759'; g.lineWidth = 2; g.strokeRect(600, ly - 17, 40, 20);
+    T('ขอบการ์ด', 650, ly, `400 19px ${FB}`, C.ink);
+    g.setLineDash([10, 7]); g.strokeStyle = '#FF3B30'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(800, ly - 7); g.lineTo(852, ly - 7); g.stroke(); g.setLineDash([]);
+    T('ขอบใน (กรอบภาพ)', 862, ly, `400 19px ${FB}`, C.ink);
+
+    /* right: four corners */
+    box(1112, top, 440, bot-top);
+    spaced(true); T('CORNERS (8)', 1332, 290, `600 30px ${FD}`, C.ink, 'center'); spaced(false);
+    const CN = [['TL','ซ้ายบน','L','T'], ['TR','ขวาบน','R','T'], ['BL','ซ้ายล่าง','L','B'], ['BR','ขวาล่าง','R','B']];
+    const ts = 188, gx = [1136, 1340];
+    [['front', 300], ['back', 890]].forEach(([k, sy0], si) => {
+      T(SIDE_NAME[k], 1136, sy0 + 38, `600 24px ${FB}`, C.gold);
+      if (si) hr(1136, 1528, sy0 - 8);
+      const R = S.results[k];
+      if (!R){ g.strokeStyle = C.line; g.setLineDash([8, 6]); g.strokeRect(1136, sy0 + 58, 392, 470); g.setLineDash([]);
+        T('ยังไม่วัด', 1332, sy0 + 300, `500 26px ${FB}`, C.mute, 'center'); return; }
+      const RL = R.lines, m = sideMetrics(RL), px = R.mm[0]/Math.max(1, RL.oR-RL.oL), py = R.mm[1]/Math.max(1, RL.oB-RL.oT);
+      CN.forEach(([which, label, sx, sy2], i) => {
+        const x = gx[i % 2], y = sy0 + 58 + Math.floor(i/2)*258;
+        drawCornerTile(g, R, which, x, y, ts);
+        T(label, x, y + ts + 26, `500 18px ${FB}`, C.mute);
+        T(`${SIDE_TH[sx]} ${(m.g[sx]*px).toFixed(2)} · ${SIDE_TH[sy2]} ${(m.g[sy2]*py).toFixed(2)}`, x, y + ts + 50, `500 17px ${FB}`, C.ink);
+      });
+    });
+    T('วัดกันป่ะ!! · ประเมินอ้างอิงเท่านั้น ไม่ใช่ผลเกรดอย่างเป็นทางการ' + bendNote(), W/2, 1556, `400 18px ${FB}`, C.mute, 'center');
+    return await new Promise(res => cv.toBlob(res, 'image/png'));
+  }
+
+  /* ---------- more report templates ---------- */
+  const RF = { D:'"Chakra Petch","IBM Plex Sans Thai",sans-serif', B:'"IBM Plex Sans Thai",sans-serif', M:'"IBM Plex Mono",monospace' };
+  const mkCanvas = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+  const toPng = cv => new Promise(res => cv.toBlob(res, 'image/png'));
+  const gColor = n => n === 10 ? '#1F9D57' : n === 9 ? '#C98A12' : '#D0452F';
+  function tx(g, s, x, y, font, color, align = 'left', spacing = 0){
+    g.font = font; g.fillStyle = color; g.textAlign = align; g.textBaseline = 'alphabetic';
+    if ('letterSpacing' in g) g.letterSpacing = spacing + 'px';
+    g.fillText(s, x, y);
+    if ('letterSpacing' in g) g.letterSpacing = '0px';
+  }
+  function tagPill(g, cx, cy, text, bg, fg, font){
+    g.font = font; const w = g.measureText(text).width + 40, h = 46;
+    g.fillStyle = bg; rr(g, cx - w/2, cy - h/2, w, h, 23); g.fill();
+    g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(text, cx, cy + 1); g.textBaseline = 'alphabetic';
+  }
+  function repData(){
+    const sides = ['front','back'].filter(k => S.results[k]), per = {};
+    for (const k of sides){
+      const r = S.results[k], L = r.lines, m = sideMetrics(L), gr = gradeOf(k, m);
+      const mmX = r.mm[0]/Math.max(1, L.oR-L.oL), mmY = r.mm[1]/Math.max(1, L.oB-L.oT);
+      per[k] = { r, L, m, gr, mm:{ L:m.g.L*mmX, R:m.g.R*mmX, T:m.g.T*mmY, B:m.g.B*mmY } };
+    }
+    const gs = sides.map(k => per[k].gr);
+    const overall = gs.length && gs.every(x => x && x.n) ? Math.min(...gs.map(x => x.n)) : null;
+    const now = new Date(), p2 = n => String(n).padStart(2, '0');
+    return { sides, per, hero:sides[0], overall,
+      name:$('cardName').value.trim(), note:fullNote(),
+      rid:`CTL-${String(now.getFullYear()).slice(2)}${p2(now.getMonth()+1)}${p2(now.getDate())}-${p2(now.getHours())}${p2(now.getMinutes())}`,
+      dateTh:now.toLocaleDateString('th-TH', { day:'numeric', month:'short', year:'numeric' }) };
+  }
+  function drawCard(g, P, x, y, w, h, overlay){
+    const L = P.L, cw = L.oR-L.oL, ch = L.oB-L.oT, f = Math.min(w/cw, h/ch), dw = cw*f, dh = ch*f, dx = x + (w-dw)/2, dy = y + (h-dh)/2;
+    const X = v => dx + (v-L.oL)*f, Y = v => dy + (v-L.oT)*f;
+    g.imageSmoothingQuality = 'high'; g.drawImage(P.r.img, L.oL, L.oT, cw, ch, dx, dy, dw, dh);
+    if (overlay){
+      g.beginPath(); g.rect(dx, dy, dw, dh); g.rect(X(L.iL), Y(L.iT), (L.iR-L.iL)*f, (L.iB-L.iT)*f);
+      g.fillStyle = 'rgba(52,199,89,0.42)'; g.fill('evenodd');
+      g.setLineDash([12, 8]); g.strokeStyle = '#FF3B30'; g.lineWidth = 3; g.strokeRect(X(L.iL), Y(L.iT), (L.iR-L.iL)*f, (L.iB-L.iT)*f); g.setLineDash([]);
+      g.strokeStyle = '#34C759'; g.lineWidth = 3; g.strokeRect(dx, dy, dw, dh);
+    }
+    return { dx, dy, dw, dh, f, X, Y };
+  }
+  const sideLine = Q => `L/R ${fmt1(Q.m.lr)}/${fmt1(100-Q.m.lr)}   T/B ${fmt1(Q.m.tb)}/${fmt1(100-Q.m.tb)}`;
+  const gradeTxt = gr => gr && gr.n ? `เซ็นเตอร์ผ่านเกณฑ์ PSA ${gr.n}` : 'เยื้องเกินเกณฑ์';
+
+  /* 2. Story: 1080 x 1920, light, card first */
+  async function drawStory(D){
+    const W = 1080, H = 1920, cv = mkCanvas(W, H), g = cv.getContext('2d');
+    const K = { bg:'#F2F5F4', ink:'#101614', mute:'#5E6B66', band:'#0E2B27', gold:'#E8C27A', line:'#D3DCD8' };
+    g.fillStyle = K.bg; g.fillRect(0, 0, W, H);
+    g.fillStyle = K.band; g.fillRect(0, 0, W, 232);
+    tx(g, 'วัดกันป่ะ!!', W/2, 122, `600 92px ${RF.D}`, K.gold, 'center');
+    tx(g, 'CENTERING LAB', W/2, 178, `500 26px ${RF.D}`, '#FFFFFF', 'center', 8);
+    tx(g, `${D.dateTh}  ·  ${D.rid}`, W/2, 214, `400 19px ${RF.B}`, '#9FB3AD', 'center');
+    let y = 290;
+    if (D.name){ g.font = `600 36px ${RF.B}`; tx(g, wrapText(g, D.name, 940, 1)[0], W/2, y, `600 36px ${RF.B}`, K.ink, 'center'); y += 30; }
+    const P = D.per[D.hero], rc = drawCard(g, P, 90, y + 10, 900, 1130 - y, true);
+    tx(g, `ภาพ${SIDE_NAME[D.hero]}  ·  แถบเขียว = ขอบการ์ด  เส้นประแดง = ขอบใน`, W/2, rc.dy + rc.dh + 40, `400 19px ${RF.B}`, K.mute, 'center');
+    g.fillStyle = K.line; g.fillRect(90, 1212, 900, 2);
+    const cols = D.sides.length === 2 ? [[D.sides[0], 290], [D.sides[1], 790]] : [[D.sides[0], 540]];
+    for (const [k, cx] of cols){
+      const Q = D.per[k];
+      tx(g, SIDE_NAME[k], cx, 1266, `500 26px ${RF.B}`, K.mute, 'center');
+      if (!Q.gr){ tx(g, 'วัดไม่ได้', cx, 1360, `600 48px ${RF.B}`, K.mute, 'center'); continue; }
+      tx(g, ratioTxt(Q.gr.worst), cx, 1370, `600 104px ${RF.M}`, K.ink, 'center');
+      tx(g, sideLine(Q), cx, 1416, `500 20px ${RF.M}`, K.mute, 'center');
+      tagPill(g, cx, 1472, gradeTxt(Q.gr), gColor(Q.gr.n), '#FFFFFF', `600 22px ${RF.D}`);
+    }
+    if (D.note){ g.font = `400 21px ${RF.B}`; tx(g, wrapText(g, D.note.replace(/\n/g, ' · '), 900, 1)[0], W/2, 1538, `400 21px ${RF.B}`, K.ink, 'center'); }
+    tx(g, 'มุมการ์ดทั้ง 4', W/2, 1590, `600 26px ${RF.D}`, K.ink, 'center', 2);
+    const ts = 206, gap = 26, x0 = (W - (4*ts + 3*gap))/2;
+    [['TL','ซ้ายบน'], ['TR','ขวาบน'], ['BL','ซ้ายล่าง'], ['BR','ขวาล่าง']].forEach(([c, lb], i) => {
+      drawCornerTile(g, P.r, c, x0 + i*(ts+gap), 1614, ts);
+      tx(g, lb, x0 + i*(ts+gap) + ts/2, 1614 + ts + 30, `400 19px ${RF.B}`, K.mute, 'center');
+    });
+    tx(g, 'ประเมินเซ็นเตอร์จากรูปถ่าย ไม่ใช่ผลเกรดอย่างเป็นทางการ' + bendNote(), W/2, 1900, `400 17px ${RF.B}`, K.mute, 'center');
+    return toPng(cv);
+  }
+
+  /* 3. Shop label: 1600 x 820, white slab-label look */
+  async function drawLabel(D){
+    const W = 1600, H = 820, cv = mkCanvas(W, H), g = cv.getContext('2d');
+    const K = { ink:'#121614', mute:'#66716D', gold:'#E8C27A', line:'#DCE2DF' };
+    g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, W, H);
+    g.fillStyle = K.ink; g.fillRect(0, 0, W, 112);
+    g.strokeStyle = K.ink; g.lineWidth = 8; g.strokeRect(4, 4, W-8, H-8);
+    tx(g, 'วัดกันป่ะ!!', 50, 80, `600 62px ${RF.D}`, K.gold);
+    tx(g, 'CENTERING LAB', 400, 74, `500 24px ${RF.D}`, '#FFFFFF', 'left', 6);
+    tx(g, D.rid, W-50, 56, `600 22px ${RF.M}`, K.gold, 'right');
+    tx(g, D.dateTh, W-50, 90, `400 20px ${RF.B}`, '#B9C2BE', 'right');
+    const P = D.per[D.hero], rc = drawCard(g, P, 50, 146, 380, 560, false);
+    g.strokeStyle = K.line; g.lineWidth = 2; g.strokeRect(rc.dx - 10, rc.dy - 10, rc.dw + 20, rc.dh + 20);
+    g.font = `600 40px ${RF.B}`; const nl = wrapText(g, D.name || 'ไม่ได้ใส่ชื่อการ์ด', 520, 2);
+    nl.forEach((ln, i) => tx(g, ln, 480, 196 + i*50, `600 40px ${RF.B}`, D.name ? K.ink : K.mute));
+    const ny = 196 + nl.length*50 + 30;
+    tx(g, 'เกรดเซ็นเตอร์ อ้างอิง PSA', 480, ny, `500 22px ${RF.B}`, K.mute);
+    const big = D.overall ? String(D.overall) : '–';
+    tx(g, big, 474, ny + 190, `600 200px ${RF.D}`, D.overall ? gColor(D.overall) : K.mute);
+    g.font = `600 200px ${RF.D}`; const bx = 480 + g.measureText(big).width + 34;
+    tx(g, D.overall ? 'CENTERING ONLY' : 'เกินเกณฑ์', bx, ny + 66, `600 26px ${RF.D}`, K.ink, 'left', 2);
+    ['front','back'].forEach((k, i) => {
+      const Q = D.per[k], t = !Q ? `${SIDE_NAME[k]}  ยังไม่วัด` : !Q.gr ? `${SIDE_NAME[k]}  วัดไม่ได้` : `${SIDE_NAME[k]}  ${ratioTxt(Q.gr.worst)}  ·  ${Q.gr.n ? 'PSA ' + Q.gr.n : 'เกินเกณฑ์'}`;
+      tx(g, t, bx, ny + 122 + i*40, `500 24px ${RF.B}`, Q ? K.ink : K.mute);
+    });
+    g.fillStyle = K.line; g.fillRect(480, 636, 520, 2);
+    if (D.note){ g.font = `400 21px ${RF.B}`; wrapText(g, D.note, 520, 3).forEach((ln, i) => tx(g, ln, 480, 672 + i*30, `400 21px ${RF.B}`, K.ink)); }
+    const ts = 118;
+    g.fillStyle = K.line; g.fillRect(1040, 146, 2, 560);
+    [['front', 1066], ['back', 1314]].forEach(([k, gx]) => {
+      tx(g, SIDE_NAME[k], gx, 170, `600 22px ${RF.B}`, K.ink);
+      const Q = D.per[k];
+      if (!Q){ g.strokeStyle = K.line; g.setLineDash([8, 6]); g.strokeRect(gx, 190, 2*ts + 8, 2*ts + 8); g.setLineDash([]);
+        tx(g, 'ยังไม่วัด', gx + ts + 4, 190 + ts + 12, `500 22px ${RF.B}`, K.mute, 'center'); return; }
+      [['TL',0,0], ['TR',1,0], ['BL',0,1], ['BR',1,1]].forEach(([c, cx, cy]) => drawCornerTile(g, Q.r, c, gx + cx*(ts+8), 190 + cy*(ts+8), ts));
+      tx(g, 'ความกว้างขอบ (มม.)', gx, 488, `500 18px ${RF.B}`, K.mute);
+      tx(g, `ซ้าย ${Q.mm.L.toFixed(2)}  ขวา ${Q.mm.R.toFixed(2)}`, gx, 524, `500 20px ${RF.B}`, K.ink);
+      tx(g, `บน ${Q.mm.T.toFixed(2)}  ล่าง ${Q.mm.B.toFixed(2)}`, gx, 556, `500 20px ${RF.B}`, K.ink);
+    });
+    tx(g, 'ประเมินเซ็นเตอร์จากรูปถ่าย ไม่ใช่ผลเกรดอย่างเป็นทางการ' + bendNote(), W/2, 782, `400 18px ${RF.B}`, K.mute, 'center');
+    return toPng(cv);
+  }
+
+  /* 4. Front vs back: 1600 x 1200, slate */
+  async function drawCompare(D){
+    const W = 1600, H = 1200, cv = mkCanvas(W, H), g = cv.getContext('2d');
+    const K = { bg:'#14171C', panel:'#1C2027', ink:'#EEF1F4', mute:'#8C96A3', line:'#2C323B', gold:'#E8C27A' };
+    g.fillStyle = K.bg; g.fillRect(0, 0, W, H);
+    tx(g, 'วัดกันป่ะ!!', 60, 98, `600 66px ${RF.D}`, K.gold);
+    tx(g, D.name ? D.name : 'เทียบเซ็นเตอร์หน้า-หลัง', 60, 146, `500 26px ${RF.B}`, K.ink);
+    tx(g, 'เกรดเซ็นเตอร์รวม อ้างอิง PSA', W-60, 72, `500 20px ${RF.B}`, K.mute, 'right');
+    tx(g, D.overall ? `PSA ${D.overall}` : '–', W-60, 132, `600 50px ${RF.D}`, D.overall ? K.gold : K.mute, 'right');
+    [['front', 60], ['back', 820]].forEach(([k, px]) => {
+      g.fillStyle = K.panel; g.fillRect(px, 180, 720, 950); g.strokeStyle = K.line; g.lineWidth = 2; g.strokeRect(px+1, 181, 718, 948);
+      tx(g, SIDE_NAME[k], px + 30, 230, `600 28px ${RF.B}`, K.ink);
+      const Q = D.per[k];
+      if (!Q){ tx(g, 'ยังไม่วัด', px + 360, 620, `500 34px ${RF.B}`, K.mute, 'center'); tx(g, 'วัดอีกด้านแล้วกลับมาสร้างภาพใหม่', px + 360, 664, `400 20px ${RF.B}`, K.mute, 'center'); return; }
+      const rc = drawCard(g, Q, px + 30, 264, 660, 600, true), L = Q.L, my = rc.dy + rc.dh/2, mx = rc.dx + rc.dw/2;
+      const small = (t, x, y) => tagPill(g, x, y, t, '#2E3540', K.ink, `500 18px ${RF.M}`);
+      small(Q.mm.L.toFixed(2), rc.dx - 52, my); small(Q.mm.R.toFixed(2), rc.dx + rc.dw + 52, my);
+      small(Q.mm.T.toFixed(2), mx, rc.dy - 26); small(Q.mm.B.toFixed(2), mx, rc.dy + rc.dh + 28);
+      if (!Q.gr){ tx(g, 'วัดไม่ได้', px + 360, 1000, `600 40px ${RF.B}`, K.mute, 'center'); return; }
+      tx(g, ratioTxt(Q.gr.worst), px + 360, 1004, `600 66px ${RF.M}`, K.ink, 'center');
+      tx(g, sideLine(Q), px + 360, 1044, `500 19px ${RF.M}`, K.mute, 'center');
+      tagPill(g, px + 360, 1092, gradeTxt(Q.gr), gColor(Q.gr.n), '#FFFFFF', `600 20px ${RF.D}`);
+    });
+    tx(g, `มม. = ความกว้างขอบโดยประมาณ  ·  ${D.dateTh}  ·  ${D.rid}  ·  ประเมินจากรูปถ่าย ไม่ใช่ผลเกรดอย่างเป็นทางการ${bendNote()}`, W/2, 1172, `400 17px ${RF.B}`, K.mute, 'center');
+    return toPng(cv);
+  }
+
+  /* 5. Blueprint: 1600 x 1600, navy grid, dimensioned drawing */
+  async function drawBlueprint(D){
+    const W = 1600, H = 1600, cv = mkCanvas(W, H), g = cv.getContext('2d');
+    const K = { bg:'#0D2340', minor:'#14305A', major:'#1E4475', ink:'#E6F0FF', cyan:'#7FD6FF', mute:'#8FA9C9', red:'#FF6B5E' };
+    g.fillStyle = K.bg; g.fillRect(0, 0, W, H);
+    for (let v = 0; v <= W; v += 40){ g.fillStyle = v % 200 ? K.minor : K.major; g.fillRect(v, 0, 1, H); g.fillRect(0, v, W, 1); }
+    g.strokeStyle = K.cyan; g.lineWidth = 2; g.strokeRect(40, 40, W-80, H-80);
+    tx(g, 'วัดกันป่ะ!!', 90, 136, `600 72px ${RF.D}`, '#FFFFFF');
+    tx(g, 'CENTERING LAB · BLUEPRINT', 92, 184, `500 24px ${RF.D}`, K.cyan, 'left', 6);
+    const P = D.per[D.hero], mmW = P.r.mm[0], mmH = P.r.mm[1], k = 840/mmH, w = mmW*k, h = mmH*k, x = 190, y = 330;
+    const ar = (x1, y1, x2, y2) => { const a = Math.atan2(y2-y1, x2-x1), s = 12;
+      g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke();
+      for (const [px, py, aa] of [[x1, y1, a + Math.PI], [x2, y2, a]]){ g.beginPath(); g.moveTo(px, py); g.lineTo(px - s*Math.cos(aa - 0.4), py - s*Math.sin(aa - 0.4)); g.moveTo(px, py); g.lineTo(px - s*Math.cos(aa + 0.4), py - s*Math.sin(aa + 0.4)); g.stroke(); } };
+    const mm = P.mm, ix = x + mm.L*k, iy = y + mm.T*k, iw = w - (mm.L + mm.R)*k, ih = h - (mm.T + mm.B)*k;
+    g.beginPath(); g.rect(x, y, w, h); g.rect(ix, iy, iw, ih); g.fillStyle = 'rgba(127,214,255,0.22)'; g.fill('evenodd');
+    g.strokeStyle = K.cyan; g.lineWidth = 3; g.strokeRect(x, y, w, h);
+    g.setLineDash([12, 8]); g.strokeStyle = K.red; g.lineWidth = 2.5; g.strokeRect(ix, iy, iw, ih); g.setLineDash([]);
+    g.strokeStyle = K.mute; g.lineWidth = 1.5;
+    ar(x, y - 70, x + w, y - 70); tx(g, `${mmW.toFixed(1)} มม.`, x + w/2, y - 84, `500 22px ${RF.B}`, K.mute, 'center');
+    ar(x + w + 130, y, x + w + 130, y + h); tx(g, `${mmH.toFixed(1)} มม.`, x + w + 130, y - 16, `500 22px ${RF.B}`, K.mute, 'center');
+    g.strokeStyle = K.cyan; g.lineWidth = 1.5;
+    const lead = (fx, fy, tx2, ty2) => { g.beginPath(); g.moveTo(fx, fy); g.lineTo(tx2, ty2); g.stroke(); g.fillStyle = K.cyan; g.beginPath(); g.arc(fx, fy, 4, 0, Math.PI*2); g.fill(); };
+    const midY = y + h*0.42, midX = x + w*0.36;
+    lead(x + mm.L*k/2, midY, x - 20, midY); tx(g, `ซ้าย ${mm.L.toFixed(2)}`, x - 26, midY - 10, `600 24px ${RF.B}`, K.ink, 'right');
+    lead(x + w - mm.R*k/2, midY, x + w + 20, midY); tx(g, `ขวา ${mm.R.toFixed(2)}`, x + w + 26, midY - 10, `600 24px ${RF.B}`, K.ink);
+    lead(midX, y + mm.T*k/2, midX, y - 20); tx(g, `บน ${mm.T.toFixed(2)}`, midX + 12, y - 26, `600 24px ${RF.B}`, K.ink);
+    lead(midX, y + h - mm.B*k/2, midX, y + h + 24); tx(g, `ล่าง ${mm.B.toFixed(2)}`, midX + 12, y + h + 50, `600 24px ${RF.B}`, K.ink);
+    g.lineWidth = 1.5; g.setLineDash([18, 6, 4, 6]);
+    g.strokeStyle = K.cyan; g.beginPath(); g.moveTo(x + w/2, y + 20); g.lineTo(x + w/2, y + h - 20); g.moveTo(x + 20, y + h/2); g.lineTo(x + w - 20, y + h/2); g.stroke();
+    g.strokeStyle = K.red; g.beginPath(); g.moveTo(ix + iw/2, iy + 20); g.lineTo(ix + iw/2, iy + ih - 20); g.moveTo(ix + 20, iy + ih/2); g.lineTo(ix + iw - 20, iy + ih/2); g.stroke();
+    g.setLineDash([]);
+    if (P.gr){
+      tx(g, `ซ้าย/ขวา  ${fmt1(P.m.lr)} / ${fmt1(100-P.m.lr)}`, x, y + h + 130, `600 40px ${RF.M}`, K.cyan);
+      tx(g, `บน/ล่าง  ${fmt1(P.m.tb)} / ${fmt1(100-P.m.tb)}`, x, y + h + 184, `600 40px ${RF.M}`, K.cyan);
+    }
+    const tbx = 1020, tby = 300, tbw = 500, rowH = 62;
+    const rows = [['ชื่อการ์ด', D.name || '–'], ['ด้านที่วาด', SIDE_NAME[D.hero]], ['ขนาดการ์ด', `${SIZES[S.size][0]} × ${SIZES[S.size][1]} มม.`]];
+    for (const kk of ['front','back']){
+      const Q = D.per[kk];
+      rows.push([`${SIDE_NAME[kk]}`, !Q ? 'ยังไม่วัด' : !Q.gr ? 'วัดไม่ได้' : `${ratioTxt(Q.gr.worst)} · ${Q.gr.n ? 'PSA ' + Q.gr.n : 'เกินเกณฑ์'}`]);
+    }
+    rows.push(['เกรดเซ็นเตอร์', D.overall ? `PSA ${D.overall} (เฉพาะเซ็นเตอร์)` : '–'], ['วันที่', D.dateTh], ['รหัส', D.rid]);
+    g.fillStyle = 'rgba(13,35,64,0.85)'; g.fillRect(tbx, tby, tbw, rows.length*rowH);
+    g.strokeStyle = K.cyan; g.lineWidth = 2; g.strokeRect(tbx, tby, tbw, rows.length*rowH);
+    rows.forEach(([a, b], i) => {
+      const ry = tby + i*rowH; if (i) { g.fillStyle = K.major; g.fillRect(tbx, ry, tbw, 1.5); }
+      tx(g, a, tbx + 18, ry + 40, `500 19px ${RF.B}`, K.mute);
+      g.font = `600 22px ${RF.B}`; tx(g, wrapText(g, b, 300, 1)[0], tbx + tbw - 18, ry + 40, `600 22px ${RF.B}`, K.ink, 'right');
+    });
+    g.fillStyle = K.major; g.fillRect(tbx + 160, tby, 1.5, rows.length*rowH);
+    const ny = tby + rows.length*rowH + 60;
+    tx(g, 'หมายเหตุ', tbx, ny, `500 20px ${RF.B}`, K.mute);
+    g.font = `400 22px ${RF.B}`; const nls = wrapText(g, D.note || '–', tbw, 4); nls.forEach((ln, i) => tx(g, ln, tbx, ny + 40 + i*34, `400 22px ${RF.B}`, K.ink));
+    const py0 = ny + 40 + nls.length*34 + 10, ph = drawCard(g, P, tbx, py0, tbw, 1310 - py0, false);
+    g.strokeStyle = K.mute; g.lineWidth = 1; g.strokeRect(ph.dx, ph.dy, ph.dw, ph.dh);
+    g.fillStyle = 'rgba(127,214,255,0.4)'; g.fillRect(tbx, 1340, 40, 20); g.strokeStyle = K.cyan; g.strokeRect(tbx, 1340, 40, 20);
+    tx(g, 'ขอบการ์ด', tbx + 52, 1358, `400 20px ${RF.B}`, K.ink);
+    g.setLineDash([12, 8]); g.strokeStyle = K.red; g.lineWidth = 2.5; g.beginPath(); g.moveTo(tbx + 200, 1350); g.lineTo(tbx + 252, 1350); g.stroke(); g.setLineDash([]);
+    tx(g, 'ขอบใน (กรอบภาพ)', tbx + 264, 1358, `400 20px ${RF.B}`, K.ink);
+    tx(g, 'เส้นจุดประ: ฟ้า = กึ่งกลางการ์ด  แดง = กึ่งกลางกรอบภาพ', tbx, 1400, `400 20px ${RF.B}`, K.ink);
+    tx(g, 'ประเมินเซ็นเตอร์จากรูปถ่าย ไม่ใช่ผลเกรดอย่างเป็นทางการ' + bendNote(), W/2, 1530, `400 18px ${RF.B}`, K.mute, 'center');
+    return toPng(cv);
+  }
+
+  async function buildReport(){
+    try { await Promise.all(['600 96px "Chakra Petch"', '500 22px "IBM Plex Sans Thai"', '600 22px "IBM Plex Sans Thai"', '600 40px "IBM Plex Mono"'].map(f => document.fonts.load(f, 'วัดกันป่ะ 0123'))); } catch(_){}
+    if (!Object.keys(S.results).length) return null;
+    if (S.tpl === 'lab') return drawLab();
+    const D = repData();
+    return S.tpl === 'story' ? drawStory(D) : S.tpl === 'label' ? drawLabel(D) : S.tpl === 'compare' ? drawCompare(D) : drawBlueprint(D);
+  }
+  document.querySelectorAll('#tpls .chip').forEach(b => b.addEventListener('click', () => {
+    S.tpl = b.dataset.t;
+    document.querySelectorAll('#tpls .chip').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    scheduleReport();
+  }));
+
+  function saveMsg(t, ok){ const m = $('saveMsg'); m.textContent = t; m.hidden = !t; m.classList.toggle('okmsg', !!ok); }
+  /* iPhone: the share sheet's "Save Image" puts it in Photos. Elsewhere: a normal download. */
+  $('saveReport').addEventListener('click', async () => {
+    saveMsg('');
+    if (!reportBlob){ saveMsg('กำลังสร้างภาพสรุป ลองกดอีกครั้งในอีกสักครู่'); return; }
+    const now = new Date(), p2 = n => String(n).padStart(2, '0');
+    const nm = $('cardName').value.trim().replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, '-').slice(0, 40) || 'centering';
+    const filename = `wadkanpa-${nm}-${S.tpl}-${now.getFullYear()}${p2(now.getMonth()+1)}${p2(now.getDate())}.png`;
+    const file = new File([reportBlob], filename, { type:'image/png' });
+    try {
+      if (navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file] }); saveMsg('เลือก "บันทึกภาพ" ในเมนูแชร์เพื่อเก็บลงคลังรูป', true); return; }
+    } catch (e){ if (e && e.name === 'AbortError') return; }
+    const a = document.createElement('a'), u = URL.createObjectURL(file); a.href = u; a.download = filename; document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(u), 4000);
+    saveMsg('ดาวน์โหลดภาพแล้ว', true);
+  });
+  $('clearSides').addEventListener('click', newCard);
+  $('nextSide').addEventListener('click', () => { setSide(otherSide()); if (!S.src) openCam(); });
+  $('emptyBack').addEventListener('click', () => setSide(otherSide()));
+  $('cardName').addEventListener('input', scheduleReport);
+  $('cardNote').addEventListener('input', scheduleReport);
+
+  function showMsg(t){ const m = $('msg'); m.textContent = t; m.hidden = false; }
+  function hideMsg(){ $('msg').hidden = true; }
+  const loadImg = f => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = URL.createObjectURL(f); });
+  /* One photo goes to the side on screen. Two photos: first is the front, second the back. */
+  async function loadFiles(list){
+    const fs = [...(list || [])].filter(f => f && f.type.startsWith('image/'));
+    if (!fs.length){ if (list && list.length) showMsg('ไฟล์นี้ไม่ใช่รูปภาพ ลองเลือกไฟล์ .jpg หรือ .png'); return; }
+    try {
+      if (fs.length >= 2){
+        const [a, b] = await Promise.all(fs.slice(0, 2).map(loadImg));
+        saveSlot();
+        S.side = 'back'; setSource(b, false); saveSlot();
+        S.side = 'front'; setSource(a, false);
+        updSideBtns();
+      } else setSource(await loadImg(fs[0]), false);
+    } catch (_){ showMsg('เปิดรูปนี้ไม่ได้ ถ้าเป็นไฟล์ HEIC จาก iPhone ให้บันทึกเป็น .jpg ก่อนแล้วเลือกใหม่'); }
+  }
+  const loadFile = f => loadFiles(f ? [f] : []);
+  /* ---------- camera with spirit level ---------- */
+  /* Tilt limits in degrees: up to OK_DEG is green (auto capture), above LOCK_DEG the shutter locks. */
+  const OK_DEG = 1.5, LOCK_DEG = 3, STEADY_DEG = 0.3, STEADY_MS = 500, GUIDE = [63, 88];
+  const CAM = { stream:null, track:null, sensor:false, b:null, g:null, hist:[], cal:{ b:0, g:0 }, auto:true, steadySince:0, busy:false,
+                devices:[], devIdx:0, zooms:null, zoomIdx:0, motionAsked:false, motionOK:false, blob:null, shot:null, lastEvt:0, raf:0, open:false };
+  try { const c = JSON.parse(localStorage.getItem('wkp-cal') || 'null'); if (c && isFinite(c.b) && isFinite(c.g)) CAM.cal = c; } catch(_){}
+  const cvid = $('cvideo'), cguide = $('cguide'), cbub = $('cbub'), cshut = $('cshut'), cring = $('cring');
+  function ctoast(t, ms = 2400){ const el = $('ctoast'); el.textContent = t; el.hidden = false; clearTimeout(ctoast.t); ctoast.t = setTimeout(() => el.hidden = true, ms); }
+  const camErr = e => !window.isSecureContext ? 'กล้องใช้ได้เฉพาะลิงก์ https'
+    : e && e.name === 'NotAllowedError' ? 'ไม่ได้รับอนุญาตให้ใช้กล้อง เปิดได้ที่ การตั้งค่า › Safari › กล้อง แล้วลองใหม่ หรือใช้ปุ่มเลือกรูปแทน'
+    : 'เปิดกล้องไม่ได้ ลองปิดแอปอื่นที่ใช้กล้องอยู่ หรือใช้ปุ่มเลือกรูปแทน';
+
+  async function openCam(){
+    hideMsg();
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ showMsg('เบราว์เซอร์นี้เปิดกล้องไม่ได้ ใช้ปุ่มเลือกรูปแทน'); return; }
+    if (!CAM.motionAsked){
+      CAM.motionAsked = true;
+      try {
+        CAM.motionOK = (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function')
+          ? (await DeviceOrientationEvent.requestPermission()) === 'granted' : true;
+      } catch(_){ CAM.motionOK = false; }
+      if (CAM.motionOK) addEventListener('deviceorientation', onOrient);
+    }
+    try { await startStream(CAM.devIdx && CAM.devices[CAM.devIdx] ? CAM.devices[CAM.devIdx].deviceId : undefined); }
+    catch (e){ showMsg(camErr(e)); return; }
+    CAM.open = true; CAM.hist = []; CAM.steadySince = 0; CAM.busy = false;
+    $('cam').hidden = false; $('creview').hidden = true; document.documentElement.classList.add('cam-open');
+    $('cSideTxt').textContent = 'กำลังถ่าย' + SIDE_NAME[S.side];
+    layoutCam();
+    if (!CAM.motionOK) ctoast('ไม่ได้รับอนุญาตให้อ่านเซนเซอร์ ปุ่มถ่ายจะไม่ล็อก', 3500);
+    cancelAnimationFrame(CAM.raf); CAM.raf = requestAnimationFrame(camLoop);
+  }
+  function stopStream(){ if (CAM.stream){ CAM.stream.getTracks().forEach(t => t.stop()); CAM.stream = null; } }
+  function closeCam(){
+    CAM.open = false; stopStream(); cancelAnimationFrame(CAM.raf);
+    $('cam').hidden = true; $('creview').hidden = true; $('cCalSheet').hidden = true;
+    document.documentElement.classList.remove('cam-open');
+  }
+  async function startStream(deviceId){
+    stopStream();
+    const base = deviceId ? { deviceId:{ exact:deviceId } } : { facingMode:{ ideal:'environment' } };
+    const stream = await navigator.mediaDevices.getUserMedia({ audio:false, video:{ ...base, width:{ ideal:3840 }, height:{ ideal:2160 } } });
+    CAM.stream = stream; CAM.track = stream.getVideoTracks()[0];
+    cvid.srcObject = stream; await cvid.play().catch(() => {});
+    await new Promise(r => cvid.readyState >= 1 ? r() : cvid.addEventListener('loadedmetadata', r, { once:true }));
     try {
       const all = await navigator.mediaDevices.enumerateDevices();
-      S.devices = all.filter(d => d.kind === 'videoinput' && !/front|หน้า/i.test(d.label));
-      $('lensBtn').hidden = S.devices.length < 2;
+      CAM.devices = all.filter(d => d.kind === 'videoinput' && !/front|หน้า/i.test(d.label));
+      $('cLens').hidden = CAM.devices.length < 2;
     } catch(_){}
-    const caps = S.track.getCapabilities ? S.track.getCapabilities() : {};
+    const caps = CAM.track.getCapabilities ? CAM.track.getCapabilities() : {};
     if (caps.zoom && caps.zoom.max >= 2){
-      S.zooms = [1, 2, ...(caps.zoom.max >= 3 ? [3] : [])].filter(z => z >= caps.zoom.min);
-      S.zoomIdx = 0; $('zoomBtn').hidden = false; $('zoomBtn').textContent = '1×';
-    } else { S.zooms = null; $('zoomBtn').hidden = true; }
-    layoutGuide();
+      CAM.zooms = [1, 2, ...(caps.zoom.max >= 3 ? [3] : [])].filter(z => z >= caps.zoom.min);
+      CAM.zoomIdx = 0; $('cZoom').hidden = false; $('cZoom').textContent = '1×';
+    } else { CAM.zooms = null; $('cZoom').hidden = true; }
+    layoutCam();
   }
-
-  /* ---------- guide frame and resolution estimate ---------- */
-  function layoutGuide(){
-    const W = innerWidth, H = innerHeight, free = H * 0.62;
-    const h = Math.min(free * GUIDE_FILL / 0.82, W * GUIDE_FILL * CARD[1] / CARD[0], H * 0.6), w = h * CARD[0] / CARD[1];
-    guide.style.width = w + 'px'; guide.style.height = h + 'px';
-    const vw = video.videoWidth, vh = video.videoHeight;
-    if (vw && vh){
-      const scale = Math.max(W / vw, H / vh), pxmm = (h / scale) / CARD[1];
-      $('res').textContent = `กล้อง ${vw}×${vh} · การ์ดเต็มกรอบ ≈ ${pxmm.toFixed(1)} px/มม.`;
-    }
+  /* The guide sits in the space between the top buttons and the bottom panel, so nothing covers the card. */
+  function layoutCam(){
+    if (!CAM.open) return;
+    const W = innerWidth, top = $('ctop').getBoundingClientRect().bottom + 8, bot = $('cbot').getBoundingClientRect().top - 8;
+    const avail = Math.max(120, bot - top), h = Math.min(avail*0.94, W*0.86*GUIDE[1]/GUIDE[0]), w = h*GUIDE[0]/GUIDE[1], cy = (top + bot)/2;
+    Object.assign(cguide.style, { width:w + 'px', height:h + 'px', left:(W - w)/2 + 'px', top:(cy - h/2) + 'px' });
+    const lv = $('clevel'); lv.style.left = W/2 + 'px'; lv.style.top = cy + 'px';
+    const vw = cvid.videoWidth, vh = cvid.videoHeight;
+    if (vw && vh){ const sc = Math.max(W/vw, innerHeight/vh); $('cres').textContent = `กล้อง ${vw}×${vh} · การ์ดเต็มกรอบ ≈ ${((h/sc)/GUIDE[1]).toFixed(1)} px/มม.`; }
   }
-  addEventListener('resize', layoutGuide);
+  addEventListener('resize', layoutCam);
 
-  /* ---------- sensor ---------- */
   function onOrient(e){
     if (e.beta == null || e.gamma == null) return;
-    S.sensor = true; S.lastEvt = performance.now();
+    CAM.sensor = true; CAM.lastEvt = performance.now();
     const a = 0.25;
-    S.b = S.b == null ? e.beta : S.b + a*(e.beta - S.b);
-    S.g = S.g == null ? e.gamma : S.g + a*(e.gamma - S.g);
-    const t = performance.now(); S.hist.push({ t, b:S.b, g:S.g });
-    while (S.hist.length && t - S.hist[0].t > 900) S.hist.shift();
+    CAM.b = CAM.b == null ? e.beta : CAM.b + a*(e.beta - CAM.b);
+    CAM.g = CAM.g == null ? e.gamma : CAM.g + a*(e.gamma - CAM.g);
+    const t = performance.now(); CAM.hist.push({ t, b:CAM.b, g:CAM.g });
+    while (CAM.hist.length && t - CAM.hist[0].t > 900) CAM.hist.shift();
   }
-  const tilt = () => ({ b:S.b - S.cal.b, g:S.g - S.cal.g });
-  function steady(){
-    const t = performance.now(), w = S.hist.filter(h => t - h.t <= STEADY_MS);
+  function camSteady(){
+    const t = performance.now(), w = CAM.hist.filter(h => t - h.t <= STEADY_MS);
     if (w.length < 5 || t - w[0].t < STEADY_MS*0.8) return false;
     const r = k => Math.max(...w.map(h => h[k])) - Math.min(...w.map(h => h[k]));
     return r('b') <= STEADY_DEG && r('g') <= STEADY_DEG;
   }
-  function state(){
-    if (!S.sensor) return { lvl:'none' };
-    const { b, g } = tilt(), m = Math.max(Math.abs(b), Math.abs(g));
-    return { lvl: m <= OK_DEG ? 'ok' : m <= LOCK_DEG ? 'warn' : 'bad', b, g, m, still: steady() };
+  function camState(){
+    if (!CAM.sensor) return { lvl:'none' };
+    const b = CAM.b - CAM.cal.b, g = CAM.g - CAM.cal.g, m = Math.max(Math.abs(b), Math.abs(g));
+    return { lvl: m <= OK_DEG ? 'ok' : m <= LOCK_DEG ? 'warn' : 'bad', b, g, still: camSteady() };
   }
-  /* Which edge to lift. gamma > 0: right edge is lower. beta > 0: top edge is higher. */
-  function advice(b, g){
+  /* Which edge to lift. gamma > 0: the right edge is lower. beta > 0: the top edge is higher. */
+  function camAdvice(b, g){
     if (Math.abs(b) > 30 || Math.abs(g) > 30) return 'ถือมือถือให้ขนานกับโต๊ะ กล้องหันลงหาการ์ด';
     const out = [];
     if (Math.abs(g) > OK_DEG) out.push(g > 0 ? 'ยกขอบขวาขึ้น' : 'ยกขอบซ้ายขึ้น');
     if (Math.abs(b) > OK_DEG) out.push(b > 0 ? 'ยกขอบล่างขึ้น' : 'ยกขอบบนขึ้น');
     return out.join(' · ') + 'นิดหนึ่ง';
   }
-
-  /* ---------- UI loop ---------- */
-  function render(){
-    const st = state(), hint = $('hint');
-    guide.className = 'guide' + (st.lvl === 'ok' ? ' ok' : st.lvl === 'warn' ? ' warn' : st.lvl === 'none' ? ' ok' : '');
+  function camRender(){
+    const st = camState(), hint = $('chint');
+    cguide.className = 'cg' + (st.lvl === 'ok' || st.lvl === 'none' ? ' ok' : st.lvl === 'warn' ? ' warn' : '');
     if (st.lvl === 'none'){
-      hint.className = 'hint warn'; hint.textContent = 'ไม่มีระดับน้ำ เล็งให้ตรงเอง';
-      $('read').textContent = 'เซนเซอร์: ไม่มีข้อมูล';
-      shutter.disabled = S.busy; bubble.style.transform = 'none'; $('level').hidden = true; return;
+      hint.className = 'chint warn'; hint.textContent = 'ไม่มีระดับน้ำ เล็งให้ตรงเอง';
+      $('cread').textContent = 'เซนเซอร์: ไม่มีข้อมูล'; $('clevel').hidden = true; cshut.disabled = CAM.busy; return st;
     }
-    $('level').hidden = false;
-    const k = 8, clamp = v => Math.max(-28, Math.min(28, v));
-    bubble.style.transform = `translate(${clamp(-st.g*k)}px, ${clamp(-st.b*k)}px)`;
-    bubble.style.background = st.lvl === 'ok' ? 'var(--ok)' : st.lvl === 'warn' ? 'var(--warn)' : 'var(--bad)';
-    $('read').textContent = `ซ้าย-ขวา ${Math.abs(st.g).toFixed(1)}° · หน้า-หลัง ${Math.abs(st.b).toFixed(1)}°`;
-    shutter.disabled = S.busy || st.lvl === 'bad';
-    if (st.lvl === 'bad'){ hint.className = 'hint bad'; hint.textContent = advice(st.b, st.g); }
-    else if (st.lvl === 'warn'){ hint.className = 'hint warn'; hint.textContent = 'ถ่ายได้ แต่ยังเอียง · ' + advice(st.b, st.g); }
-    else { hint.className = 'hint ok'; hint.textContent = st.still ? (S.auto ? 'ตรงแล้ว ถือนิ่ง ๆ…' : 'ตรงแล้ว กดถ่ายได้เลย') : 'ตรงแล้ว ถือให้นิ่ง'; }
+    $('clevel').hidden = false;
+    const k = 8, cl = v => Math.max(-28, Math.min(28, v));
+    cbub.style.transform = `translate(${cl(-st.g*k)}px, ${cl(-st.b*k)}px)`;
+    cbub.style.background = st.lvl === 'ok' ? '#5DCAA5' : st.lvl === 'warn' ? '#E8B45A' : '#F0997B';
+    $('cread').textContent = `ซ้าย-ขวา ${Math.abs(st.g).toFixed(1)}° · หน้า-หลัง ${Math.abs(st.b).toFixed(1)}°`;
+    cshut.disabled = CAM.busy || st.lvl === 'bad';
+    if (st.lvl === 'bad'){ hint.className = 'chint bad'; hint.textContent = camAdvice(st.b, st.g); }
+    else if (st.lvl === 'warn'){ hint.className = 'chint warn'; hint.textContent = 'ถ่ายได้ แต่ยังเอียง · ' + camAdvice(st.b, st.g); }
+    else { hint.className = 'chint ok'; hint.textContent = st.still ? (CAM.auto ? 'ตรงแล้ว ถือนิ่ง ๆ…' : 'ตรงแล้ว กดถ่ายได้เลย') : 'ตรงแล้ว ถือให้นิ่ง'; }
     return st;
   }
-  function loop(){
-    if (!$('cam').hidden){
-      const st = render() || {};
+  function camLoop(){
+    if (!CAM.open) return;
+    if ($('creview').hidden && $('cCalSheet').hidden){
+      const st = camRender();
       let p = 0;
-      if (S.auto && st.lvl === 'ok' && st.still && !S.busy){
-        if (!S.steadySince) S.steadySince = performance.now();
-        p = Math.min(1, (performance.now() - S.steadySince) / STEADY_MS);
-        if (p >= 1){ S.steadySince = 0; capture(); }
-      } else S.steadySince = 0;
-      ring.setAttribute('stroke-dashoffset', String(226*(1 - p)));
-      if (S.sensor && performance.now() - S.lastEvt > 1500){ S.sensor = false; S.hist = []; }
+      if (CAM.auto && st.lvl === 'ok' && st.still && !CAM.busy){
+        if (!CAM.steadySince) CAM.steadySince = performance.now();
+        p = Math.min(1, (performance.now() - CAM.steadySince)/STEADY_MS);
+        if (p >= 1){ CAM.steadySince = 0; camCapture(); }
+      } else CAM.steadySince = 0;
+      cring.setAttribute('stroke-dashoffset', String(226*(1 - p)));
+      if (CAM.sensor && performance.now() - CAM.lastEvt > 1500){ CAM.sensor = false; CAM.hist = []; }
     }
-    requestAnimationFrame(loop);
+    CAM.raf = requestAnimationFrame(camLoop);
   }
-
-  /* ---------- capture ---------- */
-  async function capture(){
-    if (S.busy || !video.videoWidth) return;
-    S.busy = true;
-    const st = state(), c = document.createElement('canvas');
-    c.width = video.videoWidth; c.height = video.videoHeight;
-    c.getContext('2d').drawImage(video, 0, 0);
+  async function camCapture(){
+    if (CAM.busy || !cvid.videoWidth) return;
+    CAM.busy = true;
+    const st = camState(), c = document.createElement('canvas');
+    c.width = cvid.videoWidth; c.height = cvid.videoHeight;
+    c.getContext('2d').drawImage(cvid, 0, 0);
     if (navigator.vibrate) navigator.vibrate(30);
-    S.blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.95));
-    S.shotInfo = { w:c.width, h:c.height, b:st.b, g:st.g, sensor:st.lvl !== 'none', at:new Date() };
-    const url = URL.createObjectURL(S.blob), img = $('shot');
-    if (img.dataset.url) URL.revokeObjectURL(img.dataset.url);
-    img.src = url; img.dataset.url = url;
-    $('shotMeta').textContent = (S.shotInfo.sensor ? `ถ่ายตอนเอียง ซ้าย-ขวา ${Math.abs(st.g).toFixed(1)}° · หน้า-หลัง ${Math.abs(st.b).toFixed(1)}° · ` : 'ไม่มีข้อมูลเซนเซอร์ · ') + `${c.width}×${c.height} px`;
-    $('saveMsg').hidden = true;
-    show('review'); S.busy = false;
+    CAM.blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.95));
+    CAM.shot = st.lvl === 'none' ? null : { b:st.b, g:st.g };
+    const img = $('cshot'); if (img.dataset.url) URL.revokeObjectURL(img.dataset.url);
+    const u = URL.createObjectURL(CAM.blob); img.src = u; img.dataset.url = u;
+    $('cshotMeta').textContent = (CAM.shot ? `ถ่ายตอนเอียง ซ้าย-ขวา ${Math.abs(st.g).toFixed(1)}° · หน้า-หลัง ${Math.abs(st.b).toFixed(1)}°` : 'ไม่มีข้อมูลเซนเซอร์') + ` · ${c.width}×${c.height} px`;
+    $('creview').hidden = false; CAM.busy = false;
   }
-  shutter.addEventListener('click', capture);
-  $('again').addEventListener('click', () => { S.hist = []; S.steadySince = 0; show('cam'); });
-  $('save').addEventListener('click', async () => {
-    if (!S.blob) return;
-    const d = S.shotInfo.at, p = n => String(n).padStart(2, '0');
-    const name = `wadkanpa-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}.jpg`;
-    const file = new File([S.blob], name, { type:'image/jpeg' }), m = $('saveMsg');
-    try {
-      if (navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file] }); m.textContent = 'เลือก "บันทึกภาพ" ในเมนูแชร์เพื่อเก็บลงคลังรูป'; m.hidden = false; return; }
-    } catch (e){ if (e && e.name === 'AbortError') return; }
-    const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name; document.body.append(a); a.click(); a.remove();
-    m.textContent = 'ดาวน์โหลดรูปแล้ว'; m.hidden = false;
+  cshut.addEventListener('click', camCapture);
+  $('cAgain').addEventListener('click', () => { $('creview').hidden = true; CAM.hist = []; CAM.steadySince = 0; });
+  $('cUse').addEventListener('click', () => {
+    if (!CAM.blob) return;
+    const tilt = CAM.shot, im = new Image();
+    im.onload = () => { closeCam(); setSource(im, false, tilt); };
+    im.onerror = () => { closeCam(); showMsg('เปิดรูปที่ถ่ายไม่ได้ ลองถ่ายใหม่'); };
+    im.src = URL.createObjectURL(CAM.blob);
   });
-
-  /* ---------- controls ---------- */
-  $('autoBtn').addEventListener('click', e => { S.auto = !S.auto; e.currentTarget.setAttribute('aria-pressed', String(S.auto)); S.steadySince = 0; });
-  $('calBtn').addEventListener('click', () => { $('calSheet').hidden = false; updCal(); });
-  $('calCancel').addEventListener('click', () => $('calSheet').hidden = true);
-  function updCal(){
-    $('calNow').textContent = `ศูนย์ปัจจุบัน: ซ้าย-ขวา ${S.cal.g.toFixed(1)}° · หน้า-หลัง ${S.cal.b.toFixed(1)}°`;
-  }
-  $('calSet').addEventListener('click', () => {
-    if (!S.sensor){ toast('ยังไม่มีค่าเซนเซอร์'); return; }
-    const w = S.hist.slice(-20); if (!w.length) return;
-    S.cal = { b:w.reduce((s,h) => s + h.b, 0)/w.length, g:w.reduce((s,h) => s + h.g, 0)/w.length };
-    try { localStorage.setItem('wkp-cal', JSON.stringify(S.cal)); } catch(_){}
-    updCal(); $('calSheet').hidden = true; toast('ตั้งศูนย์แล้ว');
+  $('cfile').addEventListener('change', e => { const f = e.target.files; closeCam(); loadFiles(f); e.target.value = ''; });
+  $('cClose').addEventListener('click', closeCam);
+  $('cAuto').addEventListener('click', e => { CAM.auto = !CAM.auto; e.currentTarget.setAttribute('aria-pressed', String(CAM.auto)); CAM.steadySince = 0; });
+  const updCal = () => { $('cCalNow').textContent = `ศูนย์ปัจจุบัน: ซ้าย-ขวา ${CAM.cal.g.toFixed(1)}° · หน้า-หลัง ${CAM.cal.b.toFixed(1)}°`; };
+  $('cCal').addEventListener('click', () => { $('cCalSheet').hidden = false; updCal(); });
+  $('cCalClose').addEventListener('click', () => $('cCalSheet').hidden = true);
+  $('cCalSet').addEventListener('click', () => {
+    if (!CAM.sensor){ ctoast('ยังไม่มีค่าเซนเซอร์'); return; }
+    const w = CAM.hist.slice(-20); if (!w.length) return;
+    CAM.cal = { b:w.reduce((s, h) => s + h.b, 0)/w.length, g:w.reduce((s, h) => s + h.g, 0)/w.length };
+    try { localStorage.setItem('wkp-cal', JSON.stringify(CAM.cal)); } catch(_){}
+    updCal(); $('cCalSheet').hidden = true; ctoast('ตั้งศูนย์แล้ว');
   });
-  $('calReset').addEventListener('click', () => {
-    S.cal = { b:0, g:0 }; try { localStorage.removeItem('wkp-cal'); } catch(_){}
-    updCal(); toast('ล้างค่าศูนย์แล้ว');
+  $('cCalReset').addEventListener('click', () => { CAM.cal = { b:0, g:0 }; try { localStorage.removeItem('wkp-cal'); } catch(_){} updCal(); ctoast('ล้างค่าศูนย์แล้ว'); });
+  $('cLens').addEventListener('click', async () => {
+    if (CAM.devices.length < 2) return;
+    CAM.devIdx = (CAM.devIdx + 1) % CAM.devices.length;
+    try { await startStream(CAM.devices[CAM.devIdx].deviceId); ctoast(CAM.devices[CAM.devIdx].label || `เลนส์ ${CAM.devIdx + 1}`); }
+    catch(_){ ctoast('สลับเลนส์ไม่ได้'); }
   });
-  $('lensBtn').addEventListener('click', async () => {
-    if (S.devices.length < 2) return;
-    S.devIdx = (S.devIdx + 1) % S.devices.length;
-    try { await openCamera(S.devices[S.devIdx].deviceId); toast(S.devices[S.devIdx].label || `เลนส์ ${S.devIdx + 1}`); }
-    catch(_){ toast('สลับเลนส์ไม่ได้'); }
-  });
-  $('zoomBtn').addEventListener('click', async () => {
-    if (!S.zooms) return;
-    S.zoomIdx = (S.zoomIdx + 1) % S.zooms.length;
-    const z = S.zooms[S.zoomIdx];
-    try { await S.track.applyConstraints({ advanced:[{ zoom:z }] }); $('zoomBtn').textContent = z + '×'; }
-    catch(_){ toast('ซูมไม่ได้'); }
+  $('cZoom').addEventListener('click', async () => {
+    if (!CAM.zooms) return;
+    CAM.zoomIdx = (CAM.zoomIdx + 1) % CAM.zooms.length;
+    const z = CAM.zooms[CAM.zoomIdx];
+    try { await CAM.track.applyConstraints({ advanced:[{ zoom:z }] }); $('cZoom').textContent = z + '×'; layoutCam(); }
+    catch(_){ ctoast('ซูมไม่ได้'); }
   });
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden && S.stream){ S.stream.getTracks().forEach(t => t.stop()); S.stream = null; }
-    else if (!document.hidden && !$('cam').hidden && !S.stream){ openCamera(S.devices[S.devIdx] && S.devIdx ? S.devices[S.devIdx].deviceId : undefined).catch(() => toast('เปิดกล้องใหม่ไม่ได้ ลองรีเฟรชหน้า')); }
+    if (!CAM.open) return;
+    if (document.hidden) stopStream();
+    else if (!CAM.stream) startStream(CAM.devIdx && CAM.devices[CAM.devIdx] ? CAM.devices[CAM.devIdx].deviceId : undefined).catch(() => ctoast('เปิดกล้องใหม่ไม่ได้ ปิดแล้วกดถ่ายรูปอีกครั้ง'));
   });
+  $('camBtn').addEventListener('click', openCam);
+  $('camBtn2').addEventListener('click', openCam);
+
+  $('file').addEventListener('change', e => { loadFiles(e.target.files); e.target.value = ''; });
+  const stage = $('stage');
+  stage.addEventListener('dragover', e => { e.preventDefault(); stage.classList.add('drop'); });
+  stage.addEventListener('dragleave', () => stage.classList.remove('drop'));
+  stage.addEventListener('drop', e => { e.preventDefault(); stage.classList.remove('drop'); loadFiles(e.dataTransfer.files); });
+  window.addEventListener('paste', e => {
+    const it = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith('image/'));
+    if (it) loadFile(it.getAsFile());
+  });
+
+  new ResizeObserver(() => { const w = stage.clientWidth; if (w !== S.lastW){ S.lastW = w; layout(); } }).observe(stage);
+  window.addEventListener('resize', () => layout());
+  new MutationObserver(render).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+  try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render); } catch(_){}
+
+  const start = () => setSource(makeSample(), true);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(start); else start();
 })();
 </script>
 </body>
