@@ -10,27 +10,19 @@
 <title>วัดกันป่ะ!!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Kanit:ital,wght@0,600;0,700;1,700;1,800&family=Chakra+Petch:wght@500;600&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
 <style>
 /* Layout: grading bench. Two-step flow (corners, then borders). Photo stage left, instrument panel right; stacks on phones. */
 :root{
-  --bg:#EDF1EF; --surface:#FFFFFF; --sunk:#E2E8E5; --ink:#15211D; --muted:#56665F; --rule:#CCD7D2;
-  --outer:#0A7F72; --inner:#BE2D72; --on-accent:#FFFFFF;
-  --good:#1F7A45; --good-bg:#DDF0E4; --warn:#9A600B; --warn-bg:#F6E8CF; --bad:#AE3A24; --bad-bg:#F5DDD7;
-  --f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
+  --bg:#0B0B0C; --surface:#161617; --sunk:#0F0F10; --ink:#F4F1EC; --muted:#A9A6A1; --rule:#2E2D2B;
+  --outer:#F4F1EC; --inner:#FF3B47; --on-accent:#0B0B0C; --accent:#D7141E; --on-red:#FFFFFF;
+  --good:#6FD39A; --good-bg:#16301F; --warn:#E8B45A; --warn-bg:#332611; --bad:#FF6B6B; --bad-bg:#3A1416;
+  --f-display:"Kanit","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-label:"Anton","Kanit",system-ui,sans-serif;
   --f-body:"IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0E1412; --surface:#161F1C; --sunk:#0A0F0D; --ink:#E4ECE9; --muted:#93A49E; --rule:#2A3733;
-  --outer:#3CC4B2; --inner:#F06AA6; --on-accent:#0E1412;
-  --good:#6FD39A; --good-bg:#16301F; --warn:#E8B45A; --warn-bg:#332611; --bad:#F08A72; --bad-bg:#3A1C15;
-  color-scheme:dark;}}
-:root[data-theme="dark"]{
-  --bg:#0E1412; --surface:#161F1C; --sunk:#0A0F0D; --ink:#E4ECE9; --muted:#93A49E; --rule:#2A3733;
-  --outer:#3CC4B2; --inner:#F06AA6; --on-accent:#0E1412;
-  --good:#6FD39A; --good-bg:#16301F; --warn:#E8B45A; --warn-bg:#332611; --bad:#F08A72; --bad-bg:#3A1C15;
-  color-scheme:dark;}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;
@@ -147,6 +139,57 @@ input[type=text]:focus-visible,textarea:focus-visible{outline:2px solid var(--in
 .tpls .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:transparent}
 .okmsg{color:var(--good)}
 .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* ---------- black-red theme ---------- */
+html,body{overflow-x:hidden}
+.wrap>header{position:relative;z-index:0;padding-top:8px}
+.wrap>header::before{content:"";position:absolute;left:-60vw;right:-60vw;top:-90px;height:160px;background:var(--accent);transform:rotate(-4deg);z-index:-1}
+.eyebrow{font-family:var(--f-label);font-weight:400;color:var(--ink);background:var(--bg);display:inline-block;padding:1px 10px;transform:skewX(-12deg)}
+h1{font-family:var(--f-display);font-weight:800;font-style:italic;font-size:clamp(30px,4.6vw,44px);text-shadow:3px 3px 0 var(--bg)}
+.sub{color:var(--ink);opacity:.92}
+.btn{border-radius:0;transform:skewX(-8deg);border-color:var(--rule);touch-action:manipulation}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-red);font-weight:600;box-shadow:3px 3px 0 var(--ink)}
+.btn:hover{border-color:var(--ink)}
+.seg{border-radius:0;transform:skewX(-8deg);border-color:var(--rule)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.step{border-radius:0;transform:skewX(-8deg)}
+.step[aria-current="step"]{border-color:var(--accent)}
+.step[aria-current="step"] .n{background:var(--accent);color:var(--on-red)}
+.step.done .n{background:var(--ink);color:var(--bg)}
+.stage{border-radius:0;border-color:var(--rule)}
+.card{border-radius:0;border-color:var(--rule)}
+.label{font-family:var(--f-label);font-weight:400;letter-spacing:.14em;color:var(--ink)}
+.chip{border-radius:0;transform:skewX(-8deg);touch-action:manipulation}
+.chip.o[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chip.i[aria-pressed="true"],.chip.c[aria-pressed="true"]{background:var(--accent);color:var(--on-red)}
+.tpls .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.dpad button{border-radius:0;background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.dpad{grid-template-columns:repeat(3,56px);grid-template-rows:repeat(3,48px)}
+.bar i{background:var(--ink)} .bar b{background:var(--accent);opacity:1}
+.sides li{border-radius:0} .sides li.on{border-color:var(--accent)}
+.report{border-radius:0}
+.loupe{border-radius:0}
+.badge{border-radius:0;transform:skewX(-8deg)}
+.verdict{border-radius:0}
+button,.btn,.chip,.step,label.btn{touch-action:manipulation}
+.dock{display:flex;flex-direction:column;gap:12px}
+
+/* ---------- phones: controls docked at the bottom, loupe floating over the photo ---------- */
+@media (max-width:880px){
+  .dock{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:3px solid var(--accent);
+    padding:10px max(12px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));gap:8px}
+  html[data-step="1"] body,html[data-step="2"] body{padding-bottom:calc(250px + env(safe-area-inset-bottom))}
+  .dock .corners{gap:4px} .dock .corners .chip{padding:5px 0;font-size:13px} .dock .corners .ctr{visibility:hidden}
+  .dock .chips .chip{padding:8px 0}
+  .dock .who{font-size:13px}
+  .dock .dpad{display:grid;grid-template-columns:none;grid-template-rows:52px;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px;justify-content:stretch}
+  .dock .dpad span{display:none}
+  .dock .dpad button{font-size:20px}
+  .dock .dpad button:disabled{display:none}
+  .dock .dpad button[data-dx="-1"]{order:1} .dock .dpad button[data-dy="-1"]{order:2} .dock .dpad button[data-dy="1"]{order:3} .dock .dpad button[data-dx="1"]{order:4}
+  .loupe-box{position:fixed;z-index:25;top:calc(env(safe-area-inset-top,0px) + 10px);right:10px;width:min(44vw,200px);border:3px solid var(--accent);box-shadow:4px 4px 0 var(--bg)}
+  html.loupe-left .loupe-box{right:auto;left:10px}
+}
+
 
 /* Standalone page: keep content clear of the notch and home bar. */
 html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg)}
@@ -262,6 +305,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
         <section class="card">
           <p class="label">มุมการ์ด</p>
           <p class="status" id="status">กำลังหามุม…</p>
+          <div class="dock" id="dock1">
           <div class="corners" id="cornerChips">
             <button class="chip c" type="button" data-i="0">ซ้ายบน</button>
             <button class="chip c mid" type="button" data-i="4">กลางบน</button>
@@ -273,18 +317,19 @@ html.cam-open,html.cam-open body{overflow:hidden}
             <button class="chip c mid" type="button" data-i="6">กลางล่าง</button>
             <button class="chip c" type="button" data-i="2">ขวาล่าง</button>
           </div>
-          <p class="hint" id="bendInfo"></p>
           <div class="dpad" id="dpad1" role="group" aria-label="เลื่อนมุมที่เลือกทีละพิกเซล">
             <span></span><button type="button" data-dx="0" data-dy="-1" aria-label="เลื่อนขึ้น">↑</button><span></span>
             <button type="button" data-dx="-1" data-dy="0" aria-label="เลื่อนซ้าย">←</button><span class="c">1 px</span><button type="button" data-dx="1" data-dy="0" aria-label="เลื่อนขวา">→</button>
             <span></span><button type="button" data-dx="0" data-dy="1" aria-label="เลื่อนลง">↓</button><span></span>
           </div>
+          </div>
+          <p class="hint" id="bendInfo"></p>
           <div class="loupe-box"><canvas class="loupe" id="loupe1" aria-label="ภาพขยายรอบมุมที่เลือก"></canvas></div>
           <div class="ztools">
             <button class="btn zm" type="button" data-l="1" data-z="-1" aria-label="ซูมออก">−</button><output id="zl1">6×</output><button class="btn zm" type="button" data-l="1" data-z="1" aria-label="ซูมเข้า">+</button>
             <button class="btn" type="button" data-c="1">กลับไปที่จุด</button>
           </div>
-          <p class="hint">ลากในภาพขยายเพื่อเลื่อนดูรอบๆ ลากที่วงกลมเพื่อขยับมุมแบบละเอียด ซูมด้วยปุ่ม ล้อเมาส์ หรือใช้สองนิ้ว</p>
+          <p class="hint">มือถือ: ลากนิ้วเดียวในภาพขยายเพื่อขยับมุม ใช้สองนิ้วเลื่อนดูและซูม · คอม: ลากที่วงกลมเพื่อขยับ ลากที่อื่นเพื่อเลื่อนดู ซูมด้วยล้อเมาส์ · กดปุ่มลูกศรค้างเพื่อเลื่อนต่อเนื่อง</p>
           <p class="hint">การ์ดมุมมน ให้วางจุดตรงที่เส้นขอบสองด้านต่อออกไปชนกัน ไม่ใช่บนส่วนโค้ง</p>
           <label class="field" for="size">ขนาดการ์ด
             <select id="size">
@@ -344,6 +389,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
         <section class="card">
           <p class="label">ปรับเส้นให้ตรงขอบ</p>
           <p class="status warn" id="bendWarn" hidden></p>
+          <div class="dock" id="dock2">
           <div class="chips" id="chips">
             <span class="rl"><i class="sw"></i>นอก</span>
             <button class="chip o" data-k="oL" type="button">ซ้าย</button>
@@ -362,12 +408,13 @@ html.cam-open,html.cam-open body{overflow:hidden}
             <button type="button" data-dx="-1" data-dy="0" aria-label="เลื่อนซ้าย">←</button><span class="c">1 px</span><button type="button" data-dx="1" data-dy="0" aria-label="เลื่อนขวา">→</button>
             <span></span><button type="button" data-dx="0" data-dy="1" aria-label="เลื่อนลง">↓</button><span></span>
           </div>
+          </div>
           <div class="loupe-box"><canvas class="loupe" id="loupe2" aria-label="ภาพขยายรอบเส้นที่เลือก"></canvas></div>
           <div class="ztools">
             <button class="btn zm" type="button" data-l="2" data-z="-1" aria-label="ซูมออก">−</button><output id="zl2">8×</output><button class="btn zm" type="button" data-l="2" data-z="1" aria-label="ซูมเข้า">+</button>
             <button class="btn" type="button" data-c="2">กลับไปที่เส้น</button>
           </div>
-          <p class="hint">ลากในภาพขยายเพื่อเลื่อนดูรอบๆ ลากที่เส้นที่เลือกเพื่อขยับแบบละเอียด ซูมด้วยปุ่ม ล้อเมาส์ หรือใช้สองนิ้ว</p>
+          <p class="hint">มือถือ: ลากนิ้วเดียวในภาพขยายเพื่อขยับเส้น ใช้สองนิ้วเลื่อนดูและซูม · คอม: ลากที่เส้นเพื่อขยับ ลากที่อื่นเพื่อเลื่อนดู ซูมด้วยล้อเมาส์ · กดปุ่มลูกศรค้างเพื่อเลื่อนต่อเนื่อง</p>
           <p class="hint">วางเส้นให้ทับรอยต่อสีพอดี กดลูกศรบนคีย์บอร์ดเพื่อเลื่อนทีละพิกเซล (Shift = 10)</p>
           <div class="actions"><button class="btn" type="button" id="redetectL">หาขอบอัตโนมัติอีกครั้ง</button></div>
         </section>
@@ -438,6 +485,22 @@ html.cam-open,html.cam-open body{overflow:hidden}
 </div>
 
 <script>
+/* Safari on iPhone ignores textAlign for Thai text drawn on a canvas and draws it left-aligned.
+   For any text with non-ASCII characters, measure it and place it ourselves, always drawing left-aligned. */
+(() => {
+  const P = window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype;
+  if (!P || P.__thaiAlign) return;
+  const orig = P.fillText; P.__thaiAlign = true;
+  P.fillText = function(text, x, y, maxW){
+    const a = this.textAlign, str = String(text);
+    if (a === 'left' || a === 'start' || !/[^\x00-\x7F]/.test(str)) return maxW === undefined ? orig.call(this, str, x, y) : orig.call(this, str, x, y, maxW);
+    const w = this.measureText(str).width, x0 = a === 'center' ? x - w/2 : x - w;
+    this.textAlign = 'left';
+    try { return maxW === undefined ? orig.call(this, str, x0, y) : orig.call(this, str, x0, y, maxW); }
+    finally { this.textAlign = a; }
+  };
+})();
+
 (() => {
   const $ = id => document.getElementById(id);
   const view = $('view'), vctx = view.getContext('2d');
@@ -953,6 +1016,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
     const o = otherSide(), eb = $('emptyBack');
     eb.hidden = !S.slots[o]; eb.textContent = `← กลับไป${SIDE_NAME[o]}`;
     for (const i of [1,2,3]){ $('p'+i).hidden = true; $('bar'+i).hidden = true; $('st'+i).removeAttribute('aria-current'); $('st'+i).classList.remove('done'); }
+    delete document.documentElement.dataset.step;
   }
   function hideEmpty(){ view.hidden = false; $('empty').hidden = true; }
   function updSideBtns(){
@@ -968,7 +1032,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
       if (!makeFlat()){ showMsg('มุมทั้ง 4 จุดไม่เป็นรูปสี่เหลี่ยม ลองลากจุดให้อยู่คนละมุมของการ์ด'); return; }
       detectLines(); S.sel = 'iL'; S.dirty = false;
     }
-    hideMsg(); S.step = n; S.drag = false; S.pan = {x:0, y:0};
+    hideMsg(); S.step = n; S.drag = false; S.pan = {x:0, y:0}; document.documentElement.dataset.step = String(n);
     for (const i of [1,2,3]){
       $('p'+i).hidden = n !== i; $('bar'+i).hidden = n !== i;
       const st = $('st'+i);
@@ -989,7 +1053,8 @@ html.cam-open,html.cam-open body{overflow:hidden}
     stage.classList.toggle('has-live', live); $('live').hidden = !live;
     const lw = live && wide ? Math.round(Math.min(330, Math.max(240, stage.clientWidth*0.35))) : 0;
     if (lw) stage.style.setProperty('--livew', lw + 'px');
-    const aw = stage.clientWidth - 26 - (lw ? lw + 14 : 0), mh = Math.max(300, window.innerHeight*(live && !wide ? 0.6 : 0.74));
+    const phone = matchMedia('(max-width: 880px)').matches;
+    const aw = stage.clientWidth - 26 - (lw ? lw + 14 : 0), mh = phone && S.step < 3 ? Math.max(260, window.innerHeight*(live ? 0.42 : 0.52)) : Math.max(300, window.innerHeight*(live && !wide ? 0.6 : 0.74));
     const sc = Math.min(aw/im.width, mh/im.height);
     S.scale = sc; S.dpr = window.devicePixelRatio || 1;
     const cw = Math.round(im.width*sc), ch = Math.round(im.height*sc);
@@ -1002,6 +1067,9 @@ html.cam-open,html.cam-open body{overflow:hidden}
   function render(){
     if (!S.src) return;
     $('zl1').textContent = fmtZ(S.lz[1]); $('zl2').textContent = fmtZ(S.lz[2]);
+    /* Phones: the floating loupe moves to the side away from what is being adjusted. */
+    const onRight = S.step === 1 ? (S.corners && allPts()[S.csel].x > work.width/2) : (S.sel === 'oR' || S.sel === 'iR');
+    document.documentElement.classList.toggle('loupe-left', !!onRight);
     if (S.step === 1){ drawCorners(); drawLoupe1(); updCornerUI(); }
     else { drawLines(); drawLoupe2(); readout(); updChips(); if (S.step === 2) drawLive(); }
   }
@@ -1331,11 +1399,12 @@ html.cam-open,html.cam-open body{overflow:hidden}
       if (!ready()) return;
       cv.setPointerCapture(e.pointerId); e.preventDefault();
       pts.set(e.pointerId, local(e));
-      if (pts.size === 2){ const [a,b] = [...pts.values()]; pinch = { d:Math.hypot(a.x-b.x, a.y-b.y) || 1, z:S.lz[l] }; S.ldrag = null; return; }
+      if (pts.size === 2){ const [a,b] = [...pts.values()]; pinch = { d:Math.hypot(a.x-b.x, a.y-b.y) || 1, z:S.lz[l], m:{ x:(a.x+b.x)/2, y:(a.y+b.y)/2 }, pan:{ ...S.pan } }; S.ldrag = null; return; }
       const v = cv._v; if (!v) return;
       const q = local(e), touch = e.pointerType === 'touch', t = loupeTarget();
       let mode = 'pan';
-      if (l === 1){
+      if (touch) mode = 'move';
+      else if (l === 1){
         if (Math.hypot(q.x - (t.x - v.sx)*v.z, q.y - (t.y - v.sy)*v.z) < (touch ? 30 : 18)) mode = 'move';
       } else {
         const k = S.sel, pos = isV(k) ? (S.lines[k] - v.sx)*v.z : (S.lines[k] - v.sy)*v.z;
@@ -1347,7 +1416,12 @@ html.cam-open,html.cam-open body{overflow:hidden}
     cv.addEventListener('pointermove', e => {
       if (!pts.has(e.pointerId)) return;
       pts.set(e.pointerId, local(e));
-      if (pinch && pts.size >= 2){ const [a,b] = [...pts.values()]; setZoom(l, pinch.z * Math.hypot(a.x-b.x, a.y-b.y) / pinch.d); return; }
+      if (pinch && pts.size >= 2){
+        const [a,b] = [...pts.values()], m = { x:(a.x+b.x)/2, y:(a.y+b.y)/2 };
+        S.lz[l] = Math.max(2, Math.min(24, pinch.z * Math.hypot(a.x-b.x, a.y-b.y) / pinch.d));
+        S.pan = { x:pinch.pan.x - (m.x - pinch.m.x)/S.lz[l], y:pinch.pan.y - (m.y - pinch.m.y)/S.lz[l] };
+        render(); return;
+      }
       const D = S.ldrag; if (!D) return;
       const q = local(e), dx = (q.x - D.q0.x)/D.z, dy = (q.y - D.q0.y)/D.z;
       if (D.mode === 'pan'){ S.pan = { x:D.pan0.x - dx, y:D.pan0.y - dy }; render(); return; }
@@ -1364,11 +1438,25 @@ html.cam-open,html.cam-open body{overflow:hidden}
     cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
   }
   bindLoupe(loupe1, 1); bindLoupe(loupe2, 2);
-  document.querySelectorAll('#dpad1 button').forEach(b => b.addEventListener('click', () => S.corners && moveCorner(+b.dataset.dx, +b.dataset.dy)));
-  document.querySelectorAll('#dpad2 button').forEach(b => b.addEventListener('click', () => {
+  /* Arrow buttons: one tap = 1 px; hold to repeat, and after a second of holding move 5 px at a time. */
+  function bindRepeat(btn, fn){
+    let t0 = 0, timer = null;
+    const stop = () => { clearTimeout(timer); timer = null; };
+    const tick = () => { fn(performance.now() - t0 > 1000 ? 5 : 1); timer = setTimeout(tick, 60); };
+    btn.addEventListener('pointerdown', e => {
+      if (btn.disabled || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      e.preventDefault(); try { btn.setPointerCapture(e.pointerId); } catch(_){}
+      t0 = performance.now(); fn(1); stop(); timer = setTimeout(tick, 380);
+    });
+    for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) btn.addEventListener(ev, stop);
+    btn.addEventListener('click', e => { if (e.detail === 0) fn(1); });
+    btn.addEventListener('contextmenu', e => e.preventDefault());
+  }
+  document.querySelectorAll('#dpad1 button').forEach(b => bindRepeat(b, step => S.corners && moveCorner(+b.dataset.dx*step, +b.dataset.dy*step)));
+  document.querySelectorAll('#dpad2 button').forEach(b => bindRepeat(b, step => {
     if (!S.lines) return;
     const by = isV(S.sel) ? +b.dataset.dx : +b.dataset.dy;
-    if (by) moveLine(S.sel, by);
+    if (by) moveLine(S.sel, by*step);
   }));
   $('go').addEventListener('click', () => setStep(2));
   $('st2').addEventListener('click', () => setStep(2));
@@ -1547,7 +1635,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
     const T = (txt, x, y, font, color, align = 'left') => { g.font = font; g.fillStyle = color; g.textAlign = align; g.textBaseline = 'alphabetic'; g.fillText(txt, x, y); };
     const box = (x, y, w, h) => { g.fillStyle = C.panel; g.fillRect(x, y, w, h); g.strokeStyle = C.line; g.lineWidth = 2; g.strokeRect(x+1, y+1, w-2, h-2); };
     const hr = (x1, x2, y) => { g.strokeStyle = C.line; g.lineWidth = 2; g.beginPath(); g.moveTo(x1, y); g.lineTo(x2, y); g.stroke(); };
-    const spaced = (on) => { if ('letterSpacing' in g) g.letterSpacing = on ? '6px' : '0px'; };
+    const spaced = (on) => { if (on){ g.save(); if ('letterSpacing' in g) g.letterSpacing = '6px'; } else g.restore(); };
     const gradeColor = n => n >= 10 ? C.good : n >= 9 ? C.warn : C.bad;
 
     g.fillStyle = C.bg; g.fillRect(0, 0, W, H);
@@ -1685,9 +1773,8 @@ html.cam-open,html.cam-open body{overflow:hidden}
   const gColor = n => n === 10 ? '#1F9D57' : n === 9 ? '#C98A12' : '#D0452F';
   function tx(g, s, x, y, font, color, align = 'left', spacing = 0){
     g.font = font; g.fillStyle = color; g.textAlign = align; g.textBaseline = 'alphabetic';
-    if ('letterSpacing' in g) g.letterSpacing = spacing + 'px';
-    g.fillText(s, x, y);
-    if ('letterSpacing' in g) g.letterSpacing = '0px';
+    if (spacing && 'letterSpacing' in g){ g.save(); g.letterSpacing = spacing + 'px'; g.fillText(s, x, y); g.restore(); }
+    else g.fillText(s, x, y);
   }
   function tagPill(g, cx, cy, text, bg, fg, font){
     g.font = font; const w = g.measureText(text).width + 40, h = 46;
