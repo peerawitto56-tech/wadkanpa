@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="วัดกันป่ะ">
+<meta name="theme-color" content="#0B0F0E">
+<title>วัดกันป่ะ!! กล้อง</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<style>
+/* Phase 1: camera test page. Live view + spirit level from the gyroscope; the shutter stays locked while the phone is tilted. */
+:root{
+  --bg:#0B0F0E; --panel:#151B19; --ink:#EEF3F1; --muted:#9FB0AA; --rule:#2E3936;
+  --ok:#5DCAA5; --warn:#E8B45A; --bad:#F0997B; --gold:#E8C27A;
+  --f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai",system-ui,-apple-system,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-user-select:none;user-select:none;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column}
+
+/* start screen */
+#start{align-items:center;justify-content:center;gap:18px;text-align:center;padding:calc(24px + env(safe-area-inset-top)) max(24px,env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left))}
+.brand{font-family:var(--f-display);font-size:40px;color:var(--gold);margin:0;line-height:1.1}
+.eyebrow{font-family:var(--f-display);font-size:12px;letter-spacing:.24em;color:var(--muted);margin:0}
+.lead{max-width:34ch;color:var(--muted);margin:0}
+.big{height:56px;padding:0 28px;border:0;border-radius:16px;background:var(--gold);color:#2B1F06;font-size:17px;font-weight:600}
+.msg{color:var(--bad);max-width:34ch;margin:0}
+
+/* camera screen */
+#cam{background:#000}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.guide{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);border:2px dashed var(--bad);border-radius:10px;pointer-events:none;transition:border-color .15s}
+.guide.ok{border-style:solid;border-color:var(--ok)}
+.guide.warn{border-color:var(--warn)}
+.topbar{position:absolute;left:0;right:0;top:0;padding:calc(10px + env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 10px max(12px,env(safe-area-inset-left));display:flex;gap:8px;justify-content:space-between;align-items:center}
+.pill{height:44px;padding:0 14px;border-radius:22px;border:0;background:rgba(11,15,14,.72);font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.pill[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.level{position:absolute;left:50%;top:44%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;border:2px solid rgba(238,243,241,.85);pointer-events:none}
+.level::after{content:"";position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:1px solid rgba(238,243,241,.85)}
+.bubble{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:var(--bad);transition:background .15s}
+.bottom{position:absolute;left:0;right:0;bottom:0;padding:12px max(16px,env(safe-area-inset-right)) calc(18px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(transparent,rgba(0,0,0,.75) 30%)}
+.read{font-family:var(--f-mono);font-size:13px;color:var(--ink);text-align:center}
+.hint{font-size:16px;font-weight:600;text-align:center;min-height:24px}
+.hint.ok{color:var(--ok)} .hint.warn{color:var(--warn)} .hint.bad{color:var(--bad)}
+.row{display:flex;align-items:center;justify-content:center;gap:22px;width:100%}
+.shutter{position:relative;width:78px;height:78px;border-radius:50%;border:4px solid var(--ink);background:transparent;display:grid;place-items:center;padding:0}
+.shutter i{width:62px;height:62px;border-radius:50%;background:var(--ink);display:block;transition:transform .1s}
+.shutter:active i{transform:scale(.9)}
+.shutter:disabled{border-color:#5F5E5A;cursor:not-allowed}
+.shutter:disabled i{background:#3A403E}
+.shutter svg{position:absolute;inset:-4px;width:78px;height:78px;transform:rotate(-90deg);pointer-events:none}
+.side{width:64px;height:44px;border-radius:12px;border:0;background:rgba(11,15,14,.72);font-size:13px}
+.res{font-size:12px;color:var(--muted);text-align:center}
+
+/* calibration sheet + review */
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--panel);border-radius:20px 20px 0 0;padding:18px max(18px,env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:12px}
+.sheet h2{margin:0;font-size:18px}
+.sheet p{margin:0;color:var(--muted)}
+.btns{display:flex;gap:10px}
+.btn{flex:1;height:50px;border-radius:14px;border:0;background:#222B28;font-size:15px}
+.btn.primary{background:var(--gold);color:#2B1F06;font-weight:600}
+#review{background:var(--bg)}
+#shot{flex:1;min-height:0;width:100%;object-fit:contain;margin-top:env(safe-area-inset-top)}
+.meta{font-family:var(--f-mono);font-size:13px;color:var(--muted);text-align:center;margin:0}
+.toast{position:absolute;left:50%;top:calc(64px + env(safe-area-inset-top));transform:translateX(-50%);background:var(--panel);padding:8px 14px;border-radius:12px;font-size:14px;max-width:90%;text-align:center}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<section id="start" class="screen">
+  <p class="eyebrow">CENTERING LAB · กล้อง</p>
+  <h1 class="brand">วัดกันป่ะ!!</h1>
+  <p class="lead">วางการ์ดบนโต๊ะเรียบ ถือมือถือขนานกับโต๊ะ ปุ่มถ่ายจะปลดล็อกเมื่อมือถือตรงและนิ่ง</p>
+  <button class="big" type="button" id="go">เริ่มถ่าย</button>
+  <p class="msg" id="startMsg" role="status" hidden></p>
+</section>
+
+<section id="cam" class="screen" hidden>
+  <video id="video" playsinline muted autoplay></video>
+  <div class="guide" id="guide"></div>
+  <div class="level" id="level" aria-hidden="true"><div class="bubble" id="bubble"></div></div>
+  <div class="topbar">
+    <button class="pill" type="button" id="calBtn">ตั้งศูนย์</button>
+    <button class="pill" type="button" id="lensBtn" hidden>เลนส์</button>
+    <button class="pill" type="button" id="autoBtn" aria-pressed="true">ถ่ายอัตโนมัติ</button>
+  </div>
+  <p class="toast" id="toast" role="status" hidden></p>
+  <div class="bottom">
+    <p class="hint bad" id="hint" aria-live="polite">กำลังอ่านเซนเซอร์…</p>
+    <p class="read" id="read">ซ้าย-ขวา –° · หน้า-หลัง –°</p>
+    <div class="row">
+      <button class="side" type="button" id="zoomBtn" hidden>1×</button>
+      <button class="shutter" type="button" id="shutter" aria-label="ถ่ายรูป" disabled>
+        <i></i>
+        <svg viewBox="0 0 78 78" aria-hidden="true"><circle id="ring" cx="39" cy="39" r="36" fill="none" stroke="#5DCAA5" stroke-width="4" stroke-dasharray="226" stroke-dashoffset="226"/></svg>
+      </button>
+      <span class="side" aria-hidden="true" style="background:none"></span>
+    </div>
+    <p class="res" id="res"></p>
+  </div>
+  <div class="sheet" id="calSheet" hidden>
+    <h2>ตั้งศูนย์ระดับ</h2>
+    <p>วางมือถือหงายราบบนโต๊ะตรงที่จะวางการ์ด แล้วกด "ตั้งศูนย์" ระบบจะจำความเอียงของโต๊ะไว้ ถ้าโต๊ะไม่ได้ระดับก็ยังวัดถูก</p>
+    <p id="calNow" style="font-family:var(--f-mono)"></p>
+    <div class="btns">
+      <button class="btn" type="button" id="calReset">ล้างค่า</button>
+      <button class="btn" type="button" id="calCancel">ปิด</button>
+      <button class="btn primary" type="button" id="calSet">ตั้งศูนย์</button>
+    </div>
+  </div>
+</section>
+
+<section id="review" class="screen" hidden>
+  <img id="shot" alt="รูปการ์ดที่ถ่าย">
+  <div class="sheet" style="position:static">
+    <p class="meta" id="shotMeta"></p>
+    <div class="btns">
+      <button class="btn" type="button" id="again">ถ่ายใหม่</button>
+      <button class="btn primary" type="button" id="save">บันทึกรูป</button>
+    </div>
+    <p class="meta" id="saveMsg" role="status" hidden></p>
+  </div>
+</section>
+
+<script>
+(() => {
+  /* ---------- settings ---------- */
+  const OK_DEG = 1.5;        // green: shutter free, auto capture allowed
+  const LOCK_DEG = 3;        // above this on either axis the shutter locks
+  const STEADY_DEG = 0.3;    // max wobble inside the steady window
+  const STEADY_MS = 500;     // how long the phone must stay steady
+  const CARD = [63, 88];     // mm, portrait
+  const GUIDE_FILL = 0.82;   // guide size against the smaller free screen side
+
+  const $ = id => document.getElementById(id);
+  const video = $('video'), guide = $('guide'), bubble = $('bubble'), shutter = $('shutter'), ring = $('ring');
+  const S = { stream:null, track:null, sensor:false, b:null, g:null, hist:[], cal:{ b:0, g:0 }, auto:true, steadySince:0, busy:false,
+              devices:[], devIdx:0, zooms:null, zoomIdx:0, blob:null, shotInfo:null, lastEvt:0 };
+  try { const c = JSON.parse(localStorage.getItem('wkp-cal') || 'null'); if (c && isFinite(c.b) && isFinite(c.g)) S.cal = c; } catch(_){}
+
+  function toast(t, ms = 2200){ const el = $('toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => el.hidden = true, ms); }
+  function show(id){ for (const s of ['start','cam','review']) $(s).hidden = s !== id; }
+
+  /* ---------- start: permissions must come from a tap on iOS ---------- */
+  $('go').addEventListener('click', async () => {
+    const msg = $('startMsg'); msg.hidden = true;
+    let motionOK = true;
+    try {
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
+        motionOK = (await DeviceOrientationEvent.requestPermission()) === 'granted';
+      }
+    } catch(_){ motionOK = false; }
+    if (motionOK) window.addEventListener('deviceorientation', onOrient);
+    try {
+      await openCamera();
+    } catch (e){
+      msg.hidden = false;
+      msg.textContent = !window.isSecureContext ? 'ต้องเปิดผ่านลิงก์ https เท่านั้น'
+        : e && e.name === 'NotAllowedError' ? 'ไม่ได้รับอนุญาตให้ใช้กล้อง เปิดได้ที่ การตั้งค่า › Safari › กล้อง แล้วลองใหม่'
+        : 'เปิดกล้องไม่ได้ ลองปิดแอปอื่นที่ใช้กล้องอยู่แล้วกดใหม่';
+      return;
+    }
+    show('cam'); layoutGuide();
+    if (!motionOK) toast('ไม่ได้รับอนุญาตให้อ่านเซนเซอร์ ปุ่มถ่ายจะไม่ล็อก', 3500);
+    setTimeout(() => { if (!S.sensor){ toast('เครื่องนี้ไม่ส่งค่าเซนเซอร์ ถ่ายได้แต่ไม่มีระดับน้ำ', 3500); render(); } }, 1500);
+    requestAnimationFrame(loop);
+  });
+
+  async function openCamera(deviceId){
+    if (S.stream) S.stream.getTracks().forEach(t => t.stop());
+    const video0 = deviceId ? { deviceId:{ exact:deviceId } } : { facingMode:{ ideal:'environment' } };
+    const stream = await navigator.mediaDevices.getUserMedia({ audio:false,
+      video:{ ...video0, width:{ ideal:3840 }, height:{ ideal:2160 } } });
+    S.stream = stream; S.track = stream.getVideoTracks()[0];
+    video.srcObject = stream; await video.play().catch(() => {});
+    await new Promise(r => video.readyState >= 1 ? r() : video.addEventListener('loadedmetadata', r, { once:true }));
+    try {
+      const all = await navigator.mediaDevices.enumerateDevices();
+      S.devices = all.filter(d => d.kind === 'videoinput' && !/front|หน้า/i.test(d.label));
+      $('lensBtn').hidden = S.devices.length < 2;
+    } catch(_){}
+    const caps = S.track.getCapabilities ? S.track.getCapabilities() : {};
+    if (caps.zoom && caps.zoom.max >= 2){
+      S.zooms = [1, 2, ...(caps.zoom.max >= 3 ? [3] : [])].filter(z => z >= caps.zoom.min);
+      S.zoomIdx = 0; $('zoomBtn').hidden = false; $('zoomBtn').textContent = '1×';
+    } else { S.zooms = null; $('zoomBtn').hidden = true; }
+    layoutGuide();
+  }
+
+  /* ---------- guide frame and resolution estimate ---------- */
+  function layoutGuide(){
+    const W = innerWidth, H = innerHeight, free = H * 0.62;
+    const h = Math.min(free * GUIDE_FILL / 0.82, W * GUIDE_FILL * CARD[1] / CARD[0], H * 0.6), w = h * CARD[0] / CARD[1];
+    guide.style.width = w + 'px'; guide.style.height = h + 'px';
+    const vw = video.videoWidth, vh = video.videoHeight;
+    if (vw && vh){
+      const scale = Math.max(W / vw, H / vh), pxmm = (h / scale) / CARD[1];
+      $('res').textContent = `กล้อง ${vw}×${vh} · การ์ดเต็มกรอบ ≈ ${pxmm.toFixed(1)} px/มม.`;
+    }
+  }
+  addEventListener('resize', layoutGuide);
+
+  /* ---------- sensor ---------- */
+  function onOrient(e){
+    if (e.beta == null || e.gamma == null) return;
+    S.sensor = true; S.lastEvt = performance.now();
+    const a = 0.25;
+    S.b = S.b == null ? e.beta : S.b + a*(e.beta - S.b);
+    S.g = S.g == null ? e.gamma : S.g + a*(e.gamma - S.g);
+    const t = performance.now(); S.hist.push({ t, b:S.b, g:S.g });
+    while (S.hist.length && t - S.hist[0].t > 900) S.hist.shift();
+  }
+  const tilt = () => ({ b:S.b - S.cal.b, g:S.g - S.cal.g });
+  function steady(){
+    const t = performance.now(), w = S.hist.filter(h => t - h.t <= STEADY_MS);
+    if (w.length < 5 || t - w[0].t < STEADY_MS*0.8) return false;
+    const r = k => Math.max(...w.map(h => h[k])) - Math.min(...w.map(h => h[k]));
+    return r('b') <= STEADY_DEG && r('g') <= STEADY_DEG;
+  }
+  function state(){
+    if (!S.sensor) return { lvl:'none' };
+    const { b, g } = tilt(), m = Math.max(Math.abs(b), Math.abs(g));
+    return { lvl: m <= OK_DEG ? 'ok' : m <= LOCK_DEG ? 'warn' : 'bad', b, g, m, still: steady() };
+  }
+  /* Which edge to lift. gamma > 0: right edge is lower. beta > 0: top edge is higher. */
+  function advice(b, g){
+    if (Math.abs(b) > 30 || Math.abs(g) > 30) return 'ถือมือถือให้ขนานกับโต๊ะ กล้องหันลงหาการ์ด';
+    const out = [];
+    if (Math.abs(g) > OK_DEG) out.push(g > 0 ? 'ยกขอบขวาขึ้น' : 'ยกขอบซ้ายขึ้น');
+    if (Math.abs(b) > OK_DEG) out.push(b > 0 ? 'ยกขอบล่างขึ้น' : 'ยกขอบบนขึ้น');
+    return out.join(' · ') + 'นิดหนึ่ง';
+  }
+
+  /* ---------- UI loop ---------- */
+  function render(){
+    const st = state(), hint = $('hint');
+    guide.className = 'guide' + (st.lvl === 'ok' ? ' ok' : st.lvl === 'warn' ? ' warn' : st.lvl === 'none' ? ' ok' : '');
+    if (st.lvl === 'none'){
+      hint.className = 'hint warn'; hint.textContent = 'ไม่มีระดับน้ำ เล็งให้ตรงเอง';
+      $('read').textContent = 'เซนเซอร์: ไม่มีข้อมูล';
+      shutter.disabled = S.busy; bubble.style.transform = 'none'; $('level').hidden = true; return;
+    }
+    $('level').hidden = false;
+    const k = 8, clamp = v => Math.max(-28, Math.min(28, v));
+    bubble.style.transform = `translate(${clamp(-st.g*k)}px, ${clamp(-st.b*k)}px)`;
+    bubble.style.background = st.lvl === 'ok' ? 'var(--ok)' : st.lvl === 'warn' ? 'var(--warn)' : 'var(--bad)';
+    $('read').textContent = `ซ้าย-ขวา ${Math.abs(st.g).toFixed(1)}° · หน้า-หลัง ${Math.abs(st.b).toFixed(1)}°`;
+    shutter.disabled = S.busy || st.lvl === 'bad';
+    if (st.lvl === 'bad'){ hint.className = 'hint bad'; hint.textContent = advice(st.b, st.g); }
+    else if (st.lvl === 'warn'){ hint.className = 'hint warn'; hint.textContent = 'ถ่ายได้ แต่ยังเอียง · ' + advice(st.b, st.g); }
+    else { hint.className = 'hint ok'; hint.textContent = st.still ? (S.auto ? 'ตรงแล้ว ถือนิ่ง ๆ…' : 'ตรงแล้ว กดถ่ายได้เลย') : 'ตรงแล้ว ถือให้นิ่ง'; }
+    return st;
+  }
+  function loop(){
+    if (!$('cam').hidden){
+      const st = render() || {};
+      let p = 0;
+      if (S.auto && st.lvl === 'ok' && st.still && !S.busy){
+        if (!S.steadySince) S.steadySince = performance.now();
+        p = Math.min(1, (performance.now() - S.steadySince) / STEADY_MS);
+        if (p >= 1){ S.steadySince = 0; capture(); }
+      } else S.steadySince = 0;
+      ring.setAttribute('stroke-dashoffset', String(226*(1 - p)));
+      if (S.sensor && performance.now() - S.lastEvt > 1500){ S.sensor = false; S.hist = []; }
+    }
+    requestAnimationFrame(loop);
+  }
+
+  /* ---------- capture ---------- */
+  async function capture(){
+    if (S.busy || !video.videoWidth) return;
+    S.busy = true;
+    const st = state(), c = document.createElement('canvas');
+    c.width = video.videoWidth; c.height = video.videoHeight;
+    c.getContext('2d').drawImage(video, 0, 0);
+    if (navigator.vibrate) navigator.vibrate(30);
+    S.blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.95));
+    S.shotInfo = { w:c.width, h:c.height, b:st.b, g:st.g, sensor:st.lvl !== 'none', at:new Date() };
+    const url = URL.createObjectURL(S.blob), img = $('shot');
+    if (img.dataset.url) URL.revokeObjectURL(img.dataset.url);
+    img.src = url; img.dataset.url = url;
+    $('shotMeta').textContent = (S.shotInfo.sensor ? `ถ่ายตอนเอียง ซ้าย-ขวา ${Math.abs(st.g).toFixed(1)}° · หน้า-หลัง ${Math.abs(st.b).toFixed(1)}° · ` : 'ไม่มีข้อมูลเซนเซอร์ · ') + `${c.width}×${c.height} px`;
+    $('saveMsg').hidden = true;
+    show('review'); S.busy = false;
+  }
+  shutter.addEventListener('click', capture);
+  $('again').addEventListener('click', () => { S.hist = []; S.steadySince = 0; show('cam'); });
+  $('save').addEventListener('click', async () => {
+    if (!S.blob) return;
+    const d = S.shotInfo.at, p = n => String(n).padStart(2, '0');
+    const name = `wadkanpa-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}.jpg`;
+    const file = new File([S.blob], name, { type:'image/jpeg' }), m = $('saveMsg');
+    try {
+      if (navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file] }); m.textContent = 'เลือก "บันทึกภาพ" ในเมนูแชร์เพื่อเก็บลงคลังรูป'; m.hidden = false; return; }
+    } catch (e){ if (e && e.name === 'AbortError') return; }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name; document.body.append(a); a.click(); a.remove();
+    m.textContent = 'ดาวน์โหลดรูปแล้ว'; m.hidden = false;
+  });
+
+  /* ---------- controls ---------- */
+  $('autoBtn').addEventListener('click', e => { S.auto = !S.auto; e.currentTarget.setAttribute('aria-pressed', String(S.auto)); S.steadySince = 0; });
+  $('calBtn').addEventListener('click', () => { $('calSheet').hidden = false; updCal(); });
+  $('calCancel').addEventListener('click', () => $('calSheet').hidden = true);
+  function updCal(){
+    $('calNow').textContent = `ศูนย์ปัจจุบัน: ซ้าย-ขวา ${S.cal.g.toFixed(1)}° · หน้า-หลัง ${S.cal.b.toFixed(1)}°`;
+  }
+  $('calSet').addEventListener('click', () => {
+    if (!S.sensor){ toast('ยังไม่มีค่าเซนเซอร์'); return; }
+    const w = S.hist.slice(-20); if (!w.length) return;
+    S.cal = { b:w.reduce((s,h) => s + h.b, 0)/w.length, g:w.reduce((s,h) => s + h.g, 0)/w.length };
+    try { localStorage.setItem('wkp-cal', JSON.stringify(S.cal)); } catch(_){}
+    updCal(); $('calSheet').hidden = true; toast('ตั้งศูนย์แล้ว');
+  });
+  $('calReset').addEventListener('click', () => {
+    S.cal = { b:0, g:0 }; try { localStorage.removeItem('wkp-cal'); } catch(_){}
+    updCal(); toast('ล้างค่าศูนย์แล้ว');
+  });
+  $('lensBtn').addEventListener('click', async () => {
+    if (S.devices.length < 2) return;
+    S.devIdx = (S.devIdx + 1) % S.devices.length;
+    try { await openCamera(S.devices[S.devIdx].deviceId); toast(S.devices[S.devIdx].label || `เลนส์ ${S.devIdx + 1}`); }
+    catch(_){ toast('สลับเลนส์ไม่ได้'); }
+  });
+  $('zoomBtn').addEventListener('click', async () => {
+    if (!S.zooms) return;
+    S.zoomIdx = (S.zoomIdx + 1) % S.zooms.length;
+    const z = S.zooms[S.zoomIdx];
+    try { await S.track.applyConstraints({ advanced:[{ zoom:z }] }); $('zoomBtn').textContent = z + '×'; }
+    catch(_){ toast('ซูมไม่ได้'); }
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && S.stream){ S.stream.getTracks().forEach(t => t.stop()); S.stream = null; }
+    else if (!document.hidden && !$('cam').hidden && !S.stream){ openCamera(S.devices[S.devIdx] && S.devIdx ? S.devices[S.devIdx].deviceId : undefined).catch(() => toast('เปิดกล้องใหม่ไม่ได้ ลองรีเฟรชหน้า')); }
+  });
+})();
+</script>
+</body>
+</html>
