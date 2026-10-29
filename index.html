@@ -3,30 +3,41 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TRC TCG Centering</title>
+<meta name="description" content="วัดเซ็นเตอร์การ์ดจากรูปถ่าย ดัดภาพให้ตรง หาขอบอัตโนมัติ และสร้างภาพสรุปผล">
+<meta name="theme-color" content="#0B0B0C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="วัดกันป่ะ">
-<title>วัดกันป่ะ!!</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TRC TCG">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Kanit:ital,wght@0,600;0,700;1,700;1,800&family=Chakra+Petch:wght@500;600&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Chakra+Petch:wght@500;600&family=Kanit:ital,wght@0,700;1,700;1,800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
 <style>
 /* Layout: grading bench. Two-step flow (corners, then borders). Photo stage left, instrument panel right; stacks on phones. */
 :root{
-  --bg:#0B0B0C; --surface:#161617; --sunk:#0F0F10; --ink:#F4F1EC; --muted:#A9A6A1; --rule:#2E2D2B;
-  --outer:#F4F1EC; --inner:#FF3B47; --on-accent:#0B0B0C; --accent:#D7141E; --on-red:#FFFFFF;
-  --good:#6FD39A; --good-bg:#16301F; --warn:#E8B45A; --warn-bg:#332611; --bad:#FF6B6B; --bad-bg:#3A1416;
-  --f-display:"Kanit","IBM Plex Sans Thai",system-ui,sans-serif;
-  --f-label:"Anton","Kanit",system-ui,sans-serif;
+  --bg:#EDF1EF; --surface:#FFFFFF; --sunk:#E2E8E5; --ink:#15211D; --muted:#56665F; --rule:#CCD7D2;
+  --outer:#0A7F72; --inner:#BE2D72; --on-accent:#FFFFFF;
+  --good:#1F7A45; --good-bg:#DDF0E4; --warn:#9A600B; --warn-bg:#F6E8CF; --bad:#AE3A24; --bad-bg:#F5DDD7;
+  --f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
   --f-body:"IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
-  color-scheme:dark;
 }
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1412; --surface:#161F1C; --sunk:#0A0F0D; --ink:#E4ECE9; --muted:#93A49E; --rule:#2A3733;
+  --outer:#3CC4B2; --inner:#F06AA6; --on-accent:#0E1412;
+  --good:#6FD39A; --good-bg:#16301F; --warn:#E8B45A; --warn-bg:#332611; --bad:#F08A72; --bad-bg:#3A1C15;
+  color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#0E1412; --surface:#161F1C; --sunk:#0A0F0D; --ink:#E4ECE9; --muted:#93A49E; --rule:#2A3733;
+  --outer:#3CC4B2; --inner:#F06AA6; --on-accent:#0E1412;
+  --good:#6FD39A; --good-bg:#16301F; --warn:#E8B45A; --warn-bg:#332611; --bad:#F08A72; --bad-bg:#3A1C15;
+  color-scheme:dark;}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;
-  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-top:max(20px,env(safe-area-inset-top,0px));padding-bottom:max(40px,env(safe-area-inset-bottom,0px))}
 .wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
 header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
 .eyebrow{margin:0 0 2px;font-family:var(--f-display);font-weight:600;font-size:13px;letter-spacing:.24em;color:var(--outer)}
@@ -139,96 +150,6 @@ input[type=text]:focus-visible,textarea:focus-visible{outline:2px solid var(--in
 .tpls .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:transparent}
 .okmsg{color:var(--good)}
 .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-/* ---------- black-red theme ---------- */
-html,body{overflow-x:hidden}
-.wrap>header{position:relative;z-index:0;padding-top:8px}
-.wrap>header::before{content:"";position:absolute;left:-60vw;right:-60vw;top:-90px;height:160px;background:var(--accent);transform:rotate(-4deg);z-index:-1}
-.eyebrow{font-family:var(--f-label);font-weight:400;color:var(--ink);background:var(--bg);display:inline-block;padding:1px 10px;transform:skewX(-12deg)}
-h1{font-family:var(--f-display);font-weight:800;font-style:italic;font-size:clamp(30px,4.6vw,44px);text-shadow:3px 3px 0 var(--bg)}
-.sub{color:var(--ink);opacity:.92}
-.btn{border-radius:0;transform:skewX(-8deg);border-color:var(--rule);touch-action:manipulation}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-red);font-weight:600;box-shadow:3px 3px 0 var(--ink)}
-.btn:hover{border-color:var(--ink)}
-.seg{border-radius:0;transform:skewX(-8deg);border-color:var(--rule)}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-.step{border-radius:0;transform:skewX(-8deg)}
-.step[aria-current="step"]{border-color:var(--accent)}
-.step[aria-current="step"] .n{background:var(--accent);color:var(--on-red)}
-.step.done .n{background:var(--ink);color:var(--bg)}
-.stage{border-radius:0;border-color:var(--rule)}
-.card{border-radius:0;border-color:var(--rule)}
-.label{font-family:var(--f-label);font-weight:400;letter-spacing:.14em;color:var(--ink)}
-.chip{border-radius:0;transform:skewX(-8deg);touch-action:manipulation}
-.chip.o[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-.chip.i[aria-pressed="true"],.chip.c[aria-pressed="true"]{background:var(--accent);color:var(--on-red)}
-.tpls .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-.dpad button{border-radius:0;background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600;touch-action:manipulation;-webkit-user-select:none;user-select:none}
-.dpad{grid-template-columns:repeat(3,56px);grid-template-rows:repeat(3,48px)}
-.bar i{background:var(--ink)} .bar b{background:var(--accent);opacity:1}
-.sides li{border-radius:0} .sides li.on{border-color:var(--accent)}
-.report{border-radius:0}
-.loupe{border-radius:0}
-.badge{border-radius:0;transform:skewX(-8deg)}
-.verdict{border-radius:0}
-button,.btn,.chip,.step,label.btn{touch-action:manipulation}
-.dock{display:flex;flex-direction:column;gap:12px}
-
-/* ---------- phones: controls docked at the bottom, loupe floating over the photo ---------- */
-@media (max-width:880px){
-  .dock{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:3px solid var(--accent);
-    padding:10px max(12px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));gap:8px}
-  html[data-step="1"] body,html[data-step="2"] body{padding-bottom:calc(250px + env(safe-area-inset-bottom))}
-  .dock .corners{gap:4px} .dock .corners .chip{padding:5px 0;font-size:13px} .dock .corners .ctr{visibility:hidden}
-  .dock .chips .chip{padding:8px 0}
-  .dock .who{font-size:13px}
-  .dock .dpad{display:grid;grid-template-columns:none;grid-template-rows:52px;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px;justify-content:stretch}
-  .dock .dpad span{display:none}
-  .dock .dpad button{font-size:20px}
-  .dock .dpad button:disabled{display:none}
-  .dock .dpad button[data-dx="-1"]{order:1} .dock .dpad button[data-dy="-1"]{order:2} .dock .dpad button[data-dy="1"]{order:3} .dock .dpad button[data-dx="1"]{order:4}
-  .loupe-box{position:fixed;z-index:25;top:calc(env(safe-area-inset-top,0px) + 10px);right:10px;width:min(44vw,200px);border:3px solid var(--accent);box-shadow:4px 4px 0 var(--bg)}
-  html.loupe-left .loupe-box{right:auto;left:10px}
-}
-
-
-/* Standalone page: keep content clear of the notch and home bar. */
-html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg)}
-/* Camera with spirit level: always dark, over the whole screen. */
-html.cam-open,html.cam-open body{overflow:hidden}
-.camwrap{position:fixed;inset:0;z-index:50;background:#000;color:#EEF3F1;font-family:var(--f-body);-webkit-user-select:none;user-select:none}
-.camwrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.cg{position:absolute;border:2px dashed #F0997B;border-radius:10px;pointer-events:none}
-.cg.ok{border-style:solid;border-color:#5DCAA5} .cg.warn{border-color:#E8B45A}
-.clevel{position:absolute;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;border:2px solid rgba(238,243,241,.85);pointer-events:none}
-.clevel::after{content:"";position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:1px solid rgba(238,243,241,.85)}
-.cbub{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:#F0997B}
-.ctop{position:absolute;left:0;right:0;top:0;padding:calc(10px + env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 10px max(12px,env(safe-area-inset-left));display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center}
-.cpill{height:44px;min-width:44px;padding:0 14px;border-radius:22px;border:0;background:rgba(11,15,14,.72);color:#EEF3F1;font:inherit;font-size:14px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
-.cpill[aria-pressed="true"]{background:#EEF3F1;color:#0B0F0E}
-.cbot{position:absolute;left:0;right:0;bottom:0;padding:10px max(16px,env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(0,0,0,.72)}
-.cside-t{font-size:13px;color:#9FB0AA;margin:0}
-.chint{font-size:16px;font-weight:600;text-align:center;margin:0;min-height:24px}
-.chint.ok{color:#5DCAA5}.chint.warn{color:#E8B45A}.chint.bad{color:#F0997B}
-.cread{font-family:var(--f-mono);font-size:13px;margin:0;text-align:center}
-.crow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;width:100%;max-width:420px;margin-top:4px}
-.cshut{position:relative;width:78px;height:78px;border-radius:50%;border:4px solid #EEF3F1;background:transparent;display:grid;place-items:center;padding:0;cursor:pointer}
-.cshut i{width:62px;height:62px;border-radius:50%;background:#EEF3F1;display:block}
-.cshut:disabled{border-color:#5F5E5A;cursor:not-allowed}
-.cshut:disabled i{background:#3A403E}
-.cshut svg{position:absolute;inset:-4px;width:78px;height:78px;transform:rotate(-90deg);pointer-events:none}
-.cside{height:44px;min-width:72px;padding:0 12px;border-radius:12px;border:0;background:rgba(238,243,241,.14);color:#EEF3F1;font:inherit;font-size:14px;justify-self:center;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
-.cres{font-size:12px;color:#9FB0AA;margin:0;text-align:center}
-.csheet{position:absolute;left:0;right:0;bottom:0;z-index:2;background:#151B19;color:#EEF3F1;border-radius:20px 20px 0 0;padding:18px max(18px,env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:12px}
-.csheet h2{margin:0;font-size:18px}
-.csheet p{margin:0;color:#9FB0AA}
-.cbtns{display:flex;gap:10px}
-.cbtn{flex:1;height:50px;border-radius:14px;border:0;background:#222B28;color:#EEF3F1;font:inherit;font-size:15px;cursor:pointer}
-.cbtn.pri{background:#E8C27A;color:#2B1F06;font-weight:600}
-.ctoast{position:absolute;left:50%;top:calc(66px + env(safe-area-inset-top));transform:translateX(-50%);background:#151B19;color:#EEF3F1;padding:8px 14px;border-radius:12px;font-size:14px;max-width:90%;text-align:center;margin:0;z-index:3}
-.creview{position:fixed;inset:0;z-index:51;background:#0B0F0E;color:#EEF3F1;display:flex;flex-direction:column}
-.creview img{flex:1;min-height:0;width:100%;object-fit:contain;padding-top:env(safe-area-inset-top);box-sizing:border-box}
-.creview .csheet{position:static}
-.cpill:focus-visible,.cside:focus-visible,.cshut:focus-visible,.cbtn:focus-visible{outline:2px solid #E8C27A;outline-offset:2px}
 </style>
 </head>
 <body>
@@ -237,8 +158,8 @@ html.cam-open,html.cam-open body{overflow:hidden}
   <header>
     <div>
       <p class="eyebrow">CENTERING LAB</p>
-      <h1>วัดกันป่ะ!!</h1>
-      <p class="sub">ถ่ายหรือเลือกรูปหน้าและหลังการ์ด ระบบจะหามุม ดัดภาพให้ตรง แล้วหาขอบให้อัตโนมัติ ทุกขั้นลากแก้เองได้ เลือก 2 รูปพร้อมกันได้ รูปแรกเป็นหน้า รูปที่สองเป็นหลัง</p>
+      <h1>TRC TCG</h1>
+      <p class="sub">เลือกรูปหน้าและหลังการ์ด ระบบจะหามุม ดัดภาพให้ตรง แล้วหาขอบให้อัตโนมัติ ทุกขั้นลากแก้เองได้ เลือก 2 รูปพร้อมกันได้ รูปแรกเป็นหน้า รูปที่สองเป็นหลัง</p>
     </div>
     <div class="actions">
       <div class="seg" role="group" aria-label="ด้านของการ์ด">
@@ -246,8 +167,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
         <button type="button" id="sideB" aria-pressed="false">หลังการ์ด</button>
       </div>
       <button class="btn" type="button" id="sample">ดูภาพตัวอย่าง</button>
-      <button class="btn primary" type="button" id="camBtn">ถ่ายรูป</button>
-      <label class="btn" for="file">เลือกรูป</label>
+      <label class="btn primary" for="file">เลือกรูป</label>
       <input id="file" type="file" accept="image/*" multiple class="visually-hidden">
     </div>
   </header>
@@ -274,7 +194,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
         </div>
         <div class="empty" id="empty" hidden>
           <p class="empty-t" id="emptyT">ยังไม่มีรูปหลังการ์ด</p>
-          <div class="actions" style="justify-content:center"><button class="btn primary" type="button" id="camBtn2">ถ่ายรูป</button><label class="btn" for="file">เลือกรูป</label></div>
+          <label class="btn primary" for="file">เลือกรูป</label>
           <p class="hint">ถ่ายจากกล้องหรือเลือกจากอัลบั้มก็ได้ ถ้าเลือก 2 รูปพร้อมกัน รูปแรกจะเป็นหน้าการ์ด รูปที่สองเป็นหลังการ์ด</p>
           <button class="btn" type="button" id="emptyBack" hidden>← กลับไปหน้าการ์ด</button>
         </div>
@@ -305,7 +225,6 @@ html.cam-open,html.cam-open body{overflow:hidden}
         <section class="card">
           <p class="label">มุมการ์ด</p>
           <p class="status" id="status">กำลังหามุม…</p>
-          <div class="dock" id="dock1">
           <div class="corners" id="cornerChips">
             <button class="chip c" type="button" data-i="0">ซ้ายบน</button>
             <button class="chip c mid" type="button" data-i="4">กลางบน</button>
@@ -317,19 +236,18 @@ html.cam-open,html.cam-open body{overflow:hidden}
             <button class="chip c mid" type="button" data-i="6">กลางล่าง</button>
             <button class="chip c" type="button" data-i="2">ขวาล่าง</button>
           </div>
+          <p class="hint" id="bendInfo"></p>
           <div class="dpad" id="dpad1" role="group" aria-label="เลื่อนมุมที่เลือกทีละพิกเซล">
             <span></span><button type="button" data-dx="0" data-dy="-1" aria-label="เลื่อนขึ้น">↑</button><span></span>
             <button type="button" data-dx="-1" data-dy="0" aria-label="เลื่อนซ้าย">←</button><span class="c">1 px</span><button type="button" data-dx="1" data-dy="0" aria-label="เลื่อนขวา">→</button>
             <span></span><button type="button" data-dx="0" data-dy="1" aria-label="เลื่อนลง">↓</button><span></span>
           </div>
-          </div>
-          <p class="hint" id="bendInfo"></p>
           <div class="loupe-box"><canvas class="loupe" id="loupe1" aria-label="ภาพขยายรอบมุมที่เลือก"></canvas></div>
           <div class="ztools">
             <button class="btn zm" type="button" data-l="1" data-z="-1" aria-label="ซูมออก">−</button><output id="zl1">6×</output><button class="btn zm" type="button" data-l="1" data-z="1" aria-label="ซูมเข้า">+</button>
             <button class="btn" type="button" data-c="1">กลับไปที่จุด</button>
           </div>
-          <p class="hint">มือถือ: ลากนิ้วเดียวในภาพขยายเพื่อขยับมุม ใช้สองนิ้วเลื่อนดูและซูม · คอม: ลากที่วงกลมเพื่อขยับ ลากที่อื่นเพื่อเลื่อนดู ซูมด้วยล้อเมาส์ · กดปุ่มลูกศรค้างเพื่อเลื่อนต่อเนื่อง</p>
+          <p class="hint">ลากในภาพขยายเพื่อเลื่อนดูรอบๆ ลากที่วงกลมเพื่อขยับมุมแบบละเอียด ซูมด้วยปุ่ม ล้อเมาส์ หรือใช้สองนิ้ว</p>
           <p class="hint">การ์ดมุมมน ให้วางจุดตรงที่เส้นขอบสองด้านต่อออกไปชนกัน ไม่ใช่บนส่วนโค้ง</p>
           <label class="field" for="size">ขนาดการ์ด
             <select id="size">
@@ -345,12 +263,12 @@ html.cam-open,html.cam-open body{overflow:hidden}
         <section class="card" aria-live="polite">
           <p class="label">ผลการวัด</p>
           <p class="hint" id="meta"></p>
+          <p class="status warn" id="bendWarn3" hidden></p>
           <div class="readouts">
             <div class="ro"><span class="k">ซ้าย / ขวา</span><span class="v" id="lr">–</span><div class="bar"><i id="lrBar"></i><b></b></div></div>
             <div class="ro"><span class="k">บน / ล่าง</span><span class="v" id="tb">–</span><div class="bar"><i id="tbBar"></i><b></b></div></div>
           </div>
           <div class="verdict" id="verdict"><strong id="vTitle">–</strong><small id="vSub"></small></div>
-          <p class="status warn" id="bendWarn3" hidden></p>
           <p class="crit" id="crit"></p>
           <table>
             <thead><tr><th>ด้าน</th><th class="n">พิกเซล</th><th class="n">มม. (ประมาณ)</th></tr></thead>
@@ -370,7 +288,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
           </label>
           <p class="hint" id="autoNote" hidden></p>
           <div class="tpls" id="tpls" role="group" aria-label="แบบภาพสรุป">
-            <button class="chip" type="button" data-t="lab" aria-pressed="true">ห้องแล็บ</button>
+            <button class="chip" type="button" data-t="lab" aria-pressed="true">ห้องแล็บ ดำแดง</button>
             <button class="chip" type="button" data-t="story" aria-pressed="false">สตอรี่</button>
             <button class="chip" type="button" data-t="label" aria-pressed="false">ป้ายร้าน</button>
             <button class="chip" type="button" data-t="compare" aria-pressed="false">หน้า-หลัง</button>
@@ -389,7 +307,6 @@ html.cam-open,html.cam-open body{overflow:hidden}
         <section class="card">
           <p class="label">ปรับเส้นให้ตรงขอบ</p>
           <p class="status warn" id="bendWarn" hidden></p>
-          <div class="dock" id="dock2">
           <div class="chips" id="chips">
             <span class="rl"><i class="sw"></i>นอก</span>
             <button class="chip o" data-k="oL" type="button">ซ้าย</button>
@@ -408,13 +325,12 @@ html.cam-open,html.cam-open body{overflow:hidden}
             <button type="button" data-dx="-1" data-dy="0" aria-label="เลื่อนซ้าย">←</button><span class="c">1 px</span><button type="button" data-dx="1" data-dy="0" aria-label="เลื่อนขวา">→</button>
             <span></span><button type="button" data-dx="0" data-dy="1" aria-label="เลื่อนลง">↓</button><span></span>
           </div>
-          </div>
           <div class="loupe-box"><canvas class="loupe" id="loupe2" aria-label="ภาพขยายรอบเส้นที่เลือก"></canvas></div>
           <div class="ztools">
             <button class="btn zm" type="button" data-l="2" data-z="-1" aria-label="ซูมออก">−</button><output id="zl2">8×</output><button class="btn zm" type="button" data-l="2" data-z="1" aria-label="ซูมเข้า">+</button>
             <button class="btn" type="button" data-c="2">กลับไปที่เส้น</button>
           </div>
-          <p class="hint">มือถือ: ลากนิ้วเดียวในภาพขยายเพื่อขยับเส้น ใช้สองนิ้วเลื่อนดูและซูม · คอม: ลากที่เส้นเพื่อขยับ ลากที่อื่นเพื่อเลื่อนดู ซูมด้วยล้อเมาส์ · กดปุ่มลูกศรค้างเพื่อเลื่อนต่อเนื่อง</p>
+          <p class="hint">ลากในภาพขยายเพื่อเลื่อนดูรอบๆ ลากที่เส้นที่เลือกเพื่อขยับแบบละเอียด ซูมด้วยปุ่ม ล้อเมาส์ หรือใช้สองนิ้ว</p>
           <p class="hint">วางเส้นให้ทับรอยต่อสีพอดี กดลูกศรบนคีย์บอร์ดเพื่อเลื่อนทีละพิกเซล (Shift = 10)</p>
           <div class="actions"><button class="btn" type="button" id="redetectL">หาขอบอัตโนมัติอีกครั้ง</button></div>
         </section>
@@ -436,71 +352,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
   </div>
 </div>
 
-<div class="camwrap" id="cam" hidden>
-  <video id="cvideo" playsinline muted autoplay></video>
-  <div class="cg" id="cguide"></div>
-  <div class="clevel" id="clevel" aria-hidden="true"><div class="cbub" id="cbub"></div></div>
-  <div class="ctop" id="ctop">
-    <button class="cpill" type="button" id="cClose" aria-label="ปิดกล้อง">✕</button>
-    <button class="cpill" type="button" id="cCal">ตั้งศูนย์</button>
-    <button class="cpill" type="button" id="cLens" hidden>เลนส์</button>
-    <button class="cpill" type="button" id="cAuto" aria-pressed="true">ถ่ายอัตโนมัติ</button>
-  </div>
-  <p class="ctoast" id="ctoast" role="status" hidden></p>
-  <div class="cbot" id="cbot">
-    <p class="cside-t" id="cSideTxt">กำลังถ่ายหน้าการ์ด</p>
-    <p class="chint bad" id="chint" aria-live="polite">กำลังอ่านเซนเซอร์…</p>
-    <p class="cread" id="cread"></p>
-    <div class="crow">
-      <label class="cside" for="cfile">คลังรูป</label>
-      <button class="cshut" type="button" id="cshut" aria-label="ถ่ายรูป" disabled>
-        <i></i>
-        <svg viewBox="0 0 78 78" aria-hidden="true"><circle id="cring" cx="39" cy="39" r="36" fill="none" stroke="#5DCAA5" stroke-width="4" stroke-dasharray="226" stroke-dashoffset="226"/></svg>
-      </button>
-      <button class="cside" type="button" id="cZoom" hidden>1×</button>
-    </div>
-    <p class="cres" id="cres"></p>
-  </div>
-  <input id="cfile" type="file" accept="image/*" class="visually-hidden">
-  <div class="csheet" id="cCalSheet" hidden>
-    <h2>ตั้งศูนย์ระดับ</h2>
-    <p>วางมือถือหงายราบบนโต๊ะตรงที่จะวางการ์ด แล้วกด "ตั้งศูนย์" ระบบจะจำความเอียงของโต๊ะไว้ ถ้าโต๊ะไม่ได้ระดับก็ยังวัดถูก</p>
-    <p id="cCalNow" style="font-family:var(--f-mono)"></p>
-    <div class="cbtns">
-      <button class="cbtn" type="button" id="cCalReset">ล้างค่า</button>
-      <button class="cbtn" type="button" id="cCalClose">ปิด</button>
-      <button class="cbtn pri" type="button" id="cCalSet">ตั้งศูนย์</button>
-    </div>
-  </div>
-</div>
-<div class="creview" id="creview" hidden>
-  <img id="cshot" alt="รูปที่ถ่าย">
-  <div class="csheet">
-    <p class="cread" id="cshotMeta" style="color:#9FB0AA"></p>
-    <div class="cbtns">
-      <button class="cbtn" type="button" id="cAgain">ถ่ายใหม่</button>
-      <button class="cbtn pri" type="button" id="cUse">ใช้รูปนี้ →</button>
-    </div>
-  </div>
-</div>
-
 <script>
-/* Safari on iPhone ignores textAlign for Thai text drawn on a canvas and draws it left-aligned.
-   For any text with non-ASCII characters, measure it and place it ourselves, always drawing left-aligned. */
-(() => {
-  const P = window.CanvasRenderingContext2D && CanvasRenderingContext2D.prototype;
-  if (!P || P.__thaiAlign) return;
-  const orig = P.fillText; P.__thaiAlign = true;
-  P.fillText = function(text, x, y, maxW){
-    const a = this.textAlign, str = String(text);
-    if (a === 'left' || a === 'start' || !/[^\x00-\x7F]/.test(str)) return maxW === undefined ? orig.call(this, str, x, y) : orig.call(this, str, x, y, maxW);
-    const w = this.measureText(str).width, x0 = a === 'center' ? x - w/2 : x - w;
-    this.textAlign = 'left';
-    try { return maxW === undefined ? orig.call(this, str, x0, y) : orig.call(this, str, x0, y, maxW); }
-    finally { this.textAlign = a; }
-  };
-})();
-
 (() => {
   const $ = id => document.getElementById(id);
   const view = $('view'), vctx = view.getContext('2d');
@@ -868,7 +720,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
     const [mw, mh] = SIZES[S.size];
     const wq = (dist2(q[0],q[1]) + dist2(q[3],q[2]))/2, hq = (dist2(q[0],q[3]) + dist2(q[1],q[2]))/2;
     const land = wq > hq, rw = land ? mh : mw, rh = land ? mw : mh;
-    const long = Math.max(600, Math.min(2200, Math.max(dist2(q[0],q[1]), dist2(q[3],q[2]), dist2(q[0],q[3]), dist2(q[1],q[2]))));
+    const long = Math.max(600, Math.min(1600, Math.max(dist2(q[0],q[1]), dist2(q[3],q[2]), dist2(q[0],q[3]), dist2(q[1],q[2]))));
     let cw, ch; if (rh >= rw){ ch = Math.round(long); cw = Math.round(long*rw/rh); } else { cw = Math.round(long); ch = Math.round(long*rh/rw); }
     const m = Math.round(Math.max(cw,ch)*0.035), OW = cw+2*m, OH = ch+2*m;
     const h = M.Hn;
@@ -970,7 +822,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
 
   function buildWork(){
     const sw0 = S.src.naturalWidth || S.src.width, sh0 = S.src.naturalHeight || S.src.height;
-    const k = Math.min(1, 4096 / Math.max(sw0, sh0));
+    const k = Math.min(1, 2400 / Math.max(sw0, sh0));
     work.width = Math.round(sw0*k); work.height = Math.round(sh0*k);
     wctx.imageSmoothingQuality = 'high';
     wctx.drawImage(S.src, 0, 0, work.width, work.height);
@@ -987,22 +839,22 @@ html.cam-open,html.cam-open body{overflow:hidden}
       : 'หามุมอัตโนมัติไม่เจอ ลากจุดทั้ง 4 ไปวางที่มุมการ์ดเอง';
   }
 
-  function setSource(src, sample, tilt){
-    S.src = src; S.isSample = sample; S.tilt = tilt || null; S.mid++; S.lines = null; hideEmpty(); $('badge').hidden = !sample; hideMsg();
+  function setSource(src, sample){
+    S.src = src; S.isSample = sample; S.mid++; S.lines = null; hideEmpty(); $('badge').hidden = !sample; hideMsg();
     if (S.results[S.side]){ delete S.results[S.side]; updSides(); }
     buildWork(); runCorners(); setStep(1); updSideBtns();
   }
   /* Each side (front/back) keeps its own photo, corners and lines. */
   function saveSlot(){
     if (!S.src){ S.slots[S.side] = null; return; }
-    S.slots[S.side] = { src:S.src, isSample:S.isSample, tilt:S.tilt, corners:S.corners, mids:S.mids, lines:S.lines, dirty:S.dirty,
+    S.slots[S.side] = { src:S.src, isSample:S.isSample, corners:S.corners, mids:S.mids, lines:S.lines, dirty:S.dirty,
       csel:S.csel, sel:S.sel, step:S.step, status:$('status').textContent, statusWarn:$('status').classList.contains('warn') };
   }
   function restoreSlot(side){
     const sl = S.slots[side];
     if (!sl){ S.src = null; S.corners = null; S.mids = null; S.lines = null; showEmpty(); return; }
     hideEmpty();
-    Object.assign(S, { src:sl.src, isSample:sl.isSample, tilt:sl.tilt, corners:sl.corners, mids:sl.mids, lines:sl.lines, dirty:sl.dirty, csel:sl.csel, sel:sl.sel });
+    Object.assign(S, { src:sl.src, isSample:sl.isSample, corners:sl.corners, mids:sl.mids, lines:sl.lines, dirty:sl.dirty, csel:sl.csel, sel:sl.sel });
     $('badge').hidden = !S.isSample;
     const st = $('status'); st.textContent = sl.status; st.classList.toggle('warn', sl.statusWarn);
     buildWork();
@@ -1016,7 +868,6 @@ html.cam-open,html.cam-open body{overflow:hidden}
     const o = otherSide(), eb = $('emptyBack');
     eb.hidden = !S.slots[o]; eb.textContent = `← กลับไป${SIDE_NAME[o]}`;
     for (const i of [1,2,3]){ $('p'+i).hidden = true; $('bar'+i).hidden = true; $('st'+i).removeAttribute('aria-current'); $('st'+i).classList.remove('done'); }
-    delete document.documentElement.dataset.step;
   }
   function hideEmpty(){ view.hidden = false; $('empty').hidden = true; }
   function updSideBtns(){
@@ -1032,7 +883,12 @@ html.cam-open,html.cam-open body{overflow:hidden}
       if (!makeFlat()){ showMsg('มุมทั้ง 4 จุดไม่เป็นรูปสี่เหลี่ยม ลองลากจุดให้อยู่คนละมุมของการ์ด'); return; }
       detectLines(); S.sel = 'iL'; S.dirty = false;
     }
-    hideMsg(); S.step = n; S.drag = false; S.pan = {x:0, y:0}; document.documentElement.dataset.step = String(n);
+    const bw = S.bow && S.bow.max > BOW_WARN;
+    for (const id of ['bendWarn', 'bendWarn3']){
+      $(id).hidden = !bw;
+      if (bw) $(id).textContent = `การ์ดงอ ขอบ${SIDE_TH[S.bow.side]}โค้งประมาณ ${S.bow.max.toFixed(1)} มม. ระบบดัดภาพให้ตรงแล้ว แต่ผลอาจคลาดได้ ถ้าทำได้ให้กดการ์ดให้แบนแล้วถ่ายใหม่`;
+    }
+    hideMsg(); S.step = n; S.drag = false; S.pan = {x:0, y:0};
     for (const i of [1,2,3]){
       $('p'+i).hidden = n !== i; $('bar'+i).hidden = n !== i;
       const st = $('st'+i);
@@ -1053,8 +909,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
     stage.classList.toggle('has-live', live); $('live').hidden = !live;
     const lw = live && wide ? Math.round(Math.min(330, Math.max(240, stage.clientWidth*0.35))) : 0;
     if (lw) stage.style.setProperty('--livew', lw + 'px');
-    const phone = matchMedia('(max-width: 880px)').matches;
-    const aw = stage.clientWidth - 26 - (lw ? lw + 14 : 0), mh = phone && S.step < 3 ? Math.max(260, window.innerHeight*(live ? 0.42 : 0.52)) : Math.max(300, window.innerHeight*(live && !wide ? 0.6 : 0.74));
+    const aw = stage.clientWidth - 26 - (lw ? lw + 14 : 0), mh = Math.max(300, window.innerHeight*(live && !wide ? 0.6 : 0.74));
     const sc = Math.min(aw/im.width, mh/im.height);
     S.scale = sc; S.dpr = window.devicePixelRatio || 1;
     const cw = Math.round(im.width*sc), ch = Math.round(im.height*sc);
@@ -1067,9 +922,6 @@ html.cam-open,html.cam-open body{overflow:hidden}
   function render(){
     if (!S.src) return;
     $('zl1').textContent = fmtZ(S.lz[1]); $('zl2').textContent = fmtZ(S.lz[2]);
-    /* Phones: the floating loupe moves to the side away from what is being adjusted. */
-    const onRight = S.step === 1 ? (S.corners && allPts()[S.csel].x > work.width/2) : (S.sel === 'oR' || S.sel === 'iR');
-    document.documentElement.classList.toggle('loupe-left', !!onRight);
     if (S.step === 1){ drawCorners(); drawLoupe1(); updCornerUI(); }
     else { drawLines(); drawLoupe2(); readout(); updChips(); if (S.step === 2) drawLive(); }
   }
@@ -1207,11 +1059,9 @@ html.cam-open,html.cam-open body{overflow:hidden}
 
   /* ---------- readout ---------- */
   const fmt1 = v => v.toFixed(1);
-  const tiltTxt = t => t ? `ถ่ายเอียง ${Math.max(Math.abs(t.b), Math.abs(t.g)).toFixed(1)}°` : 'ไม่มีข้อมูลมุมกล้อง';
   function readout(){
     const L = S.lines; if (!L) return;
-    updBendUI();
-    $('meta').textContent = `${S.side === 'front' ? 'หน้าการ์ด' : 'หลังการ์ด'} · การ์ด ${SIZES[S.size][0]} × ${SIZES[S.size][1]} มม.` + (S.isSample ? '' : ` · ${tiltTxt(S.tilt)}`);
+    $('meta').textContent = `${S.side === 'front' ? 'หน้าการ์ด' : 'หลังการ์ด'} · การ์ด ${SIZES[S.size][0]} × ${SIZES[S.size][1]} มม.`;
     const g = gaps(), rat = (a,b) => (a < 0 || b < 0 || a+b <= 0) ? null : a/(a+b)*100;
     const lr = rat(g.L, g.R), tb = rat(g.T, g.B);
     $('lr').textContent = lr == null ? '–' : `${fmt1(lr)} / ${fmt1(100-lr)}`;
@@ -1248,11 +1098,10 @@ html.cam-open,html.cam-open body{overflow:hidden}
     const M = curveModel(), el = $('bendInfo');
     if (!M){ el.textContent = ''; return; }
     const b = bowMM(M);
-    const hard = b.max > BOW_HARD;
-    el.classList.toggle('status', hard); el.classList.toggle('warn', hard);
+    el.classList.toggle('status', b.max > BOW_WARN); el.classList.toggle('warn', b.max > BOW_WARN);
     el.textContent = b.max < BOW_MIN ? 'ขอบการ์ดตรง ไม่ต้องดัดขอบโค้ง'
-      : !hard ? `ขอบโค้ง ${b.max.toFixed(1)} มม. (ด้าน${SIDE_TH[b.side]}) ระบบจะดัดให้ตรง ขั้นถัดไปจะบอกว่าความคลาดจากการงอกระทบเกรดหรือไม่`
-      : `การ์ดงอมาก ขอบ${SIDE_TH[b.side]}โค้ง ${b.max.toFixed(1)} มม. (เกิน ${BOW_HARD.toFixed(1)} มม.) การดัดภาพแก้ได้ไม่หมด ถ้าทำได้ให้กดการ์ดให้แบนแล้วถ่ายใหม่`;
+      : b.max <= BOW_WARN ? `ขอบโค้งเล็กน้อย (สูงสุด ${b.max.toFixed(1)} มม. ด้าน${SIDE_TH[b.side]}) ระบบจะดัดให้ตรง ผลยังเชื่อถือได้`
+      : `การ์ดน่าจะงอ ขอบ${SIDE_TH[b.side]}โค้งประมาณ ${b.max.toFixed(1)} มม. ระบบจะดัดให้ตรง แต่ผลอาจคลาดจนเปลี่ยนเกรดได้ ถ้าทำได้ให้กดการ์ดให้แบนแล้วถ่ายใหม่`;
   }
 
   /* ---------- interaction ---------- */
@@ -1260,46 +1109,8 @@ html.cam-open,html.cam-open body{overflow:hidden}
     const max = isV(k) ? flat.width : flat.height;
     S.lines[k] = Math.max(0, Math.min(max, S.lines[k] + by)); render();
   }
-  /* Bend levels (mm of bow). Below BOW_MIN is photo noise. A bend is reported as a problem only when the
-     error it may cause (BOW_ERR_K x the largest bow, on every border) could move the centering grade,
-     or when the bow is above BOW_HARD, where the warp cannot undo the lift reliably. */
-  const BOW_MIN = 0.2, BOW_ERR_K = 0.3, BOW_HARD = 1.0;
-  const gradeAt = (side, w) => { const hit = GR[side].find(([t]) => w <= t + 1e-9); return hit ? +hit[1].slice(4) : null; };
-  /* Worst-side share (50-100) reachable when the first border is a in [a0,a1] and the second b in [b0,b1]. */
-  function worstSpan(a, b, d){
-    const a0 = Math.max(0, a-d), a1 = a+d, b0 = Math.max(0, b-d), b1 = b+d;
-    const hi = a1 + b0 > 0 ? a1/(a1+b0)*100 : 50, lo = a0 + b1 > 0 ? a0/(a0+b1)*100 : 50;
-    const w = r => Math.max(r, 100-r);
-    return { min: lo <= 50 && hi >= 50 ? 50 : Math.min(w(lo), w(hi)), max: Math.max(w(lo), w(hi)) };
-  }
-  /* How far the bend could push the grade, for one side's lines. */
-  function bendRisk(side, L, mm, bow){
-    if (!bow || bow.max < BOW_MIN) return null;
-    const px = mm[0]/Math.max(1, L.oR-L.oL), py = mm[1]/Math.max(1, L.oB-L.oT);
-    const g = { L:(L.iL-L.oL)*px, R:(L.oR-L.iR)*px, T:(L.iT-L.oT)*py, B:(L.oB-L.iB)*py };
-    const base = { bow:bow.max, side:bow.side, delta:bow.max*BOW_ERR_K, hard:bow.max > BOW_HARD, changes:false };
-    if (Object.values(g).some(v => v < 0) || g.L+g.R <= 0 || g.T+g.B <= 0) return base;
-    const lr = worstSpan(g.L, g.R, base.delta), tb = worstSpan(g.T, g.B, base.delta);
-    const lo = Math.max(lr.min, tb.min), hi = Math.max(lr.max, tb.max);
-    const gBest = gradeAt(side, lo), gWorst = gradeAt(side, hi);
-    return { ...base, lo, hi, gBest, gWorst, changes: gBest !== gWorst };
-  }
-  const gLabel = n => n ? `PSA ${n}` : 'เยื้องเกินเกณฑ์';
-  const riskRange = r => r.gBest && r.gWorst ? `PSA ${r.gWorst}–${r.gBest}` : r.gBest ? `PSA ${r.gBest} หรือเยื้องเกินเกณฑ์` : 'เยื้องเกินเกณฑ์';
-  /* Steps 2 and 3: a yellow box only when the grade could move or the bend is severe; otherwise a quiet line. */
-  function updBendUI(){
-    const r = S.lines ? bendRisk(S.side, S.lines, S.mm, S.bow) : null;
-    for (const id of ['bendWarn', 'bendWarn3']){
-      const el = $(id);
-      if (!r){ el.hidden = true; continue; }
-      const loud = r.changes || r.hard, sd = SIDE_TH[r.side], b = r.bow.toFixed(1), d = r.delta.toFixed(2);
-      el.hidden = false; el.className = loud ? 'status warn' : 'hint';
-      el.textContent = r.changes
-        ? `การ์ดงอ ขอบ${sd}โค้ง ${b} มม. ขอบแต่ละด้านอาจคลาดได้ ±${d} มม. เกรดเซ็นเตอร์อาจอยู่ระหว่าง ${riskRange(r)} ถ้าทำได้ให้กดการ์ดให้แบนแล้วถ่ายใหม่`
-        : r.hard ? `การ์ดงอมาก ขอบ${sd}โค้ง ${b} มม. ช่วงคลาด ±${d} มม. ยังอยู่ใน ${gLabel(r.gBest)} แต่การดัดภาพแก้ส่วนที่ยกขึ้นได้ไม่หมด ถ้าทำได้ให้กดการ์ดให้แบนแล้วถ่ายใหม่`
-        : `การ์ดงอ ${b} มม. (ขอบ${sd}) คลาดได้ ±${d} มม. ต่อขอบ ไม่กระทบเกรดเซ็นเตอร์`;
-    }
-  }
+  /* Bend levels (mm of bow): below BOW_MIN is photo noise; above BOW_WARN the result may shift a grade. */
+  const BOW_MIN = 0.2, BOW_WARN = 0.5;
   const allPts = () => [...S.corners, ...S.mids];
   /* Move point idx (0-3 corners, 4-7 edge mids T,R,B,L). A corner drags its two neighbouring mids half-way along. */
   function setPoint(idx, x, y){
@@ -1399,12 +1210,11 @@ html.cam-open,html.cam-open body{overflow:hidden}
       if (!ready()) return;
       cv.setPointerCapture(e.pointerId); e.preventDefault();
       pts.set(e.pointerId, local(e));
-      if (pts.size === 2){ const [a,b] = [...pts.values()]; pinch = { d:Math.hypot(a.x-b.x, a.y-b.y) || 1, z:S.lz[l], m:{ x:(a.x+b.x)/2, y:(a.y+b.y)/2 }, pan:{ ...S.pan } }; S.ldrag = null; return; }
+      if (pts.size === 2){ const [a,b] = [...pts.values()]; pinch = { d:Math.hypot(a.x-b.x, a.y-b.y) || 1, z:S.lz[l] }; S.ldrag = null; return; }
       const v = cv._v; if (!v) return;
       const q = local(e), touch = e.pointerType === 'touch', t = loupeTarget();
       let mode = 'pan';
-      if (touch) mode = 'move';
-      else if (l === 1){
+      if (l === 1){
         if (Math.hypot(q.x - (t.x - v.sx)*v.z, q.y - (t.y - v.sy)*v.z) < (touch ? 30 : 18)) mode = 'move';
       } else {
         const k = S.sel, pos = isV(k) ? (S.lines[k] - v.sx)*v.z : (S.lines[k] - v.sy)*v.z;
@@ -1416,12 +1226,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
     cv.addEventListener('pointermove', e => {
       if (!pts.has(e.pointerId)) return;
       pts.set(e.pointerId, local(e));
-      if (pinch && pts.size >= 2){
-        const [a,b] = [...pts.values()], m = { x:(a.x+b.x)/2, y:(a.y+b.y)/2 };
-        S.lz[l] = Math.max(2, Math.min(24, pinch.z * Math.hypot(a.x-b.x, a.y-b.y) / pinch.d));
-        S.pan = { x:pinch.pan.x - (m.x - pinch.m.x)/S.lz[l], y:pinch.pan.y - (m.y - pinch.m.y)/S.lz[l] };
-        render(); return;
-      }
+      if (pinch && pts.size >= 2){ const [a,b] = [...pts.values()]; setZoom(l, pinch.z * Math.hypot(a.x-b.x, a.y-b.y) / pinch.d); return; }
       const D = S.ldrag; if (!D) return;
       const q = local(e), dx = (q.x - D.q0.x)/D.z, dy = (q.y - D.q0.y)/D.z;
       if (D.mode === 'pan'){ S.pan = { x:D.pan0.x - dx, y:D.pan0.y - dy }; render(); return; }
@@ -1438,25 +1243,11 @@ html.cam-open,html.cam-open body{overflow:hidden}
     cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
   }
   bindLoupe(loupe1, 1); bindLoupe(loupe2, 2);
-  /* Arrow buttons: one tap = 1 px; hold to repeat, and after a second of holding move 5 px at a time. */
-  function bindRepeat(btn, fn){
-    let t0 = 0, timer = null;
-    const stop = () => { clearTimeout(timer); timer = null; };
-    const tick = () => { fn(performance.now() - t0 > 1000 ? 5 : 1); timer = setTimeout(tick, 60); };
-    btn.addEventListener('pointerdown', e => {
-      if (btn.disabled || (e.pointerType === 'mouse' && e.button !== 0)) return;
-      e.preventDefault(); try { btn.setPointerCapture(e.pointerId); } catch(_){}
-      t0 = performance.now(); fn(1); stop(); timer = setTimeout(tick, 380);
-    });
-    for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) btn.addEventListener(ev, stop);
-    btn.addEventListener('click', e => { if (e.detail === 0) fn(1); });
-    btn.addEventListener('contextmenu', e => e.preventDefault());
-  }
-  document.querySelectorAll('#dpad1 button').forEach(b => bindRepeat(b, step => S.corners && moveCorner(+b.dataset.dx*step, +b.dataset.dy*step)));
-  document.querySelectorAll('#dpad2 button').forEach(b => bindRepeat(b, step => {
+  document.querySelectorAll('#dpad1 button').forEach(b => b.addEventListener('click', () => S.corners && moveCorner(+b.dataset.dx, +b.dataset.dy)));
+  document.querySelectorAll('#dpad2 button').forEach(b => b.addEventListener('click', () => {
     if (!S.lines) return;
     const by = isV(S.sel) ? +b.dataset.dx : +b.dataset.dy;
-    if (by) moveLine(S.sel, by*step);
+    if (by) moveLine(S.sel, by);
   }));
   $('go').addEventListener('click', () => setStep(2));
   $('st2').addEventListener('click', () => setStep(2));
@@ -1487,9 +1278,8 @@ html.cam-open,html.cam-open body{overflow:hidden}
 
   /* ---------- summary report image ---------- */
   const bendNote = () => { const b = Math.max(0, ...Object.values(S.results).map(r => r.bow || 0)); return b >= BOW_MIN ? ` · ภาพผ่านการดัดขอบโค้ง (โค้งสูงสุด ${b.toFixed(1)} มม.)` : ''; };
-  const bendLines = () => ['front','back'].filter(k => S.results[k] && S.results[k].risk && (S.results[k].risk.changes || S.results[k].risk.hard))
-    .map(k => { const r = S.results[k].risk, head = `${SIDE_NAME[k]}งอ (ขอบ${SIDE_TH[r.side]}โค้ง ${r.bow.toFixed(1)} มม.)`;
-      return r.changes ? `${head} เกรดเซ็นเตอร์อาจอยู่ระหว่าง ${riskRange(r)}` : `${head} งอมาก ผลอาจคลาดได้`; });
+  const bendLines = () => ['front','back'].filter(k => S.results[k] && S.results[k].bow > BOW_WARN)
+    .map(k => `${SIDE_NAME[k]}ผ่านการดัดขอบโค้ง (ขอบ${SIDE_TH[S.results[k].bowSide]}โค้ง ${S.results[k].bow.toFixed(1)} มม.) ผลอาจคลาดได้`);
   const fullNote = () => [$('cardNote').value.trim(), ...bendLines()].filter(Boolean).join('\n');
   const SIDE_NAME = { front:'หน้าการ์ด', back:'หลังการ์ด' };
   function sideMetrics(L){
@@ -1505,59 +1295,10 @@ html.cam-open,html.cam-open body{overflow:hidden}
   }
   const ratioTxt = w => `${Math.round(w)}/${100-Math.round(w)}`;
 
-  /* Centering limits per grading company, as the worst-side share (%) a grade allows; TCG figures where the
-     company separates them. BGS judges both axes: "both" = both axes within the limit, "split" = one axis
-     exactly 50/50 (shown as 50.0) and the other within the limit. BGS figures come from secondary sources. */
-  const EXACT50 = 50.05;
-  const GRADERS = [
-    { name:'PSA', front:[[55,10],[60,9],[65,8],[70,7]], back:[[75,10],[90,9]] },
-    { name:'CGC', front:[[55,10],[60,9],[65,8],[70,7]], back:[[75,10],[90,9]] },
-    { name:'BGS', sub:'subgrade', front:[[EXACT50,10,'both'],[55,9.5,'split'],[55,9],[60,8],[65,7],[70,6]], back:[[60,10],[70,9],[80,8],[90,7],[95,6]] },
-    { name:'TAG', sub:'TCG', front:[[55,10],[60,9],[62.5,8.5],[65,8],[67.5,7.5],[70,7],[72.5,6.5],[75,6]], back:[[65,10],[75,9],[85,8.5],[95,8]] }
-  ];
-  function graderSide(G, side, m){
-    if (m.lr == null || m.tb == null) return null;
-    const wLR = Math.max(m.lr, 100-m.lr), wTB = Math.max(m.tb, 100-m.tb), hi = Math.max(wLR, wTB), lo = Math.min(wLR, wTB);
-    for (const [t, n, rule] of G[side]){
-      const ok = rule === 'both' ? hi < t : rule === 'split' ? lo < EXACT50 && hi <= t + 1e-9 : hi <= t + 1e-9;
-      if (ok) return n;
-    }
-    return null;
-  }
-  /* Per company: grade of each measured side and the lower of the two. Average of the four companies,
-     rounded up only when its fraction is above .74, otherwise down. */
-  function graderTable(){
-    const sides = ['front','back'].filter(k => S.results[k]);
-    const rows = GRADERS.map(G => {
-      const per = {};
-      for (const k of sides) per[k] = graderSide(G, k, sideMetrics(S.results[k].lines));
-      const vals = sides.map(k => per[k]);
-      return { G, per, all: vals.length && vals.every(v => v != null) ? Math.min(...vals) : null };
-    });
-    const ok = rows.every(r => r.all != null);
-    const avg = ok ? Math.round(rows.reduce((t, r) => t + r.all, 0) / rows.length * 100) / 100 : null;
-    const sideAvg = {};
-    for (const k of sides){ const v = rows.map(r => r.per[k]); sideAvg[k] = v.every(x => x != null) ? Math.round(v.reduce((t, x) => t + x, 0) / v.length * 100) / 100 : null; }
-    return { sides, rows, avg, grade: avg == null ? null : roundGrade(avg), sideAvg };
-  }
-  const roundGrade = a => { const f = Math.floor(a + 1e-9); return a - f > 0.74 + 1e-9 ? f + 1 : f; };
-  const fmtG = n => n == null ? '–' : Number.isInteger(n) ? String(n) : String(+n.toFixed(2));
-  /* How far a side's worst axis sits from the next stricter PSA/CGC/TAG front-style limit, in % and in mm of print shift. */
-  function nextStep(k){
-    const r = S.results[k]; if (!r) return null;
-    const L = r.lines, m = sideMetrics(L); if (m.lr == null || m.tb == null) return null;
-    const lim = GRADERS[0][k].map(([t]) => t), wLR = Math.max(m.lr, 100-m.lr), wTB = Math.max(m.tb, 100-m.tb);
-    const ax = wLR >= wTB ? 'LR' : 'TB', w = Math.max(wLR, wTB), t = lim.filter(x => x < w - 1e-9).pop();
-    if (t == null) return null;
-    const per = ax === 'LR' ? r.mm[0]/Math.max(1, L.oR-L.oL) : r.mm[1]/Math.max(1, L.oB-L.oT);
-    const a = (ax === 'LR' ? Math.max(m.g.L, m.g.R) : Math.max(m.g.T, m.g.B))*per, b = (ax === 'LR' ? Math.min(m.g.L, m.g.R) : Math.min(m.g.T, m.g.B))*per;
-    return { t, pct:w - t, mm:a - t/100*(a+b) };
-  }
-
   function snapshot(){
     if (!S.lines) return;
     const c = document.createElement('canvas'); c.width = flat.width; c.height = flat.height; c.getContext('2d').drawImage(flat, 0, 0);
-    S.results[S.side] = { mid:S.mid, lines:{ ...S.lines }, mm:[...S.mm], img:c, bow:S.bow ? S.bow.max : 0, bowSide:S.bow ? S.bow.side : 'T', risk:bendRisk(S.side, S.lines, S.mm, S.bow), tilt:S.tilt, sample:S.isSample };
+    S.results[S.side] = { mid:S.mid, lines:{ ...S.lines }, mm:[...S.mm], img:c, bow:S.bow ? S.bow.max : 0, bowSide:S.bow ? S.bow.side : 'T' };
     updSides(); updSideBtns(); scheduleReport();
   }
   function updSides(){
@@ -1603,7 +1344,8 @@ html.cam-open,html.cam-open body{overflow:hidden}
     return out;
   }
 
-  function drawCornerTile(g, R, which, x, y, s, sel){
+  function drawCornerTile(g, R, which, x, y, s, sel, pal){
+    const C = pal || { band:'rgba(52,199,89,0.38)', outer:'#34C759', inner:'#FF3B30', frame:'#2B3330' };
     const L = R.lines, im = R.img;
     const gp = Math.max(L.iL-L.oL, L.oR-L.iR, L.iT-L.oT, L.oB-L.iB, 10), span = gp*2.8;
     const left = which.includes('L'), top = which.includes('T');
@@ -1614,156 +1356,14 @@ html.cam-open,html.cam-open body{overflow:hidden}
     g.fillStyle = '#000'; g.fillRect(x, y, s, s);
     g.imageSmoothingQuality = 'high'; g.drawImage(im, x0, y0, span, span, x, y, s, s);
     g.beginPath(); g.rect(X(L.oL), Y(L.oT), (L.oR-L.oL)*k, (L.oB-L.oT)*k); g.rect(X(L.iL), Y(L.iT), (L.iR-L.iL)*k, (L.iB-L.iT)*k);
-    g.fillStyle = 'rgba(52,199,89,0.38)'; g.fill('evenodd');
+    g.fillStyle = C.band; g.fill('evenodd');
     const line = k => { const v = L[k], vert = k[1] === 'L' || k[1] === 'R';
       g.lineWidth = (k[0] === 'o' ? 2 : 2.5) + (k === sel ? 2 : 0);
       g.beginPath(); if (vert){ g.moveTo(X(v), y); g.lineTo(X(v), y+s); } else { g.moveTo(x, Y(v)); g.lineTo(x+s, Y(v)); } g.stroke(); };
-    g.setLineDash([]); g.strokeStyle = '#34C759'; ['oL','oR','oT','oB'].forEach(line);
-    g.setLineDash([10, 7]); g.strokeStyle = '#FF3B30'; ['iL','iR','iT','iB'].forEach(line);
+    g.setLineDash([]); g.strokeStyle = C.outer; ['oL','oR','oT','oB'].forEach(line);
+    g.setLineDash([10, 7]); g.strokeStyle = C.inner; ['iL','iR','iT','iB'].forEach(line);
     g.restore();
-    g.strokeStyle = '#2B3330'; g.lineWidth = 2; g.strokeRect(x+1, y+1, s-2, s-2);
-  }
-
-  async function drawLab(){
-    try { await Promise.all(['600 96px "Chakra Petch"', '500 22px "IBM Plex Sans Thai"', '600 22px "IBM Plex Sans Thai"', '600 40px "IBM Plex Mono"'].map(f => document.fonts.load(f, 'วัดกันป่ะ 0123'))); } catch(_){}
-    const sides = ['front','back'].filter(k => S.results[k]); if (!sides.length) return null;
-    const heroSide = sides[0], hero = S.results[heroSide];
-    const W = 1600, H = 1600, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-    const g = cv.getContext('2d');
-    const C = { bg:'#0B0E0D', panel:'#111614', line:'#2B3330', ink:'#F1EEE6', mute:'#97A39E', acc:'#4FD1B8', gold:'#E8C27A', good:'#5BD68A', warn:'#E8C27A', bad:'#FF7A66' };
-    const FD = '"Chakra Petch","IBM Plex Sans Thai",sans-serif', FB = '"IBM Plex Sans Thai",sans-serif', FM = '"IBM Plex Mono",monospace';
-    const T = (txt, x, y, font, color, align = 'left') => { g.font = font; g.fillStyle = color; g.textAlign = align; g.textBaseline = 'alphabetic'; g.fillText(txt, x, y); };
-    const box = (x, y, w, h) => { g.fillStyle = C.panel; g.fillRect(x, y, w, h); g.strokeStyle = C.line; g.lineWidth = 2; g.strokeRect(x+1, y+1, w-2, h-2); };
-    const hr = (x1, x2, y) => { g.strokeStyle = C.line; g.lineWidth = 2; g.beginPath(); g.moveTo(x1, y); g.lineTo(x2, y); g.stroke(); };
-    const spaced = (on) => { if (on){ g.save(); if ('letterSpacing' in g) g.letterSpacing = '6px'; } else g.restore(); };
-    const gradeColor = n => n >= 10 ? C.good : n >= 9 ? C.warn : C.bad;
-
-    g.fillStyle = C.bg; g.fillRect(0, 0, W, H);
-    g.strokeStyle = C.line; g.lineWidth = 2; g.strokeRect(24, 24, W-48, H-48);
-
-    const now = new Date(), p2 = n => String(n).padStart(2, '0');
-    const rid = `CTL-${String(now.getFullYear()).slice(2)}${p2(now.getMonth()+1)}${p2(now.getDate())}-${p2(now.getHours())}${p2(now.getMinutes())}`;
-    const dateTh = now.toLocaleDateString('th-TH', { day:'numeric', month:'short', year:'numeric' });
-    T('วัดกันป่ะ!!', W/2, 138, `600 96px ${FD}`, C.gold, 'center');
-    spaced(true); T('CENTERING LAB', W/2, 192, `500 30px ${FD}`, C.ink, 'center'); spaced(false);
-    T('ประเมินเซ็นเตอร์จากรูปถ่ายเท่านั้น', 60, 96, `400 20px ${FB}`, C.mute);
-    T('ไม่ใช่ผลเกรดจริงจากบริษัทเกรดการ์ด', 60, 126, `400 20px ${FB}`, C.mute);
-    T(`REPORT ID  ${rid}`, W-60, 96, `600 20px ${FM}`, C.gold, 'right');
-    T(dateTh, W-60, 126, `400 20px ${FB}`, C.mute, 'right');
-
-    const top = 232, bot = 1512;
-    /* left: centering numbers */
-    box(48, top, 440, bot-top);
-    spaced(true); T('CENTERING', 268, 290, `600 30px ${FD}`, C.acc, 'center'); spaced(false);
-    g.strokeStyle = C.line; g.beginPath(); g.moveTo(268, 318); g.lineTo(268, 520); g.stroke();
-    const grades = {}, GT = graderTable();
-    [['front', 158], ['back', 378]].forEach(([k, cx]) => {
-      T(SIDE_NAME[k], cx, 344, `500 22px ${FB}`, C.mute, 'center');
-      const r = S.results[k];
-      if (!r){ T('ยังไม่วัด', cx, 410, `500 28px ${FB}`, C.mute, 'center'); return; }
-      const m = sideMetrics(r.lines), gr = gradeOf(k, m); grades[k] = gr;
-      if (!gr){ T('เส้นไม่ครบ', cx, 410, `500 28px ${FB}`, C.bad, 'center'); return; }
-      T(ratioTxt(gr.worst), cx, 404, `600 48px ${FM}`, C.ink, 'center');
-      T(`L ${fmt1(m.lr)} / R ${fmt1(100-m.lr)}`, cx, 446, `500 19px ${FM}`, C.mute, 'center');
-      T(`T ${fmt1(m.tb)} / B ${fmt1(100-m.tb)}`, cx, 476, `500 19px ${FM}`, C.mute, 'center');
-      const sa = GT.sideAvg[k];
-      T(sa == null ? 'เกินเกณฑ์บางค่าย' : `เฉลี่ย ${fmtG(sa)}`, cx, 512, `600 22px ${FD}`, sa == null ? C.bad : gradeColor(roundGrade(sa)), 'center');
-    });
-    hr(80, 456, 548);
-    const overall = GT.grade;
-    T('เกรดเซ็นเตอร์ เฉลี่ย 4 ค่าย', 268, 598, `500 22px ${FB}`, C.mute, 'center');
-    T(overall != null ? String(overall) : '–', 268, 770, `600 190px ${FD}`, overall != null ? C.gold : C.mute, 'center');
-    spaced(true); T(overall != null ? 'CENTERING ONLY' : 'เกินเกณฑ์บางค่าย', 268, 830, `600 32px ${FD}`, C.ink, 'center'); spaced(false);
-    const avgTxt = GT.avg != null ? `เฉลี่ย ${fmtG(GT.avg)} · PSA CGC BGS TAG` : 'บางค่ายให้ต่ำกว่าเกณฑ์ที่มีในตาราง';
-    T(sides.length === 1 ? `วัดเฉพาะ${SIDE_NAME[sides[0]]} · ${avgTxt}` : avgTxt, 268, 868, `400 18px ${FB}`, C.mute, 'center');
-    hr(80, 456, 900);
-    T('ความกว้างขอบ (มม. ประมาณ)', 268, 946, `500 21px ${FB}`, C.mute, 'center');
-    T('ด้าน', 84, 994, `500 19px ${FB}`, C.mute); T('หน้า', 330, 994, `500 19px ${FB}`, C.mute, 'right'); T('หลัง', 452, 994, `500 19px ${FB}`, C.mute, 'right');
-    ['L','R','T','B'].forEach((sd, i) => {
-      const y = 1036 + i*40;
-      T(SIDE_TH[sd], 84, y, `500 21px ${FB}`, C.ink);
-      [['front', 330], ['back', 452]].forEach(([k, x]) => {
-        const r = S.results[k]; let v = '–';
-        if (r){ const L = r.lines, m = sideMetrics(L), per = (sd === 'L' || sd === 'R') ? r.mm[0]/Math.max(1, L.oR-L.oL) : r.mm[1]/Math.max(1, L.oB-L.oT); v = (m.g[sd]*per).toFixed(2); }
-        T(v, x, y, `500 21px ${FM}`, C.ink, 'right');
-      });
-    });
-    hr(80, 456, 1210);
-    const name = $('cardName').value.trim(), note = fullNote();
-    T('ชื่อการ์ด', 84, 1254, `500 19px ${FB}`, C.mute);
-    g.font = `600 26px ${FB}`; wrapText(g, name || '–', 372, 2).forEach((ln, i) => T(ln, 84, 1294 + i*36, `600 26px ${FB}`, C.ink));
-    T('หมายเหตุ', 84, 1366, `500 19px ${FB}`, C.mute);
-    g.font = `400 20px ${FB}`; wrapText(g, note || '–', 372, 4).forEach((ln, i) => T(ln, 84, 1400 + i*30, `400 20px ${FB}`, C.ink));
-
-    /* centre: the card */
-    box(512, top, 576, bot-top);
-    const L = hero.lines, cw = L.oR-L.oL, ch = L.oB-L.oT, fit = Math.min(500/cw, 700/ch), dw = cw*fit, dh = ch*fit;
-    const hx = 800 - dw/2, hy = 276;
-    g.strokeStyle = C.line; g.lineWidth = 2; g.strokeRect(hx-14, hy-14, dw+28, dh+28);
-    g.imageSmoothingQuality = 'high'; g.drawImage(hero.img, L.oL, L.oT, cw, ch, hx, hy, dw, dh);
-    T(`ภาพ${SIDE_NAME[heroSide]}` + (hero.sample ? '' : ` · ${tiltTxt(hero.tilt)}`), 800, hy+dh+44, `500 20px ${FB}`, C.mute, 'center');
-    const sy = hy + dh + 66; hr(560, 1040, sy);
-    spaced(true); T('CENTERING BY GRADER', 800, sy+44, `600 24px ${FD}`, C.ink, 'center'); spaced(false);
-    T('เกรดเซ็นเตอร์ตามเกณฑ์แต่ละค่าย · ดูด้านที่เยื้องที่สุด', 800, sy+76, `400 18px ${FB}`, C.mute, 'center');
-    const CX = { name:572, front:772, back:884, all:992 };
-    const hdr = k => { const r = S.results[k], gr = grades[k]; return SIDE_NAME[k].replace('การ์ด', '') + (r && gr ? ` ${ratioTxt(gr.worst)}` : ''); };
-    T('ค่าย', CX.name, sy+116, `500 18px ${FB}`, C.mute);
-    T(hdr('front'), CX.front, sy+116, `500 18px ${FB}`, C.mute, 'center');
-    T(hdr('back'), CX.back, sy+116, `500 18px ${FB}`, C.mute, 'center');
-    T('รวม', CX.all, sy+116, `500 18px ${FB}`, C.mute, 'center');
-    hr(560, 1040, sy+132);
-    const pillG = (n, x, y) => {
-      const col = n == null ? C.bad : gradeColor(n), txt = n == null ? 'เกิน' : fmtG(n);
-      g.font = `600 24px ${FM}`; const w = Math.max(56, g.measureText(txt).width + 26);
-      g.save(); g.globalAlpha = 0.16; g.fillStyle = col; rr(g, x - w/2, y - 25, w, 34, 8); g.fill(); g.restore();
-      T(txt, x, y, `600 24px ${FM}`, col, 'center');
-    };
-    GT.rows.forEach((row, i) => {
-      const y = sy + 170 + i*40;
-      if (i) { g.strokeStyle = 'rgba(255,255,255,0.06)'; g.lineWidth = 1; g.beginPath(); g.moveTo(560, y-28); g.lineTo(1040, y-28); g.stroke(); }
-      T(row.G.name, CX.name, y, `600 22px ${FD}`, C.ink);
-      if (row.G.sub){ g.font = `600 22px ${FD}`; T(row.G.sub, CX.name + g.measureText(row.G.name).width + 8, y, `400 15px ${FB}`, C.mute); }
-      for (const k of ['front','back']){
-        const v = row.per[k];
-        if (!S.results[k]) T('ยังไม่วัด', CX[k], y, `400 17px ${FB}`, C.mute, 'center');
-        else T(v == null ? 'เกิน' : fmtG(v), CX[k], y, `500 23px ${FM}`, v == null ? C.bad : C.ink, 'center');
-      }
-      pillG(row.all, CX.all, y);
-    });
-    let ny = sy + 170 + 3*40 + 22; hr(560, 1040, ny); ny += 34;
-    for (const k of ['front','back']){
-      const st = nextStep(k); if (!st) continue;
-      T(`${SIDE_NAME[k]} ห่างเกณฑ์ ${st.t}/${100-st.t} อีก ${st.pct.toFixed(1)}% (≈${st.mm.toFixed(2)} มม.)`, 800, ny, `400 19px ${FB}`, C.ink, 'center');
-      ny += 30;
-    }
-    T('BGS ดูทั้งสองแกน · เกณฑ์ BGS จากแหล่งรอง ยังไม่ยืนยัน', 800, ny, `400 16px ${FB}`, C.mute, 'center');
-    const ly = Math.min(ny + 44, bot - 22);
-    g.fillStyle = 'rgba(52,199,89,0.5)'; g.fillRect(600, ly - 17, 40, 20); g.strokeStyle = '#34C759'; g.lineWidth = 2; g.strokeRect(600, ly - 17, 40, 20);
-    T('ขอบการ์ด', 650, ly, `400 19px ${FB}`, C.ink);
-    g.setLineDash([10, 7]); g.strokeStyle = '#FF3B30'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(800, ly - 7); g.lineTo(852, ly - 7); g.stroke(); g.setLineDash([]);
-    T('ขอบใน (กรอบภาพ)', 862, ly, `400 19px ${FB}`, C.ink);
-
-    /* right: four corners */
-    box(1112, top, 440, bot-top);
-    spaced(true); T('CORNERS (8)', 1332, 290, `600 30px ${FD}`, C.ink, 'center'); spaced(false);
-    const CN = [['TL','ซ้ายบน','L','T'], ['TR','ขวาบน','R','T'], ['BL','ซ้ายล่าง','L','B'], ['BR','ขวาล่าง','R','B']];
-    const ts = 188, gx = [1136, 1340];
-    [['front', 300], ['back', 890]].forEach(([k, sy0], si) => {
-      T(SIDE_NAME[k], 1136, sy0 + 38, `600 24px ${FB}`, C.gold);
-      if (si) hr(1136, 1528, sy0 - 8);
-      const R = S.results[k];
-      if (!R){ g.strokeStyle = C.line; g.setLineDash([8, 6]); g.strokeRect(1136, sy0 + 58, 392, 470); g.setLineDash([]);
-        T('ยังไม่วัด', 1332, sy0 + 300, `500 26px ${FB}`, C.mute, 'center'); return; }
-      const RL = R.lines, m = sideMetrics(RL), px = R.mm[0]/Math.max(1, RL.oR-RL.oL), py = R.mm[1]/Math.max(1, RL.oB-RL.oT);
-      CN.forEach(([which, label, sx, sy2], i) => {
-        const x = gx[i % 2], y = sy0 + 58 + Math.floor(i/2)*258;
-        drawCornerTile(g, R, which, x, y, ts);
-        T(label, x, y + ts + 26, `500 18px ${FB}`, C.mute);
-        T(`${SIDE_TH[sx]} ${(m.g[sx]*px).toFixed(2)} · ${SIDE_TH[sy2]} ${(m.g[sy2]*py).toFixed(2)}`, x, y + ts + 50, `500 17px ${FB}`, C.ink);
-      });
-    });
-    T('วัดกันป่ะ!! · ประเมินอ้างอิงเท่านั้น ไม่ใช่ผลเกรดอย่างเป็นทางการ' + bendNote(), W/2, 1556, `400 18px ${FB}`, C.mute, 'center');
-    return await new Promise(res => cv.toBlob(res, 'image/png'));
+    g.strokeStyle = C.frame; g.lineWidth = 2; g.strokeRect(x+1, y+1, s-2, s-2);
   }
 
   /* ---------- more report templates ---------- */
@@ -1773,8 +1373,9 @@ html.cam-open,html.cam-open body{overflow:hidden}
   const gColor = n => n === 10 ? '#1F9D57' : n === 9 ? '#C98A12' : '#D0452F';
   function tx(g, s, x, y, font, color, align = 'left', spacing = 0){
     g.font = font; g.fillStyle = color; g.textAlign = align; g.textBaseline = 'alphabetic';
-    if (spacing && 'letterSpacing' in g){ g.save(); g.letterSpacing = spacing + 'px'; g.fillText(s, x, y); g.restore(); }
-    else g.fillText(s, x, y);
+    if ('letterSpacing' in g) g.letterSpacing = spacing + 'px';
+    g.fillText(s, x, y);
+    if ('letterSpacing' in g) g.letterSpacing = '0px';
   }
   function tagPill(g, cx, cy, text, bg, fg, font){
     g.font = font; const w = g.measureText(text).width + 40, h = 46;
@@ -1817,7 +1418,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
     const K = { bg:'#F2F5F4', ink:'#101614', mute:'#5E6B66', band:'#0E2B27', gold:'#E8C27A', line:'#D3DCD8' };
     g.fillStyle = K.bg; g.fillRect(0, 0, W, H);
     g.fillStyle = K.band; g.fillRect(0, 0, W, 232);
-    tx(g, 'วัดกันป่ะ!!', W/2, 122, `600 92px ${RF.D}`, K.gold, 'center');
+    tx(g, 'TRC TCG', W/2, 122, `600 92px ${RF.D}`, K.gold, 'center');
     tx(g, 'CENTERING LAB', W/2, 178, `500 26px ${RF.D}`, '#FFFFFF', 'center', 8);
     tx(g, `${D.dateTh}  ·  ${D.rid}`, W/2, 214, `400 19px ${RF.B}`, '#9FB3AD', 'center');
     let y = 290;
@@ -1852,7 +1453,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
     g.fillStyle = '#FFFFFF'; g.fillRect(0, 0, W, H);
     g.fillStyle = K.ink; g.fillRect(0, 0, W, 112);
     g.strokeStyle = K.ink; g.lineWidth = 8; g.strokeRect(4, 4, W-8, H-8);
-    tx(g, 'วัดกันป่ะ!!', 50, 80, `600 62px ${RF.D}`, K.gold);
+    tx(g, 'TRC TCG', 50, 80, `600 62px ${RF.D}`, K.gold);
     tx(g, 'CENTERING LAB', 400, 74, `500 24px ${RF.D}`, '#FFFFFF', 'left', 6);
     tx(g, D.rid, W-50, 56, `600 22px ${RF.M}`, K.gold, 'right');
     tx(g, D.dateTh, W-50, 90, `400 20px ${RF.B}`, '#B9C2BE', 'right');
@@ -1893,7 +1494,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
     const W = 1600, H = 1200, cv = mkCanvas(W, H), g = cv.getContext('2d');
     const K = { bg:'#14171C', panel:'#1C2027', ink:'#EEF1F4', mute:'#8C96A3', line:'#2C323B', gold:'#E8C27A' };
     g.fillStyle = K.bg; g.fillRect(0, 0, W, H);
-    tx(g, 'วัดกันป่ะ!!', 60, 98, `600 66px ${RF.D}`, K.gold);
+    tx(g, 'TRC TCG', 60, 98, `600 66px ${RF.D}`, K.gold);
     tx(g, D.name ? D.name : 'เทียบเซ็นเตอร์หน้า-หลัง', 60, 146, `500 26px ${RF.B}`, K.ink);
     tx(g, 'เกรดเซ็นเตอร์รวม อ้างอิง PSA', W-60, 72, `500 20px ${RF.B}`, K.mute, 'right');
     tx(g, D.overall ? `PSA ${D.overall}` : '–', W-60, 132, `600 50px ${RF.D}`, D.overall ? K.gold : K.mute, 'right');
@@ -1922,7 +1523,7 @@ html.cam-open,html.cam-open body{overflow:hidden}
     g.fillStyle = K.bg; g.fillRect(0, 0, W, H);
     for (let v = 0; v <= W; v += 40){ g.fillStyle = v % 200 ? K.minor : K.major; g.fillRect(v, 0, 1, H); g.fillRect(0, v, W, 1); }
     g.strokeStyle = K.cyan; g.lineWidth = 2; g.strokeRect(40, 40, W-80, H-80);
-    tx(g, 'วัดกันป่ะ!!', 90, 136, `600 72px ${RF.D}`, '#FFFFFF');
+    tx(g, 'TRC TCG', 90, 136, `600 72px ${RF.D}`, '#FFFFFF');
     tx(g, 'CENTERING LAB · BLUEPRINT', 92, 184, `500 24px ${RF.D}`, K.cyan, 'left', 6);
     const P = D.per[D.hero], mmW = P.r.mm[0], mmH = P.r.mm[1], k = 840/mmH, w = mmW*k, h = mmH*k, x = 190, y = 330;
     const ar = (x1, y1, x2, y2) => { const a = Math.atan2(y2-y1, x2-x1), s = 12;
@@ -1979,8 +1580,167 @@ html.cam-open,html.cam-open body{overflow:hidden}
     return toPng(cv);
   }
 
+  /* ---------- centering grade by grader ----------
+     Worst-axis limits (percent of the larger side) → best grade centering allows.
+     PSA, CGC: their published scales. BGS (subgrade) and TAG (TCG): secondary sources; TAG publishes no figure for 9. */
+  const GRADERS = [
+    { id:'PSA', sub:'',         front:[[55,10],[60,9],[65,8],[70,7]],       back:[[75,10],[90,9]] },
+    { id:'CGC', sub:'',         front:[[55,10],[60,9],[65,8],[70,7]],       back:[[75,10],[90,9]] },
+    { id:'BGS', sub:'subgrade', front:[[50.5,10],[55,9.5],[60,8],[65,7]],   back:[[55,10],[60,9.5],[70,9],[80,8],[90,7]] },
+    { id:'TAG', sub:'TCG',      front:[[55,10],[62.5,8.5],[65,8]],          back:[[65,10],[85,8.5],[95,8]] },
+  ];
+  const levelFor = (levels, worst) => { const hit = levels.find(([t]) => worst <= t + 1e-9); return hit ? hit[1] : null; };
+  function graderTable(D){
+    return GRADERS.map(G => {
+      const f = D.per.front && D.per.front.gr ? levelFor(G.front, D.per.front.gr.worst) : undefined;
+      const b = D.per.back && D.per.back.gr ? levelFor(G.back, D.per.back.gr.worst) : undefined;
+      const vals = [f, b].filter(v => v !== undefined);
+      const all = vals.length && vals.every(v => v !== null) ? Math.min(...vals) : (vals.length ? null : undefined);
+      return { ...G, f, b, all };
+    });
+  }
+  const avgOf = arr => { const v = arr.filter(x => typeof x === 'number'); return v.length === arr.length && v.length ? v.reduce((a, c) => a + c, 0)/v.length : null; };
+  const gNum = v => v === undefined ? '' : v === null ? '<' : (Number.isInteger(v) ? String(v) : v.toFixed(1));
+  const avgTxt = v => v == null ? '–' : (Math.abs(v - Math.round(v)) < 1e-9 ? String(Math.round(v)) : v.toFixed(2).replace(/0$/, ''));
+
+  /* Red-and-black lab report, 1600 x 1600 */
+  async function drawLab(){
+    const D = repData(); if (!D.sides.length) return null;
+    const W = 1600, H = 1600, cv = mkCanvas(W, H), g = cv.getContext('2d');
+    const K = { bg:'#0B0B0C', panel:'#141415', line:'#2E2D2B', ink:'#F4F1EC', mute:'#A9A6A1', red:'#D7141E', redT:'#FF4A4F', dash:'#FF3B47' };
+    const FK = '"Kanit","IBM Plex Sans Thai",sans-serif', FA = '"Anton","Kanit",sans-serif', FB = RF.B, FM = RF.M;
+    const deg = d => d*Math.PI/180;
+    const panel = (x, y, w, h) => { g.fillStyle = K.panel; g.fillRect(x, y, w, h); g.strokeStyle = K.line; g.lineWidth = 2; g.strokeRect(x+1, y+1, w-2, h-2); };
+    const hr = (x1, x2, y) => { g.fillStyle = K.line; g.fillRect(x1, y, x2-x1, 2); };
+    /* a label on a slab: skew (deg) leans it, rot (deg) tilts it */
+    const tag = (txt, cx, cy, font, bg, fg, { skew = 0, rot = 0, sp = 0, padX = 18, h = 46 } = {}) => {
+      g.save(); g.font = font; if ('letterSpacing' in g) g.letterSpacing = sp + 'px';
+      const w = g.measureText(txt).width + padX*2;
+      g.translate(cx, cy); g.rotate(deg(rot)); g.transform(1, 0, Math.tan(deg(skew)), 1, 0, 0);
+      g.fillStyle = bg; g.fillRect(-w/2, -h/2, w, h);
+      g.fillStyle = fg; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(txt, sp/2, 2);
+      g.restore(); if ('letterSpacing' in g) g.letterSpacing = '0px';
+    };
+    const T = (s, x, y, font, color, align = 'left') => tx(g, s, x, y, font, color, align);
+
+    /* ground: black, a tilted red band with a paper stripe, one dark square */
+    g.fillStyle = K.bg; g.fillRect(0, 0, W, H);
+    g.save(); g.translate(800, 10); g.rotate(deg(-3)); g.fillStyle = K.red; g.fillRect(-1000, -180, 2000, 360); g.restore();
+    g.save(); g.translate(800, 191); g.rotate(deg(-3)); g.fillStyle = K.ink; g.fillRect(-1000, -5, 2000, 10); g.restore();
+    g.save(); g.translate(1500, 1500); g.rotate(deg(20)); g.strokeStyle = '#161617'; g.lineWidth = 60; g.strokeRect(-230, -230, 460, 460); g.restore();
+
+    T('ประเมินเซ็นเตอร์จากรูปถ่ายเท่านั้น', 60, 90, `400 20px ${FB}`, '#FFFFFF');
+    T('ไม่ใช่ผลเกรดจริงจากบริษัทเกรดการ์ด', 60, 122, `400 20px ${FB}`, '#FFFFFF');
+    g.save(); g.font = `italic 800 118px ${FK}`; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+    g.fillStyle = K.bg; g.fillText('TRC TCG', 807, 137); g.fillStyle = K.ink; g.fillText('TRC TCG', 800, 130); g.restore();
+    tag('CENTERING LAB', 800, 188, `400 30px ${FA}`, K.bg, K.ink, { skew:-12, sp:9, padX:22, h:44 });
+    tag(`REPORT ID  ${D.rid}`, 1360, 88, `600 22px ${FM}`, K.ink, K.bg, { rot:3, padX:14, h:40 });
+    T(D.dateTh, 1540, 142, `400 20px ${FB}`, '#FFFFFF', 'right');
+
+    const GT = graderTable(D);
+    const sideAvg = k => avgOf(GT.map(r => r[k === 'front' ? 'f' : 'b']));
+    const overall = avgOf(GT.map(r => r.all));
+
+    /* left: centering numbers */
+    panel(48, 262, 440, 1250);
+    tag('CENTERING', 268, 316, `400 30px ${FA}`, K.ink, K.bg, { skew:-12, sp:7, h:46 });
+    g.fillStyle = K.line; g.fillRect(267, 368, 2, 210);
+    [['front', 158], ['back', 378]].forEach(([k, cx]) => {
+      T(SIDE_NAME[k], cx, 392, `400 22px ${FB}`, K.mute, 'center');
+      const Q = D.per[k];
+      if (!Q){ T('ยังไม่วัด', cx, 460, `400 28px ${FB}`, K.mute, 'center'); return; }
+      if (!Q.gr){ T('วัดไม่ได้', cx, 460, `400 28px ${FB}`, K.redT, 'center'); return; }
+      T(ratioTxt(Q.gr.worst), cx, 468, `400 62px ${FA}`, K.ink, 'center');
+      T(`L ${fmt1(Q.m.lr)} / R ${fmt1(100-Q.m.lr)}`, cx, 504, `500 19px ${FM}`, K.mute, 'center');
+      T(`T ${fmt1(Q.m.tb)} / B ${fmt1(100-Q.m.tb)}`, cx, 534, `500 19px ${FM}`, K.mute, 'center');
+      const a = sideAvg(k); T(a == null ? 'เกินเกณฑ์' : `เฉลี่ย ${avgTxt(a)}`, cx, 570, `italic 700 22px ${FK}`, K.redT, 'center');
+    });
+    hr(80, 456, 600);
+    T('เกรดเซ็นเตอร์ เฉลี่ย 4 ค่าย', 268, 646, `400 22px ${FB}`, K.mute, 'center');
+    const big = overall == null ? '–' : (overall >= 9.995 ? '10' : overall.toFixed(1));
+    g.save(); g.font = `400 210px ${FA}`; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+    g.fillStyle = K.red; g.fillText(big, 280, 870); g.fillStyle = overall == null ? K.mute : K.ink; g.fillText(big, 268, 860); g.restore();
+    tag(overall == null ? 'OUT OF RANGE' : 'CENTERING ONLY', 268, 912, `400 30px ${FA}`, K.ink, K.bg, { rot:-3, sp:6, padX:22, h:50 });
+    g.font = `400 18px ${FB}`;
+    const capt = `วัด${D.sides.length === 2 ? 'หน้าและหลังการ์ด' : 'เฉพาะ' + SIDE_NAME[D.sides[0]]} · เฉลี่ย ${avgTxt(overall)} · PSA CGC BGS TAG`;
+    wrapText(g, capt, 376, 2).forEach((ln, i) => T(ln, 268, 970 + i*26, `400 18px ${FB}`, K.mute, 'center'));
+    hr(80, 456, 1030);
+    T('ความกว้างขอบ (มม. ประมาณ)', 268, 1072, `400 21px ${FB}`, K.mute, 'center');
+    T('ด้าน', 82, 1112, `400 18px ${FB}`, K.mute); T('หน้า', 344, 1112, `400 18px ${FB}`, K.mute, 'right'); T('หลัง', 456, 1112, `400 18px ${FB}`, K.mute, 'right');
+    ['L','R','T','B'].forEach((sd, i) => {
+      const y = 1152 + i*40; T(SIDE_TH[sd], 82, y, `400 21px ${FB}`, K.ink);
+      [['front', 344], ['back', 456]].forEach(([k, x]) => { const Q = D.per[k];
+        T(Q ? Q.mm[sd].toFixed(2) : '–', x, y, `500 21px ${FM}`, Q ? K.ink : '#6E6B67', 'right'); });
+    });
+    hr(80, 456, 1300);
+    T('ชื่อการ์ด', 82, 1338, `400 18px ${FB}`, K.mute);
+    g.font = `italic 700 28px ${FK}`; T(wrapText(g, D.name || '–', 376, 1)[0], 82, 1376, `italic 700 28px ${FK}`, K.ink);
+    T('หมายเหตุ', 82, 1416, `400 18px ${FB}`, K.mute);
+    g.font = `400 18px ${FB}`; wrapText(g, D.note || '–', 376, 3).forEach((ln, i) => T(ln, 82, 1446 + i*24, `400 18px ${FB}`, K.ink));
+
+    /* centre: the card and the grader table */
+    panel(512, 262, 576, 1250);
+    g.save(); g.beginPath(); g.rect(514, 264, 572, 1246); g.clip();
+    g.translate(802, 667); g.rotate(deg(-18)); g.fillStyle = K.red; g.fillRect(-410, -75, 820, 150); g.restore();
+    const P = D.per[D.hero], L = P.L, cw = L.oR-L.oL, ch = L.oB-L.oT, f = Math.min(486/cw, 680/ch), dw = cw*f, dh = ch*f, hx = 800 - dw/2, hy = 302;
+    g.fillStyle = '#000000'; g.fillRect(hx + 12, hy + 12, dw, dh);
+    g.imageSmoothingQuality = 'high'; g.drawImage(P.r.img, L.oL, L.oT, cw, ch, hx, hy, dw, dh);
+    g.strokeStyle = K.ink; g.lineWidth = 4; g.strokeRect(hx - 2, hy - 2, dw + 4, dh + 4);
+    T(`ภาพ${SIDE_NAME[D.hero]}`, 800, hy + dh + 46, `400 20px ${FB}`, K.mute, 'center');
+    hr(560, 1040, 1048);
+    tag('CENTERING BY GRADER', 800, 1092, `400 26px ${FA}`, K.ink, K.bg, { skew:-12, sp:6, h:42 });
+    T('เกรดเซ็นเตอร์ตามเกณฑ์แต่ละค่าย · ดูด้านที่เยื้องที่สุด', 800, 1140, `400 18px ${FB}`, K.mute, 'center');
+    const hd = k => D.per[k] && D.per[k].gr ? `${k === 'front' ? 'หน้า' : 'หลัง'} ${ratioTxt(D.per[k].gr.worst)}` : (k === 'front' ? 'หน้า' : 'หลัง');
+    T('ค่าย', 560, 1186, `400 18px ${FB}`, K.mute); T(hd('front'), 772, 1186, `400 18px ${FB}`, K.mute, 'center');
+    T(hd('back'), 884, 1186, `400 18px ${FB}`, K.mute, 'center'); T('รวม', 992, 1186, `400 18px ${FB}`, K.mute, 'center');
+    GT.forEach((r, i) => {
+      const y = 1232 + i*48;
+      g.font = `700 24px ${FK}`; T(r.id, 560, y, `700 24px ${FK}`, K.ink);
+      if (r.sub) T(r.sub, 560 + g.measureText(r.id).width + 8, y, `400 15px ${FB}`, K.mute);
+      [['f', 772], ['b', 884]].forEach(([k, x]) => {
+        const v = r[k];
+        if (v === undefined) T('ยังไม่วัด', x, y - 2, `400 16px ${FB}`, K.mute, 'center');
+        else T(v === null ? 'ต่ำกว่า' : gNum(v), x, y, v === null ? `400 16px ${FB}` : `500 23px ${FM}`, v === null ? K.redT : K.ink, 'center');
+      });
+      const v = r.all, ok = typeof v === 'number';
+      g.save(); g.translate(992, y - 8); g.transform(1, 0, Math.tan(deg(-10)), 1, 0, 0);
+      if (ok && v >= 10){ g.fillStyle = K.ink; g.fillRect(-48, -19, 96, 38); }
+      else if (ok && v >= 9){ g.fillStyle = K.red; g.fillRect(-48, -19, 96, 38); }
+      else { g.strokeStyle = K.red; g.lineWidth = 3; g.strokeRect(-46, -17, 92, 34); }
+      g.font = `400 26px ${FA}`; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillStyle = ok && v >= 10 ? K.bg : K.ink; g.fillText(ok ? gNum(v) : (v === null ? '<' : '–'), 0, 2); g.restore();
+    });
+    T('ป้ายขาว = 10 · ป้ายแดง = 9–9.5 · กรอบแดง = ต่ำกว่า 9', 800, 1424, `400 16px ${FB}`, K.mute, 'center');
+    T('เกณฑ์ BGS และ TAG จากแหล่งรอง · TAG ไม่มีเกณฑ์ระดับ 9', 800, 1448, `400 16px ${FB}`, K.mute, 'center');
+    g.fillStyle = 'rgba(244,241,236,0.3)'; g.fillRect(620, 1472, 40, 18); g.strokeStyle = K.ink; g.lineWidth = 2; g.strokeRect(620, 1472, 40, 18);
+    T('ขอบการ์ด', 670, 1488, `400 18px ${FB}`, K.ink);
+    g.setLineDash([8, 6]); g.strokeStyle = K.dash; g.lineWidth = 3; g.beginPath(); g.moveTo(790, 1481); g.lineTo(840, 1481); g.stroke(); g.setLineDash([]);
+    T('ขอบใน (กรอบภาพ)', 850, 1488, `400 18px ${FB}`, K.ink);
+
+    /* right: front and back corners */
+    panel(1112, 262, 440, 1250);
+    tag('CORNERS (8)', 1332, 316, `400 30px ${FA}`, K.ink, K.bg, { skew:-12, sp:7, h:46 });
+    const pal = { band:'rgba(244,241,236,0.30)', outer:K.ink, inner:K.dash, frame:K.ink };
+    const CN = [['TL','ซ้ายบน','L','T'], ['TR','ขวาบน','R','T'], ['BL','ซ้ายล่าง','L','B'], ['BR','ขวาล่าง','R','B']];
+    [['front', 380], ['back', 922]].forEach(([k, y0], si) => {
+      if (si) hr(1136, 1528, y0 - 40);
+      T(SIDE_NAME[k], 1136, y0, `italic 800 26px ${FK}`, K.redT);
+      const Q = D.per[k];
+      if (!Q){ g.setLineDash([8, 6]); g.strokeStyle = '#4A4845'; g.lineWidth = 2; g.strokeRect(1148, y0 + 22, 360, 460); g.setLineDash([]);
+        T('ยังไม่วัด', 1328, y0 + 262, `400 26px ${FB}`, K.mute, 'center'); return; }
+      CN.forEach(([c, lb, a, b], i) => {
+        const x = 1148 + (i % 2)*190, y = y0 + 22 + Math.floor(i/2)*246;
+        drawCornerTile(g, Q.r, c, x, y, 170, null, pal);
+        T(lb, x, y + 194, `400 17px ${FB}`, K.mute);
+        T(`${SIDE_TH[a]} ${Q.mm[a].toFixed(2)} · ${SIDE_TH[b]} ${Q.mm[b].toFixed(2)}`, x, y + 218, `500 17px ${FB}`, K.ink);
+      });
+    });
+    T('TRC TCG · ประเมินอ้างอิงเท่านั้น ไม่ใช่ผลเกรดอย่างเป็นทางการ' + bendNote(), W/2, 1560, `400 18px ${FB}`, K.mute, 'center');
+    return toPng(cv);
+  }
+
   async function buildReport(){
-    try { await Promise.all(['600 96px "Chakra Petch"', '500 22px "IBM Plex Sans Thai"', '600 22px "IBM Plex Sans Thai"', '600 40px "IBM Plex Mono"'].map(f => document.fonts.load(f, 'วัดกันป่ะ 0123'))); } catch(_){}
+    try { await Promise.all(['600 96px "Chakra Petch"', '500 22px "IBM Plex Sans Thai"', '600 22px "IBM Plex Sans Thai"', '600 40px "IBM Plex Mono"', '400 30px "Anton"', 'italic 800 40px "Kanit"', 'italic 700 28px "Kanit"', '700 24px "Kanit"'].map(f => document.fonts.load(f, 'TRC TCG หน้าการ์ด 0123'))); } catch(_){}
     if (!Object.keys(S.results).length) return null;
     if (S.tpl === 'lab') return drawLab();
     const D = repData();
@@ -1993,23 +1753,24 @@ html.cam-open,html.cam-open body{overflow:hidden}
   }));
 
   function saveMsg(t, ok){ const m = $('saveMsg'); m.textContent = t; m.hidden = !t; m.classList.toggle('okmsg', !!ok); }
-  /* iPhone: the share sheet's "Save Image" puts it in Photos. Elsewhere: a normal download. */
   $('saveReport').addEventListener('click', async () => {
     saveMsg('');
     if (!reportBlob){ saveMsg('กำลังสร้างภาพสรุป ลองกดอีกครั้งในอีกสักครู่'); return; }
     const now = new Date(), p2 = n => String(n).padStart(2, '0');
-    const nm = $('cardName').value.trim().replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, '-').slice(0, 40) || 'centering';
-    const filename = `wadkanpa-${nm}-${S.tpl}-${now.getFullYear()}${p2(now.getMonth()+1)}${p2(now.getDate())}.png`;
+    const nm = $('cardName').value.replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'centering';
+    const filename = `trc-tcg-${nm}-${S.tpl}-${now.getFullYear()}${p2(now.getMonth()+1)}${p2(now.getDate())}.png`;
     const file = new File([reportBlob], filename, { type:'image/png' });
-    try {
-      if (navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file] }); saveMsg('เลือก "บันทึกภาพ" ในเมนูแชร์เพื่อเก็บลงคลังรูป', true); return; }
-    } catch (e){ if (e && e.name === 'AbortError') return; }
-    const a = document.createElement('a'), u = URL.createObjectURL(file); a.href = u; a.download = filename; document.body.append(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(u), 4000);
-    saveMsg('ดาวน์โหลดภาพแล้ว', true);
+    const touch = matchMedia('(pointer: coarse)').matches;
+    if (touch && navigator.canShare && navigator.canShare({ files:[file] })){
+      try { await navigator.share({ files:[file], title:'TRC TCG Centering' }); return; }
+      catch (e){ if (e && e.name === 'AbortError') return; }
+    }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(reportBlob); a.download = filename;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    saveMsg(touch ? 'ถ้าไฟล์ไม่ถูกบันทึก ให้กดค้างที่ภาพสรุปแล้วเลือกบันทึกภาพ' : 'ดาวน์โหลดภาพแล้ว', !touch);
   });
   $('clearSides').addEventListener('click', newCard);
-  $('nextSide').addEventListener('click', () => { setSide(otherSide()); if (!S.src) openCam(); });
+  $('nextSide').addEventListener('click', () => setSide(otherSide()));
   $('emptyBack').addEventListener('click', () => setSide(otherSide()));
   $('cardName').addEventListener('input', scheduleReport);
   $('cardNote').addEventListener('input', scheduleReport);
@@ -2032,194 +1793,6 @@ html.cam-open,html.cam-open body{overflow:hidden}
     } catch (_){ showMsg('เปิดรูปนี้ไม่ได้ ถ้าเป็นไฟล์ HEIC จาก iPhone ให้บันทึกเป็น .jpg ก่อนแล้วเลือกใหม่'); }
   }
   const loadFile = f => loadFiles(f ? [f] : []);
-  /* ---------- camera with spirit level ---------- */
-  /* Tilt limits in degrees: up to OK_DEG is green (auto capture), above LOCK_DEG the shutter locks. */
-  const OK_DEG = 1.5, LOCK_DEG = 3, STEADY_DEG = 0.3, STEADY_MS = 500, GUIDE = [63, 88];
-  const CAM = { stream:null, track:null, sensor:false, b:null, g:null, hist:[], cal:{ b:0, g:0 }, auto:true, steadySince:0, busy:false,
-                devices:[], devIdx:0, zooms:null, zoomIdx:0, motionAsked:false, motionOK:false, blob:null, shot:null, lastEvt:0, raf:0, open:false };
-  try { const c = JSON.parse(localStorage.getItem('wkp-cal') || 'null'); if (c && isFinite(c.b) && isFinite(c.g)) CAM.cal = c; } catch(_){}
-  const cvid = $('cvideo'), cguide = $('cguide'), cbub = $('cbub'), cshut = $('cshut'), cring = $('cring');
-  function ctoast(t, ms = 2400){ const el = $('ctoast'); el.textContent = t; el.hidden = false; clearTimeout(ctoast.t); ctoast.t = setTimeout(() => el.hidden = true, ms); }
-  const camErr = e => !window.isSecureContext ? 'กล้องใช้ได้เฉพาะลิงก์ https'
-    : e && e.name === 'NotAllowedError' ? 'ไม่ได้รับอนุญาตให้ใช้กล้อง เปิดได้ที่ การตั้งค่า › Safari › กล้อง แล้วลองใหม่ หรือใช้ปุ่มเลือกรูปแทน'
-    : 'เปิดกล้องไม่ได้ ลองปิดแอปอื่นที่ใช้กล้องอยู่ หรือใช้ปุ่มเลือกรูปแทน';
-
-  async function openCam(){
-    hideMsg();
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ showMsg('เบราว์เซอร์นี้เปิดกล้องไม่ได้ ใช้ปุ่มเลือกรูปแทน'); return; }
-    if (!CAM.motionAsked){
-      CAM.motionAsked = true;
-      try {
-        CAM.motionOK = (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function')
-          ? (await DeviceOrientationEvent.requestPermission()) === 'granted' : true;
-      } catch(_){ CAM.motionOK = false; }
-      if (CAM.motionOK) addEventListener('deviceorientation', onOrient);
-    }
-    try { await startStream(CAM.devIdx && CAM.devices[CAM.devIdx] ? CAM.devices[CAM.devIdx].deviceId : undefined); }
-    catch (e){ showMsg(camErr(e)); return; }
-    CAM.open = true; CAM.hist = []; CAM.steadySince = 0; CAM.busy = false;
-    $('cam').hidden = false; $('creview').hidden = true; document.documentElement.classList.add('cam-open');
-    $('cSideTxt').textContent = 'กำลังถ่าย' + SIDE_NAME[S.side];
-    layoutCam();
-    if (!CAM.motionOK) ctoast('ไม่ได้รับอนุญาตให้อ่านเซนเซอร์ ปุ่มถ่ายจะไม่ล็อก', 3500);
-    cancelAnimationFrame(CAM.raf); CAM.raf = requestAnimationFrame(camLoop);
-  }
-  function stopStream(){ if (CAM.stream){ CAM.stream.getTracks().forEach(t => t.stop()); CAM.stream = null; } }
-  function closeCam(){
-    CAM.open = false; stopStream(); cancelAnimationFrame(CAM.raf);
-    $('cam').hidden = true; $('creview').hidden = true; $('cCalSheet').hidden = true;
-    document.documentElement.classList.remove('cam-open');
-  }
-  async function startStream(deviceId){
-    stopStream();
-    const base = deviceId ? { deviceId:{ exact:deviceId } } : { facingMode:{ ideal:'environment' } };
-    const stream = await navigator.mediaDevices.getUserMedia({ audio:false, video:{ ...base, width:{ ideal:3840 }, height:{ ideal:2160 } } });
-    CAM.stream = stream; CAM.track = stream.getVideoTracks()[0];
-    cvid.srcObject = stream; await cvid.play().catch(() => {});
-    await new Promise(r => cvid.readyState >= 1 ? r() : cvid.addEventListener('loadedmetadata', r, { once:true }));
-    try {
-      const all = await navigator.mediaDevices.enumerateDevices();
-      CAM.devices = all.filter(d => d.kind === 'videoinput' && !/front|หน้า/i.test(d.label));
-      $('cLens').hidden = CAM.devices.length < 2;
-    } catch(_){}
-    const caps = CAM.track.getCapabilities ? CAM.track.getCapabilities() : {};
-    if (caps.zoom && caps.zoom.max >= 2){
-      CAM.zooms = [1, 2, ...(caps.zoom.max >= 3 ? [3] : [])].filter(z => z >= caps.zoom.min);
-      CAM.zoomIdx = 0; $('cZoom').hidden = false; $('cZoom').textContent = '1×';
-    } else { CAM.zooms = null; $('cZoom').hidden = true; }
-    layoutCam();
-  }
-  /* The guide sits in the space between the top buttons and the bottom panel, so nothing covers the card. */
-  function layoutCam(){
-    if (!CAM.open) return;
-    const W = innerWidth, top = $('ctop').getBoundingClientRect().bottom + 8, bot = $('cbot').getBoundingClientRect().top - 8;
-    const avail = Math.max(120, bot - top), h = Math.min(avail*0.94, W*0.86*GUIDE[1]/GUIDE[0]), w = h*GUIDE[0]/GUIDE[1], cy = (top + bot)/2;
-    Object.assign(cguide.style, { width:w + 'px', height:h + 'px', left:(W - w)/2 + 'px', top:(cy - h/2) + 'px' });
-    const lv = $('clevel'); lv.style.left = W/2 + 'px'; lv.style.top = cy + 'px';
-    const vw = cvid.videoWidth, vh = cvid.videoHeight;
-    if (vw && vh){ const sc = Math.max(W/vw, innerHeight/vh); $('cres').textContent = `กล้อง ${vw}×${vh} · การ์ดเต็มกรอบ ≈ ${((h/sc)/GUIDE[1]).toFixed(1)} px/มม.`; }
-  }
-  addEventListener('resize', layoutCam);
-
-  function onOrient(e){
-    if (e.beta == null || e.gamma == null) return;
-    CAM.sensor = true; CAM.lastEvt = performance.now();
-    const a = 0.25;
-    CAM.b = CAM.b == null ? e.beta : CAM.b + a*(e.beta - CAM.b);
-    CAM.g = CAM.g == null ? e.gamma : CAM.g + a*(e.gamma - CAM.g);
-    const t = performance.now(); CAM.hist.push({ t, b:CAM.b, g:CAM.g });
-    while (CAM.hist.length && t - CAM.hist[0].t > 900) CAM.hist.shift();
-  }
-  function camSteady(){
-    const t = performance.now(), w = CAM.hist.filter(h => t - h.t <= STEADY_MS);
-    if (w.length < 5 || t - w[0].t < STEADY_MS*0.8) return false;
-    const r = k => Math.max(...w.map(h => h[k])) - Math.min(...w.map(h => h[k]));
-    return r('b') <= STEADY_DEG && r('g') <= STEADY_DEG;
-  }
-  function camState(){
-    if (!CAM.sensor) return { lvl:'none' };
-    const b = CAM.b - CAM.cal.b, g = CAM.g - CAM.cal.g, m = Math.max(Math.abs(b), Math.abs(g));
-    return { lvl: m <= OK_DEG ? 'ok' : m <= LOCK_DEG ? 'warn' : 'bad', b, g, still: camSteady() };
-  }
-  /* Which edge to lift. gamma > 0: the right edge is lower. beta > 0: the top edge is higher. */
-  function camAdvice(b, g){
-    if (Math.abs(b) > 30 || Math.abs(g) > 30) return 'ถือมือถือให้ขนานกับโต๊ะ กล้องหันลงหาการ์ด';
-    const out = [];
-    if (Math.abs(g) > OK_DEG) out.push(g > 0 ? 'ยกขอบขวาขึ้น' : 'ยกขอบซ้ายขึ้น');
-    if (Math.abs(b) > OK_DEG) out.push(b > 0 ? 'ยกขอบล่างขึ้น' : 'ยกขอบบนขึ้น');
-    return out.join(' · ') + 'นิดหนึ่ง';
-  }
-  function camRender(){
-    const st = camState(), hint = $('chint');
-    cguide.className = 'cg' + (st.lvl === 'ok' || st.lvl === 'none' ? ' ok' : st.lvl === 'warn' ? ' warn' : '');
-    if (st.lvl === 'none'){
-      hint.className = 'chint warn'; hint.textContent = 'ไม่มีระดับน้ำ เล็งให้ตรงเอง';
-      $('cread').textContent = 'เซนเซอร์: ไม่มีข้อมูล'; $('clevel').hidden = true; cshut.disabled = CAM.busy; return st;
-    }
-    $('clevel').hidden = false;
-    const k = 8, cl = v => Math.max(-28, Math.min(28, v));
-    cbub.style.transform = `translate(${cl(-st.g*k)}px, ${cl(-st.b*k)}px)`;
-    cbub.style.background = st.lvl === 'ok' ? '#5DCAA5' : st.lvl === 'warn' ? '#E8B45A' : '#F0997B';
-    $('cread').textContent = `ซ้าย-ขวา ${Math.abs(st.g).toFixed(1)}° · หน้า-หลัง ${Math.abs(st.b).toFixed(1)}°`;
-    cshut.disabled = CAM.busy || st.lvl === 'bad';
-    if (st.lvl === 'bad'){ hint.className = 'chint bad'; hint.textContent = camAdvice(st.b, st.g); }
-    else if (st.lvl === 'warn'){ hint.className = 'chint warn'; hint.textContent = 'ถ่ายได้ แต่ยังเอียง · ' + camAdvice(st.b, st.g); }
-    else { hint.className = 'chint ok'; hint.textContent = st.still ? (CAM.auto ? 'ตรงแล้ว ถือนิ่ง ๆ…' : 'ตรงแล้ว กดถ่ายได้เลย') : 'ตรงแล้ว ถือให้นิ่ง'; }
-    return st;
-  }
-  function camLoop(){
-    if (!CAM.open) return;
-    if ($('creview').hidden && $('cCalSheet').hidden){
-      const st = camRender();
-      let p = 0;
-      if (CAM.auto && st.lvl === 'ok' && st.still && !CAM.busy){
-        if (!CAM.steadySince) CAM.steadySince = performance.now();
-        p = Math.min(1, (performance.now() - CAM.steadySince)/STEADY_MS);
-        if (p >= 1){ CAM.steadySince = 0; camCapture(); }
-      } else CAM.steadySince = 0;
-      cring.setAttribute('stroke-dashoffset', String(226*(1 - p)));
-      if (CAM.sensor && performance.now() - CAM.lastEvt > 1500){ CAM.sensor = false; CAM.hist = []; }
-    }
-    CAM.raf = requestAnimationFrame(camLoop);
-  }
-  async function camCapture(){
-    if (CAM.busy || !cvid.videoWidth) return;
-    CAM.busy = true;
-    const st = camState(), c = document.createElement('canvas');
-    c.width = cvid.videoWidth; c.height = cvid.videoHeight;
-    c.getContext('2d').drawImage(cvid, 0, 0);
-    if (navigator.vibrate) navigator.vibrate(30);
-    CAM.blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.95));
-    CAM.shot = st.lvl === 'none' ? null : { b:st.b, g:st.g };
-    const img = $('cshot'); if (img.dataset.url) URL.revokeObjectURL(img.dataset.url);
-    const u = URL.createObjectURL(CAM.blob); img.src = u; img.dataset.url = u;
-    $('cshotMeta').textContent = (CAM.shot ? `ถ่ายตอนเอียง ซ้าย-ขวา ${Math.abs(st.g).toFixed(1)}° · หน้า-หลัง ${Math.abs(st.b).toFixed(1)}°` : 'ไม่มีข้อมูลเซนเซอร์') + ` · ${c.width}×${c.height} px`;
-    $('creview').hidden = false; CAM.busy = false;
-  }
-  cshut.addEventListener('click', camCapture);
-  $('cAgain').addEventListener('click', () => { $('creview').hidden = true; CAM.hist = []; CAM.steadySince = 0; });
-  $('cUse').addEventListener('click', () => {
-    if (!CAM.blob) return;
-    const tilt = CAM.shot, im = new Image();
-    im.onload = () => { closeCam(); setSource(im, false, tilt); };
-    im.onerror = () => { closeCam(); showMsg('เปิดรูปที่ถ่ายไม่ได้ ลองถ่ายใหม่'); };
-    im.src = URL.createObjectURL(CAM.blob);
-  });
-  $('cfile').addEventListener('change', e => { const f = e.target.files; closeCam(); loadFiles(f); e.target.value = ''; });
-  $('cClose').addEventListener('click', closeCam);
-  $('cAuto').addEventListener('click', e => { CAM.auto = !CAM.auto; e.currentTarget.setAttribute('aria-pressed', String(CAM.auto)); CAM.steadySince = 0; });
-  const updCal = () => { $('cCalNow').textContent = `ศูนย์ปัจจุบัน: ซ้าย-ขวา ${CAM.cal.g.toFixed(1)}° · หน้า-หลัง ${CAM.cal.b.toFixed(1)}°`; };
-  $('cCal').addEventListener('click', () => { $('cCalSheet').hidden = false; updCal(); });
-  $('cCalClose').addEventListener('click', () => $('cCalSheet').hidden = true);
-  $('cCalSet').addEventListener('click', () => {
-    if (!CAM.sensor){ ctoast('ยังไม่มีค่าเซนเซอร์'); return; }
-    const w = CAM.hist.slice(-20); if (!w.length) return;
-    CAM.cal = { b:w.reduce((s, h) => s + h.b, 0)/w.length, g:w.reduce((s, h) => s + h.g, 0)/w.length };
-    try { localStorage.setItem('wkp-cal', JSON.stringify(CAM.cal)); } catch(_){}
-    updCal(); $('cCalSheet').hidden = true; ctoast('ตั้งศูนย์แล้ว');
-  });
-  $('cCalReset').addEventListener('click', () => { CAM.cal = { b:0, g:0 }; try { localStorage.removeItem('wkp-cal'); } catch(_){} updCal(); ctoast('ล้างค่าศูนย์แล้ว'); });
-  $('cLens').addEventListener('click', async () => {
-    if (CAM.devices.length < 2) return;
-    CAM.devIdx = (CAM.devIdx + 1) % CAM.devices.length;
-    try { await startStream(CAM.devices[CAM.devIdx].deviceId); ctoast(CAM.devices[CAM.devIdx].label || `เลนส์ ${CAM.devIdx + 1}`); }
-    catch(_){ ctoast('สลับเลนส์ไม่ได้'); }
-  });
-  $('cZoom').addEventListener('click', async () => {
-    if (!CAM.zooms) return;
-    CAM.zoomIdx = (CAM.zoomIdx + 1) % CAM.zooms.length;
-    const z = CAM.zooms[CAM.zoomIdx];
-    try { await CAM.track.applyConstraints({ advanced:[{ zoom:z }] }); $('cZoom').textContent = z + '×'; layoutCam(); }
-    catch(_){ ctoast('ซูมไม่ได้'); }
-  });
-  document.addEventListener('visibilitychange', () => {
-    if (!CAM.open) return;
-    if (document.hidden) stopStream();
-    else if (!CAM.stream) startStream(CAM.devIdx && CAM.devices[CAM.devIdx] ? CAM.devices[CAM.devIdx].deviceId : undefined).catch(() => ctoast('เปิดกล้องใหม่ไม่ได้ ปิดแล้วกดถ่ายรูปอีกครั้ง'));
-  });
-  $('camBtn').addEventListener('click', openCam);
-  $('camBtn2').addEventListener('click', openCam);
-
   $('file').addEventListener('change', e => { loadFiles(e.target.files); e.target.value = ''; });
   const stage = $('stage');
   stage.addEventListener('dragover', e => { e.preventDefault(); stage.classList.add('drop'); });
