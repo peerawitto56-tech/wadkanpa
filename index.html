@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0B0B0C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="TRC TCG">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,23 +16,15 @@
 <style>
 /* Layout: grading bench. Two-step flow (corners, then borders). Photo stage left, instrument panel right; stacks on phones. */
 :root{
-  --bg:#EDF1EF; --surface:#FFFFFF; --sunk:#E2E8E5; --ink:#15211D; --muted:#56665F; --rule:#CCD7D2;
-  --outer:#0A7F72; --inner:#BE2D72; --on-accent:#FFFFFF;
-  --good:#1F7A45; --good-bg:#DDF0E4; --warn:#9A600B; --warn-bg:#F6E8CF; --bad:#AE3A24; --bad-bg:#F5DDD7;
-  --f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
+  --bg:#0B0B0C; --surface:#141415; --sunk:#0E0E0F; --ink:#F4F1EC; --muted:#A9A6A1; --rule:#2E2D2B;
+  --outer:#F4F1EC; --inner:#FF3B47; --on-accent:#0B0B0C; --red:#D7141E; --redT:#FF4A4F;
+  --good:#7BD88F; --good-bg:#13241A; --warn:#F2C14E; --warn-bg:#2A2110; --bad:#FF4A4F; --bad-bg:#2B1214;
+  --f-display:"Kanit","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-tag:"Anton","Kanit",system-ui,sans-serif;
   --f-body:"IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0E1412; --surface:#161F1C; --sunk:#0A0F0D; --ink:#E4ECE9; --muted:#93A49E; --rule:#2A3733;
-  --outer:#3CC4B2; --inner:#F06AA6; --on-accent:#0E1412;
-  --good:#6FD39A; --good-bg:#16301F; --warn:#E8B45A; --warn-bg:#332611; --bad:#F08A72; --bad-bg:#3A1C15;
-  color-scheme:dark;}}
-:root[data-theme="dark"]{
-  --bg:#0E1412; --surface:#161F1C; --sunk:#0A0F0D; --ink:#E4ECE9; --muted:#93A49E; --rule:#2A3733;
-  --outer:#3CC4B2; --inner:#F06AA6; --on-accent:#0E1412;
-  --good:#6FD39A; --good-bg:#16301F; --warn:#E8B45A; --warn-bg:#332611; --bad:#F08A72; --bad-bg:#3A1C15;
-  color-scheme:dark;}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;
@@ -150,6 +142,34 @@ input[type=text]:focus-visible,textarea:focus-visible{outline:2px solid var(--in
 .tpls .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:transparent}
 .okmsg{color:var(--good)}
 .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Black-and-red skin: slanted slabs, white rules, red for action and the inner frame line. */
+header{border-bottom:3px solid var(--red);padding-bottom:16px}
+.eyebrow{font-family:var(--f-tag);font-weight:400;color:var(--redT);letter-spacing:.3em;font-size:14px}
+h1{font-family:var(--f-display);font-style:italic;font-weight:800;font-size:clamp(32px,4.4vw,48px);letter-spacing:.01em;text-shadow:4px 4px 0 var(--red)}
+.label{font-family:var(--f-tag);font-weight:400;letter-spacing:.14em;font-size:13px;color:var(--ink);text-transform:uppercase}
+.btn,.seg,.step,.ztools .btn{border-radius:0;transform:skewX(-10deg)}
+.btn{background:var(--surface);border-color:#4A4845}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--red);border-color:var(--red);color:#FFFFFF;box-shadow:3px 3px 0 var(--ink);font-family:var(--f-display);font-style:italic;font-weight:700}
+.btn.primary:hover{border-color:var(--red);filter:brightness(1.08)}
+.seg{border-color:#4A4845}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:600}
+.step{border-color:#4A4845;padding-right:16px}
+.step[aria-current="step"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.step[aria-current="step"] .n,.step.done .n{background:var(--red);color:#FFFFFF}
+.card,.stage,.loupe,.report,.sides li,select,input[type=text],textarea{border-radius:0}
+.chip{border-radius:0;border-color:#4A4845}
+.chip.o[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chip.i[aria-pressed="true"],.chip.c[aria-pressed="true"]{background:var(--red);color:#FFFFFF}
+.dpad button{border-radius:0;background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600;transform:skewX(-10deg)}
+.dpad button:disabled{background:transparent;color:var(--muted);border-color:#4A4845}
+.ro .v{font-family:var(--f-tag);font-weight:400;font-size:34px;letter-spacing:.02em}
+.status,.verdict{border-radius:0}
+.verdict strong{font-family:var(--f-display);font-style:italic;font-weight:700}
+.sides li.on{border-color:var(--red)}
+.live canvas{border-radius:0}
+.btn:focus-visible,.chip:focus-visible,canvas:focus-visible,.seg button:focus-visible,.step:focus-visible,select:focus-visible,.dpad button:focus-visible{outline-color:var(--redT)}
 </style>
 </head>
 <body>
@@ -1002,7 +1022,7 @@ input[type=text]:focus-visible,textarea:focus-visible{outline:2px solid var(--in
       const cv = $('lv' + i), sz = Math.max(60, Math.round(cv.clientWidth || 120));
       if (cv.width !== sz*d){ cv.width = sz*d; cv.height = sz*d; }
       const g = cv.getContext('2d'); g.setTransform(d, 0, 0, d, 0, 0); g.clearRect(0, 0, sz, sz);
-      drawCornerTile(g, { lines:L, img:flat }, c, 0, 0, sz, S.sel);
+      drawCornerTile(g, { lines:L, img:flat }, c, 0, 0, sz, S.sel, { band:'rgba(244,241,236,0.30)', outer:'#F4F1EC', inner:'#FF3B47', frame:'#F4F1EC' });
       $('lc' + i).textContent = `${SIDE_TH[a]} ${g4[a].toFixed(2)}\n${SIDE_TH[b]} ${g4[b].toFixed(2)}`;
     });
   }
